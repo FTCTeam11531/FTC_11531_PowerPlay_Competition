@@ -29,17 +29,15 @@
 
 package org.firstinspires.ftc.teamcode.system;
 
+import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
-import org.firstinspires.ftc.teamcode.utility.RobotConstants;
-
 import java.util.ArrayList;
 import java.util.ListIterator;
 
 // Program Copied from FTC example: RobotHardware.java
-// Renamed in TeamCode as: SystemDrivetrain.java
+// Renamed in TeamCode as: SysDrivetrain.java
 
 /**
  * <h2>System Class for the Robot Drivetrain</h2>
@@ -62,7 +60,7 @@ import java.util.ListIterator;
  * <hr>
  *
  */
-public class SystemDrivetrain {
+public class SysDrivetrain {
 
     /* Declare OpMode members. */
     private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
@@ -96,7 +94,7 @@ public class SystemDrivetrain {
      * </p>
      * <hr>
      */
-    public SystemDrivetrain(LinearOpMode inOpMode) {
+    public SysDrivetrain(LinearOpMode inOpMode) {
         sysOpMode = inOpMode;
     }
 

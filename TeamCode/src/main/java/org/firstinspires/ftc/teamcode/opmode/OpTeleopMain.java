@@ -33,7 +33,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.system.SystemDrivetrain;
+import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
@@ -51,7 +51,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotConstants;
  * </p>
  * <hr>
  */
-@TeleOp(name="Cmd: Robot Main", group="_main")
+@TeleOp(name="Robot Main", group="_main")
 //@Disabled
 public class OpTeleopMain extends LinearOpMode {
 
@@ -59,7 +59,7 @@ public class OpTeleopMain extends LinearOpMode {
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
     // -- Drivetrain System
-    SystemDrivetrain sysDrivetrain = new SystemDrivetrain(this);
+    SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
     // -- Claw System
 
