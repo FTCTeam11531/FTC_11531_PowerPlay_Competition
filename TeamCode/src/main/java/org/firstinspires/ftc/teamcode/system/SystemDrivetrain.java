@@ -27,13 +27,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.system;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.Range;
+
+import org.firstinspires.ftc.teamcode.utility.RobotConstants;
+
+import java.util.ArrayList;
+import java.util.ListIterator;
 
 // Program Copied from FTC example: RobotHardware.java
 // Renamed in TeamCode as: SystemDrivetrain.java
@@ -41,8 +44,11 @@ import com.qualcomm.robotcore.util.Range;
 /**
  * <h2>System Class for the Robot Drivetrain</h2>
  * <hr>
- * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
- * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+ * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+ * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+ * <hr>
+ * <b>Drivetrain Motor:</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVETRAIN_MOTOR}<br>
+ * <b>Drivetrain Wheel Type:</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVETRAIN_WHEEL_TYPE}<br>
  * <hr>
  * <p>
  * This system defines <b>ALL</b> configures all attributes, configurations, and methods for the Robot
@@ -61,6 +67,16 @@ public class SystemDrivetrain {
     /* Declare OpMode members. */
     private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
 
+    // Define Drivetrain Mode List Iterator
+    private ArrayList<String> drivetrainModeList = new ArrayList<>();
+    private ListIterator drivetrainModeListIterator = drivetrainModeList.listIterator();
+    private String drivetrainModeCurrent = null;
+
+    // Define Drivetrain Output Power List Iterator
+    private ArrayList<Double> drivetrainOutputPowerList = new ArrayList<>();
+    private ListIterator drivetrainOutputPowerListIterator = drivetrainOutputPowerList.listIterator();
+    private String drivetrainOutputPowerCurrent = null;
+
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
     private DcMotor leftFrontDrive = null;
     private DcMotor leftBackDrive = null;
@@ -72,8 +88,8 @@ public class SystemDrivetrain {
     /**
      * <h2>Drivetrain System Constructor</h2>
      * <hr>
-     * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
      * Define a constructor that allows the OpMode to pass a reference to itself.
@@ -87,8 +103,8 @@ public class SystemDrivetrain {
     /**
      * <h2>Drivetrain System Initialize</h2>
      * <hr>
-     * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
      * Initialize the robot hardware for the drivetrain system.
@@ -99,6 +115,16 @@ public class SystemDrivetrain {
      * <hr>
      */
     public void init()    {
+        // Add Drivetrain Mode(s) to List Iterator
+        drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC);
+        drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC);
+
+        // Add Drivetrain Output Power Setting(s) to List Iterator
+        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOD_OUTPUT_POWER_HIGH);
+        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOD_OUTPUT_POWER_MED);
+        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOD_OUTPUT_POWER_LOW);
+        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOD_OUTPUT_POWER_SNAIL);
+
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -117,10 +143,6 @@ public class SystemDrivetrain {
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
-        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        // leftDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        // rightDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
         // Initialize the IMU board/unit on the Rev Control Hub
         imuRevControlHub = sysOpMode.hardwareMap.get(BNO055IMU.class, RobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
         BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
@@ -138,10 +160,51 @@ public class SystemDrivetrain {
     }
 
     /**
+     * <h2>Drivetrain Method: configInitDriveMotorEncoders</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
+     * Each motion axis is controlled by one Joystick axis.
+     * </p>
+     * <p>
+     * This is a standard mecanum drivetrain or a 'Robot Centric' drivetrain
+     * </p>
+     * <br>
+     *
+     * @return void
+     * <br>
+     */
+    public void configInitDriveMotorEncoders() {
+
+        // Reset Drive Motor Encoders
+        configResetDriveMotorEncoders();
+
+        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+    }
+
+    public void configResetDriveMotorEncoders() {
+
+        // Reset the Drive Motor Encoders
+        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+    }
+
+    /**
      * <h2>Drivetrain Method: driveMecanum</h2>
      * <hr>
-     * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
      * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
@@ -189,8 +252,8 @@ public class SystemDrivetrain {
     /**
      * <h2>Drivetrain Method: driveMecanumFieldCentric</h2>
      * <hr>
-     * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
      * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
@@ -244,36 +307,77 @@ public class SystemDrivetrain {
     }
 
     /**
-     * <h2>Drivetrain Method: setDrivePower</h2>
+     * <h2>Drivetrain Method: driveMecanumByEncoder</h2>
      * <hr>
-     * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
-     * Pass the requested wheel motor powers to the appropriate hardware drive motors.
+     * {enter information here!!}
      * </p>
-     * @param leftFrontPower  Power to Left Front Wheel
-     * @param rightFrontPower Power to Right Front Wheel
-     * @param leftBackPower   Power to Left Back Wheel
-     * @param rightBackPower  Power to Right Back Wheel
-     *
-     * @return N/A (Nothing)
+     * @return void
      * <br>
      */
-    private void setDrivePower(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+    public void driveMecanumByEncoder(double inSpeed, double inLeftInches, double inRightInches, double inTimeoutSeconds) {
+/*
+        double modMaintainMotorRatio;
 
-        // Send calculated power to wheels
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        double inputAxial   = (inAxial * inOutputPowerPercent);  // Note: pushing stick forward gives negative value
+        double inputLateral = (inLateral * inOutputPowerPercent) * RobotConstants.Drivetrain.MOD_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
+        double inputYaw     = (inYaw * inOutputPowerPercent);
+
+        // Get heading value from the IMU
+        double botHeading = getIMUHeading();
+
+        // Adjust the lateral and axial movements based on heading
+        double adjLateral = inputLateral * Math.cos(botHeading) - inputAxial * Math.sin(botHeading);
+        double adjAxial = inputLateral * Math.sin(botHeading) + inputAxial * Math.cos(botHeading);
+
+        // Normalize the values so no wheel power exceeds 100%
+        // This ensures that the robot maintains the desired motion.
+        modMaintainMotorRatio = Math.max(Math.abs(inputAxial) + Math.abs(inputLateral) + Math.abs(inputYaw), RobotConstants.Drivetrain.MOD_OUTPUT_POWER_MAX);
+
+        // Combine the joystick requests for each axis-motion to determine each wheel's power.
+        // Set up a variable for each drive wheel to save the power level for telemetry.
+        double leftFrontPower  = (adjAxial + adjLateral + inputYaw) / modMaintainMotorRatio;
+        double rightFrontPower = (adjAxial - adjLateral - inputYaw) / modMaintainMotorRatio;
+        double leftBackPower   = (adjAxial - adjLateral + inputYaw) / modMaintainMotorRatio;
+        double rightBackPower  = (adjAxial + adjLateral - inputYaw) / modMaintainMotorRatio;
+
+        // Use existing function to drive both wheels.
+        setDrivePower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+
+ */
+    }
+
+    /**
+     * <h2>Drivetrain Method: getIMUHeading</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the output heading value from the IMU.
+     * </p>
+     * @return double - Output heading value from the IMU
+     * <br>
+     */
+    public double getIMUHeading() {
+        // Variable for output heading value
+        double outIMUHeadingValue = 0;
+
+        // Get heading value from the IMU
+        // Read inverse IMU heading, as the IMU heading is CW positive
+        outIMUHeadingValue = -imuRevControlHub.getAngularOrientation().firstAngle;
+
+        return outIMUHeadingValue;
     }
 
     /**
      * <h2>Drivetrain Method: getDrivetrainMotorPower</h2>
      * <hr>
-     * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
      * Get the output power value for a drivetrain motor.
@@ -315,25 +419,134 @@ public class SystemDrivetrain {
     }
 
     /**
-     * <h2>Drivetrain Method: getIMUHeading</h2>
+     * <h2>Drivetrain Method: getDrivetrainModeCurrent</h2>
      * <hr>
-     * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
-     * Get the output heading value from the IMU.
+     * Get the value of the current Drivetrain mode from List Iterator.
      * </p>
-     * @return double - Output heading value from the IMU
+     * @return String - Output the current mode value
      * <br>
      */
-    public double getIMUHeading() {
-        // Variable for output heading value
-        double outIMUHeadingValue = 0;
+    public String getDrivetrainModeCurrent() {
+        String outDrivetrainMode = null;
 
-        // Get heading value from the IMU
-        // Read inverse IMU heading, as the IMU heading is CW positive
-        outIMUHeadingValue = -imuRevControlHub.getAngularOrientation().firstAngle;
+        // Get current drivetrain mode
+        outDrivetrainMode = drivetrainModeCurrent;
 
-        return outIMUHeadingValue;
+        return outDrivetrainMode;
     }
+
+    /**
+     * <h2>Drivetrain Method: getDrivetrainOutputPowerCurrent</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the value of the current Drivetrain output power setting from List Iterator.
+     * </p>
+     * @return double - Output the current output power setting value
+     * <br>
+     */
+    public double getDrivetrainOutputPowerCurrent() {
+        double outDrivetrainOutputPower = 0;
+
+        // Get current drivetrain mode
+        switch (drivetrainOutputPowerCurrent) {
+            case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_HIGH:
+                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOD_OUTPUT_POWER_HIGH;
+                break;
+            case  RobotConstants.Drivetrain.LIST_OUTPUT_POWER_MED:
+                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOD_OUTPUT_POWER_MED;
+                break;
+            case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_LOW:
+                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOD_OUTPUT_POWER_LOW;
+                break;
+            case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_SNAIL:
+                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOD_OUTPUT_POWER_SNAIL;
+                break;
+            default:
+                outDrivetrainOutputPower = 0;
+        }
+
+        return outDrivetrainOutputPower;
+    }
+
+    /**
+     * <h2>Drivetrain Method: setDrivetrainModeNext</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the next value of the Drivetrain mode from List Iterator.
+     * </p>
+     * @return void
+     * <br>
+     */
+    public void setDrivetrainModeNext() {
+
+        // Cycle drivetrain mode - set to first when next is not available
+        if (drivetrainModeListIterator.hasNext())
+            drivetrainModeCurrent = drivetrainModeListIterator.next().toString();
+        else
+            while (drivetrainModeListIterator.hasPrevious()) {
+                drivetrainModeCurrent = drivetrainModeListIterator.previous().toString();
+            }
+
+    }
+
+    /**
+     * <h2>Drivetrain Method: setDrivetrainOutputPowerNext</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Set the next value of the Drivetrain output power setting from List Iterator.
+     * </p>
+     * @return void
+     * <br>
+     */
+    public void setDrivetrainOutputPowerNext() {
+
+        // Cycle drivetrain mode - set to first when next is not available
+        if (drivetrainOutputPowerListIterator.hasNext())
+            drivetrainOutputPowerCurrent = drivetrainOutputPowerListIterator.next().toString();
+        else
+            while (drivetrainOutputPowerListIterator.hasPrevious()) {
+                drivetrainOutputPowerCurrent = drivetrainOutputPowerListIterator.previous().toString();
+            }
+
+    }
+
+    /**
+     * <h2>Drivetrain Method: setDrivePower</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Pass the requested wheel motor powers to the appropriate hardware drive motors.
+     * </p>
+     * @param leftFrontPower  Power to Left Front Wheel
+     * @param rightFrontPower Power to Right Front Wheel
+     * @param leftBackPower   Power to Left Back Wheel
+     * @param rightBackPower  Power to Right Back Wheel
+     *
+     * @return N/A (Nothing)
+     * <br>
+     */
+    private void setDrivePower(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+
+        // Send calculated power to wheels
+        leftFrontDrive.setPower(leftFrontPower);
+        rightFrontDrive.setPower(rightFrontPower);
+        leftBackDrive.setPower(leftBackPower);
+        rightBackDrive.setPower(rightBackPower);
+    }
+
 }

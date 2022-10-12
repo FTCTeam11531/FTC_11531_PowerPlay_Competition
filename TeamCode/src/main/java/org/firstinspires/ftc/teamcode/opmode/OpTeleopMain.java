@@ -27,24 +27,23 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
+import org.firstinspires.ftc.teamcode.system.SystemDrivetrain;
+import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
-// Renamed in TeamCode as: CommandTeleopMain.java
+// Renamed in TeamCode as: OpTeleopMain.java
 
 /**
  * <h2>FTC Driver Station Teleop OpMode/Command: Robot Main</h2>
  * <hr>
- * <b>Author:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
- * <b>Season:</b> {@value org.firstinspires.ftc.teamcode.RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+ * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+ * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
  * <p>
  * This is the main Teleop OpMode/Command and will include all references to systems used
@@ -53,8 +52,8 @@ import org.firstinspires.ftc.robotcontroller.external.samples.RobotHardware;
  * <hr>
  */
 @TeleOp(name="Cmd: Robot Main", group="_main")
-@Disabled
-public class CommandTeleopMain extends LinearOpMode {
+//@Disabled
+public class OpTeleopMain extends LinearOpMode {
 
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -62,9 +61,24 @@ public class CommandTeleopMain extends LinearOpMode {
     // -- Drivetrain System
     SystemDrivetrain sysDrivetrain = new SystemDrivetrain(this);
 
+    // -- Claw System
+
+    // -- LinearSlide System
+
+    // -- Lighting System
+
+    // -- Vision System
+
+
     // ------------------------------------------------------------
     // Command Object(s)
     // ------------------------------------------------------------
+
+
+    // ------------------------------------------------------------
+    // Misc
+    // ------------------------------------------------------------
+    // -- Command Runtime
     private ElapsedTime runtime = new ElapsedTime();
 
     @Override
@@ -109,9 +123,11 @@ public class CommandTeleopMain extends LinearOpMode {
             // Drivetrain
             // ------------------------------------------------------------
             // Select / Change Drive mode
-            //if(gamepad1.back)
+            if(gamepad1.back)
+                sysDrivetrain.setDrivetrainModeNext();
 
-
+            if(gamepad1.start)
+                sysDrivetrain.setDrivetrainOutputPowerNext();
 
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
@@ -121,7 +137,10 @@ public class CommandTeleopMain extends LinearOpMode {
             inputYaw     =  gamepad1.right_stick_x;
 
             // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
-            sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, RobotConstants.Drivetrain.MOD_OUTPUT_POWER_LOW);
+            if(sysDrivetrain.getDrivetrainModeCurrent().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC))
+                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getDrivetrainOutputPowerCurrent());
+            else
+                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getDrivetrainOutputPowerCurrent());
 
             // ------------------------------------------------------------
             // Claw
@@ -155,9 +174,9 @@ public class CommandTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Drivetrain               --");
             telemetry.addData("-", "------------------------------");
-            //telemetry.addData("-", "Drivetrain Mode: ", driveMode);
-
-            //telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "Drivetrain Mode: ", sysDrivetrain.getDrivetrainModeCurrent());
+            telemetry.addData("-", "Drivetrain Power: ", sysDrivetrain.getDrivetrainOutputPowerCurrent());
+            telemetry.addData("-", "------------------------------");
             telemetry.addData("Front left/Right: ", "%4.2f, %4.2f"
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
