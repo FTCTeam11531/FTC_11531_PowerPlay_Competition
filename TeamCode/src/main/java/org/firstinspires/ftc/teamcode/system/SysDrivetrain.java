@@ -33,8 +33,13 @@ import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ListIterator;
+import java.util.List;
 
 // Program Copied from FTC example: RobotHardware.java
 // Renamed in TeamCode as: SysDrivetrain.java
@@ -45,8 +50,8 @@ import java.util.ListIterator;
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
- * <b>Drivetrain Motor:</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVETRAIN_MOTOR}<br>
- * <b>Drivetrain Wheel Type:</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVETRAIN_WHEEL_TYPE}<br>
+ * <b>Drivetrain Motor:</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVE_MOTOR}<br>
+ * <b>Drivetrain Wheel Type:</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVE_WHEEL_TYPE}<br>
  * <hr>
  * <p>
  * This system defines <b>ALL</b> configures all attributes, configurations, and methods for the Robot
@@ -76,10 +81,13 @@ public class SysDrivetrain {
     private String drivetrainOutputPowerCurrent = null;
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
-    private DcMotor leftFrontDrive = null;
-    private DcMotor leftBackDrive = null;
-    private DcMotor rightFrontDrive = null;
-    private DcMotor rightBackDrive = null;
+    private DcMotorEx leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
+    private List<DcMotorEx> listMotorsDrivetrain;
+
+//    private DcMotor leftFrontDrive = null;
+//    private DcMotor leftBackDrive = null;
+//    private DcMotor rightFrontDrive = null;
+//    private DcMotor rightBackDrive = null;
 
     private BNO055IMU imuRevControlHub = null;
 
@@ -118,18 +126,28 @@ public class SysDrivetrain {
         drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC);
 
         // Add Drivetrain Output Power Setting(s) to List Iterator
-        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOD_OUTPUT_POWER_HIGH);
-        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOD_OUTPUT_POWER_MED);
-        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOD_OUTPUT_POWER_LOW);
-        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOD_OUTPUT_POWER_SNAIL);
+        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH);
+        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_SNAIL);
 
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-        leftFrontDrive  = sysOpMode.hardwareMap.get(DcMotor.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT);
-        leftBackDrive  = sysOpMode.hardwareMap.get(DcMotor.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK);
-        rightFrontDrive = sysOpMode.hardwareMap.get(DcMotor.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT);
-        rightBackDrive = sysOpMode.hardwareMap.get(DcMotor.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK);
+        leftFrontDrive  = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT);
+        leftBackDrive  = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK);
+        rightFrontDrive = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT);
+        rightBackDrive = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK);
+
+        listMotorsDrivetrain = Arrays.asList(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
+
+        for (DcMotorEx motorItem : listMotorsDrivetrain) {
+            MotorConfigurationType motorConfigurationType = motorItem.getMotorType().clone();
+            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+            motorItem.setMotorType(motorConfigurationType);
+        }
+
+
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -229,12 +247,12 @@ public class SysDrivetrain {
         double modMaintainMotorRatio;
 
         double inputAxial   = (inAxial * inOutputPowerPercent);  // Note: pushing stick forward gives negative value
-        double inputLateral = (inLateral * inOutputPowerPercent) * RobotConstants.Drivetrain.MOD_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
+        double inputLateral = (inLateral * inOutputPowerPercent) * RobotConstants.Drivetrain.MOTOR_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
         double inputYaw     = (inYaw * inOutputPowerPercent);
 
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
-        modMaintainMotorRatio = Math.max(Math.abs(inputAxial) + Math.abs(inputLateral) + Math.abs(inputYaw), RobotConstants.Drivetrain.MOD_OUTPUT_POWER_MAX);
+        modMaintainMotorRatio = Math.max(Math.abs(inputAxial) + Math.abs(inputLateral) + Math.abs(inputYaw), RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MAX);
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -279,7 +297,7 @@ public class SysDrivetrain {
         double modMaintainMotorRatio;
 
         double inputAxial   = (inAxial * inOutputPowerPercent);  // Note: pushing stick forward gives negative value
-        double inputLateral = (inLateral * inOutputPowerPercent) * RobotConstants.Drivetrain.MOD_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
+        double inputLateral = (inLateral * inOutputPowerPercent) * RobotConstants.Drivetrain.MOTOR_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
         double inputYaw     = (inYaw * inOutputPowerPercent);
 
         // Get heading value from the IMU
@@ -291,7 +309,7 @@ public class SysDrivetrain {
 
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
-        modMaintainMotorRatio = Math.max(Math.abs(inputAxial) + Math.abs(inputLateral) + Math.abs(inputYaw), RobotConstants.Drivetrain.MOD_OUTPUT_POWER_MAX);
+        modMaintainMotorRatio = Math.max(Math.abs(inputAxial) + Math.abs(inputLateral) + Math.abs(inputYaw), RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MAX);
 
         // Combine the joystick requests for each axis-motion to determine each wheel's power.
         // Set up a variable for each drive wheel to save the power level for telemetry.
@@ -455,16 +473,16 @@ public class SysDrivetrain {
         // Get current drivetrain mode
         switch (drivetrainOutputPowerCurrent) {
             case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_HIGH:
-                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOD_OUTPUT_POWER_HIGH;
+                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH;
                 break;
             case  RobotConstants.Drivetrain.LIST_OUTPUT_POWER_MED:
-                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOD_OUTPUT_POWER_MED;
+                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED;
                 break;
             case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_LOW:
-                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOD_OUTPUT_POWER_LOW;
+                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW;
                 break;
             case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_SNAIL:
-                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOD_OUTPUT_POWER_SNAIL;
+                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_SNAIL;
                 break;
             default:
                 outDrivetrainOutputPower = 0;
