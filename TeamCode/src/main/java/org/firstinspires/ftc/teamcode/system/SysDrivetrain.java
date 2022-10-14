@@ -84,11 +84,6 @@ public class SysDrivetrain {
     private DcMotorEx leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     private List<DcMotorEx> listMotorsDrivetrain;
 
-//    private DcMotor leftFrontDrive = null;
-//    private DcMotor leftBackDrive = null;
-//    private DcMotor rightFrontDrive = null;
-//    private DcMotor rightBackDrive = null;
-
     private BNO055IMU imuRevControlHub = null;
 
     /**
@@ -101,6 +96,7 @@ public class SysDrivetrain {
      * Define a constructor that allows the OpMode to pass a reference to itself.
      * </p>
      * <hr>
+     * @param inOpMode Pass in Calling OpMode
      */
     public SysDrivetrain(LinearOpMode inOpMode) {
         sysOpMode = inOpMode;
@@ -139,15 +135,18 @@ public class SysDrivetrain {
         rightFrontDrive = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT);
         rightBackDrive = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK);
 
+        // Add Motors to an Array/List of Motors
         listMotorsDrivetrain = Arrays.asList(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
 
-        for (DcMotorEx motorItem : listMotorsDrivetrain) {
-            MotorConfigurationType motorConfigurationType = motorItem.getMotorType().clone();
+        // Clone Configuration and apply to all Motors in the list (set max RPM to 100%)
+        for (DcMotorEx itemMotor : listMotorsDrivetrain) {
+            MotorConfigurationType motorConfigurationType = itemMotor.getMotorType().clone();
             motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            motorItem.setMotorType(motorConfigurationType);
+            itemMotor.setMotorType(motorConfigurationType);
         }
 
-
+        // Set Zero Setting to Brake Mode
+        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -158,6 +157,28 @@ public class SysDrivetrain {
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
+
+        // If the hub containing the IMU you are using is mounted so that the "REV" logo does
+        // not face up, remap the IMU axes so that the z-axis points upward (normal to the floor.)
+        //
+        //             | +Z axis
+        //             |
+        //             |
+        //             |
+        //      _______|_____________     +Y axis
+        //     /       |_____________/|__________
+        //    /   REV / EXPANSION   //
+        //   /       / HUB         //
+        //  /_______/_____________//
+        // |_______/_____________|/
+        //        /
+        //       / +X axis
+        //
+        // This diagram is derived from the axes in section 3.4 https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf
+        // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
+        //
+        // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
+        // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         // Initialize the IMU board/unit on the Rev Control Hub
         imuRevControlHub = sysOpMode.hardwareMap.get(BNO055IMU.class, RobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
@@ -563,6 +584,18 @@ public class SysDrivetrain {
         rightFrontDrive.setPower(rightFrontPower);
         leftBackDrive.setPower(leftBackPower);
         rightBackDrive.setPower(rightBackPower);
+    }
+
+    public void setRunMode(DcMotor.RunMode inRunMode) {
+        for (DcMotorEx itemMotor: listMotorsDrivetrain) {
+            itemMotor.setMode(inRunMode);
+        }
+    }
+
+    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior inZeroPowerBehavior) {
+        for (DcMotorEx itemMotor : listMotorsDrivetrain) {
+            itemMotor.setZeroPowerBehavior(inZeroPowerBehavior);
+        }
     }
 
 }

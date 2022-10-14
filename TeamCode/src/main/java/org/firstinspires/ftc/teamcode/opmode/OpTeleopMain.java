@@ -98,6 +98,9 @@ public class OpTeleopMain extends LinearOpMode {
 
         int driveModeIndex = 0;
 
+        // Set Drivetrain Mode Value
+        sysDrivetrain.setDrivetrainModeNext();
+        sysDrivetrain.setDrivetrainOutputPowerNext();
 
         // ------------------------------------------------------------
         // Send telemetry message to signify robot completed initialization and waiting to start;
@@ -132,15 +135,19 @@ public class OpTeleopMain extends LinearOpMode {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
-            inputAxial   = -(gamepad1.left_stick_y);  // Note: pushing stick forward gives negative value
-            inputLateral =  gamepad1.left_stick_x;
             inputYaw     =  gamepad1.right_stick_x;
 
             // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
-            if(sysDrivetrain.getDrivetrainModeCurrent().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC))
-                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getDrivetrainOutputPowerCurrent());
-            else
-                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getDrivetrainOutputPowerCurrent());
+            if(sysDrivetrain.getDrivetrainModeCurrent().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC)) {
+                inputAxial = -(gamepad1.left_stick_x);
+                inputLateral = -(gamepad1.left_stick_y);  // Note: pushing stick forward gives negative value
+                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, 1);
+            }
+            else {
+                inputAxial = -(gamepad1.left_stick_y);
+                inputLateral = gamepad1.left_stick_x;  // Note: pushing stick forward gives negative value
+                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, 1);
+            }
 
             // ------------------------------------------------------------
             // Claw
@@ -171,11 +178,14 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // - Drivetrain telemetry
             // ------------------------------------------------------------
+            //String dataDrivetrainMode = sysDrivetrain.getDrivetrainModeCurrent();
+            //double dataDrivetrainOutputPower = sysDrivetrain.getDrivetrainOutputPowerCurrent();
+
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Drivetrain               --");
+            telemetry.addData("-", "-- Drivetrain");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "Drivetrain Mode: ", sysDrivetrain.getDrivetrainModeCurrent());
-            telemetry.addData("-", "Drivetrain Power: ", sysDrivetrain.getDrivetrainOutputPowerCurrent());
+            telemetry.addData("Drivetrain Mode: ", sysDrivetrain.getDrivetrainModeCurrent());
+            telemetry.addData("Drivetrain Power: ", "%4.2f", sysDrivetrain.getDrivetrainOutputPowerCurrent());
             telemetry.addData("-", "------------------------------");
             telemetry.addData("Front left/Right: ", "%4.2f, %4.2f"
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
@@ -190,7 +200,7 @@ public class OpTeleopMain extends LinearOpMode {
             // - Claw telemetry
             // ------------------------------------------------------------
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- The Claw                 --");
+            telemetry.addData("-", "-- The Claw");
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "<No Data Available>");
 
@@ -198,7 +208,7 @@ public class OpTeleopMain extends LinearOpMode {
             // - LinearSlide telemetry
             // ------------------------------------------------------------
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- LinearSlide              --");
+            telemetry.addData("-", "-- LinearSlide");
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "<No Data Available>");
 
@@ -206,7 +216,7 @@ public class OpTeleopMain extends LinearOpMode {
             // - Lighting telemetry
             // ------------------------------------------------------------
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Lighting                 --");
+            telemetry.addData("-", "-- Lighting");
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "<No Data Available>");
 
@@ -214,7 +224,7 @@ public class OpTeleopMain extends LinearOpMode {
             // - Vision telemetry
             // ------------------------------------------------------------
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Vision                   --");
+            telemetry.addData("-", "-- Vision");
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "<No Data Available>");
 
