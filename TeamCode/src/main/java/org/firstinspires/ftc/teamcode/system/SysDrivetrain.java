@@ -30,15 +30,14 @@
 package org.firstinspires.ftc.teamcode.system;
 
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
+import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
+import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.ListIterator;
 import java.util.List;
 
 // Program Copied from FTC example: RobotHardware.java
@@ -50,8 +49,8 @@ import java.util.List;
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
- * <b>Drivetrain Motor:</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVE_MOTOR}<br>
  * <b>Drivetrain Wheel Type:</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVE_WHEEL_TYPE}<br>
+ * <b>Drivetrain Motor(s):</b> {@value RobotConstants.Drivetrain#COMMENT_DRIVE_MOTOR}<br>
  * <hr>
  * <p>
  * This system defines <b>ALL</b> configures all attributes, configurations, and methods for the Robot
@@ -70,15 +69,11 @@ public class SysDrivetrain {
     /* Declare OpMode members. */
     private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
 
-    // Define Drivetrain Mode List Iterator
-    private ArrayList<String> drivetrainModeList = new ArrayList<>();
-    private ListIterator drivetrainModeListIterator = drivetrainModeList.listIterator();
-    private String drivetrainModeCurrent = null;
+    // Define Drivetrain Mode Enumerator
+    public StateDrivetrainMode stateDrivetrainMode = StateDrivetrainMode.Field_Centric;
 
-    // Define Drivetrain Output Power List Iterator
-    private ArrayList<Double> drivetrainOutputPowerList = new ArrayList<>();
-    private ListIterator drivetrainOutputPowerListIterator = drivetrainOutputPowerList.listIterator();
-    private String drivetrainOutputPowerCurrent = null;
+    // Define Drivetrain Output Power Enumerator
+    public StateDriveMotorMaxOutputPower stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.High;
 
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
     private DcMotorEx leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
@@ -118,14 +113,14 @@ public class SysDrivetrain {
      */
     public void init()    {
         // Add Drivetrain Mode(s) to List Iterator
-        drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC);
-        drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC);
+        //drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC);
+        //drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC);
 
         // Add Drivetrain Output Power Setting(s) to List Iterator
-        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH);
-        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
-        drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_SNAIL);
+        //drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH);
+        //drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+        //drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+        //drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_SNAIL);
 
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Initialize the hardware variables. Note that the strings used here must correspond
@@ -146,7 +141,7 @@ public class SysDrivetrain {
         }
 
         // Set Zero Setting to Brake Mode
-        setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        setDriveMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
@@ -283,7 +278,7 @@ public class SysDrivetrain {
         double rightBackPower  = (inputAxial + inputLateral - inputYaw) / modMaintainMotorRatio;
 
         // Use existing function to drive both wheels.
-        setDrivePower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+        setDriveMotorPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
     }
 
     /**
@@ -340,7 +335,7 @@ public class SysDrivetrain {
         double rightBackPower  = (adjAxial + adjLateral - inputYaw) / modMaintainMotorRatio;
 
         // Use existing function to drive both wheels.
-        setDrivePower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+        setDriveMotorPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
     }
 
     /**
@@ -382,7 +377,7 @@ public class SysDrivetrain {
         double rightBackPower  = (adjAxial + adjLateral - inputYaw) / modMaintainMotorRatio;
 
         // Use existing function to drive both wheels.
-        setDrivePower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
+        setDriveMotorPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
  */
     }
@@ -456,7 +451,7 @@ public class SysDrivetrain {
     }
 
     /**
-     * <h2>Drivetrain Method: getDrivetrainModeCurrent</h2>
+     * <h2>Drivetrain Method: getLabelDrivetrainMode</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
      * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
@@ -467,13 +462,24 @@ public class SysDrivetrain {
      * @return String - Output the current mode value
      * <br>
      */
-    public String getDrivetrainModeCurrent() {
-        String outDrivetrainMode = null;
+    public String getLabelDrivetrainMode() {
+        return stateDrivetrainMode.getLabel();
+    }
 
-        // Get current drivetrain mode
-        outDrivetrainMode = drivetrainModeCurrent;
-
-        return outDrivetrainMode;
+    /**
+     * <h2>Drivetrain Method: getLabelDrivetrainOutputPower</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the label of the current Drivetrain output power setting from List Iterator.
+     * </p>
+     * @return String - Output the current output power setting label
+     * <br>
+     */
+    public String getLabelDrivetrainOutputPower() {
+        return stateMaxDriveOutputPower.getLabel();
     }
 
     /**
@@ -488,28 +494,8 @@ public class SysDrivetrain {
      * @return double - Output the current output power setting value
      * <br>
      */
-    public double getDrivetrainOutputPowerCurrent() {
-        double outDrivetrainOutputPower = 0;
-
-        // Get current drivetrain mode
-        switch (drivetrainOutputPowerCurrent) {
-            case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_HIGH:
-                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH;
-                break;
-            case  RobotConstants.Drivetrain.LIST_OUTPUT_POWER_MED:
-                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED;
-                break;
-            case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_LOW:
-                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW;
-                break;
-            case RobotConstants.Drivetrain.LIST_OUTPUT_POWER_SNAIL:
-                outDrivetrainOutputPower = RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_SNAIL;
-                break;
-            default:
-                outDrivetrainOutputPower = 0;
-        }
-
-        return outDrivetrainOutputPower;
+    public double getValueDrivetrainOutputPower() {
+        return stateMaxDriveOutputPower.getValue();
     }
 
     /**
@@ -526,14 +512,8 @@ public class SysDrivetrain {
      */
     public void setDrivetrainModeNext() {
 
-        // Cycle drivetrain mode - set to first when next is not available
-        if (drivetrainModeListIterator.hasNext())
-            drivetrainModeCurrent = drivetrainModeListIterator.next().toString();
-        else
-            while (drivetrainModeListIterator.hasPrevious()) {
-                drivetrainModeCurrent = drivetrainModeListIterator.previous().toString();
-            }
-
+        // Cycle drivetrain mode
+        stateDrivetrainMode.nextState();
     }
 
     /**
@@ -550,18 +530,12 @@ public class SysDrivetrain {
      */
     public void setDrivetrainOutputPowerNext() {
 
-        // Cycle drivetrain mode - set to first when next is not available
-        if (drivetrainOutputPowerListIterator.hasNext())
-            drivetrainOutputPowerCurrent = drivetrainOutputPowerListIterator.next().toString();
-        else
-            while (drivetrainOutputPowerListIterator.hasPrevious()) {
-                drivetrainOutputPowerCurrent = drivetrainOutputPowerListIterator.previous().toString();
-            }
-
+        // Cycle drivetrain output power
+        stateMaxDriveOutputPower.nextState();
     }
 
     /**
-     * <h2>Drivetrain Method: setDrivePower</h2>
+     * <h2>Drivetrain Method: setDriveMotorPower</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
      * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
@@ -577,7 +551,7 @@ public class SysDrivetrain {
      * @return N/A (Nothing)
      * <br>
      */
-    private void setDrivePower(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+    private void setDriveMotorPower(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
 
         // Send calculated power to wheels
         leftFrontDrive.setPower(leftFrontPower);
@@ -586,13 +560,41 @@ public class SysDrivetrain {
         rightBackDrive.setPower(rightBackPower);
     }
 
-    public void setRunMode(DcMotor.RunMode inRunMode) {
+    /**
+     * <h2>Drivetrain Method: setDriveMotorRunMode</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Set the run mode for each drive motor.
+     * </p>
+     *
+     * @param inRunMode
+     *
+     * @return void (Nothing)
+     */
+    public void setDriveMotorRunMode(DcMotor.RunMode inRunMode) {
         for (DcMotorEx itemMotor: listMotorsDrivetrain) {
             itemMotor.setMode(inRunMode);
         }
     }
 
-    public void setZeroPowerBehavior(DcMotor.ZeroPowerBehavior inZeroPowerBehavior) {
+    /**
+     * <h2>Drivetrain Method: setDriveMotorZeroPowerBehavior</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Set the 'Zero Behavior' for each drive motor. Brake/Coast
+     * </p>
+     *
+     * @param inZeroPowerBehavior
+     *
+     * @return void (Nothing)
+     */
+    public void setDriveMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior inZeroPowerBehavior) {
         for (DcMotorEx itemMotor : listMotorsDrivetrain) {
             itemMotor.setZeroPowerBehavior(inZeroPowerBehavior);
         }

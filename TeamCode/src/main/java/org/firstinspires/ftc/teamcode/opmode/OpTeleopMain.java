@@ -96,8 +96,6 @@ public class OpTeleopMain extends LinearOpMode {
         double inputLateral = 0;
         double inputYaw = 0;
 
-        int driveModeIndex = 0;
-
         // Set Drivetrain Mode Value
         sysDrivetrain.setDrivetrainModeNext();
         sysDrivetrain.setDrivetrainOutputPowerNext();
@@ -135,18 +133,18 @@ public class OpTeleopMain extends LinearOpMode {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
-            inputYaw     =  gamepad1.right_stick_x;
+            inputYaw =  gamepad1.right_stick_x;
 
             // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
-            if(sysDrivetrain.getDrivetrainModeCurrent().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC)) {
+            if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC)) {
                 inputAxial = -(gamepad1.left_stick_x);
                 inputLateral = -(gamepad1.left_stick_y);  // Note: pushing stick forward gives negative value
-                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, 1);
+                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
             }
             else {
                 inputAxial = -(gamepad1.left_stick_y);
                 inputLateral = gamepad1.left_stick_x;  // Note: pushing stick forward gives negative value
-                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, 1);
+                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
             }
 
             // ------------------------------------------------------------
@@ -184,8 +182,8 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Drivetrain");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Drivetrain Mode: ", sysDrivetrain.getDrivetrainModeCurrent());
-            telemetry.addData("Drivetrain Power: ", "%4.2f", sysDrivetrain.getDrivetrainOutputPowerCurrent());
+            telemetry.addData("Drivetrain Mode: ", sysDrivetrain.getLabelDrivetrainMode());
+            telemetry.addData("Drivetrain Power: ", sysDrivetrain.getLabelDrivetrainOutputPower());
             telemetry.addData("-", "------------------------------");
             telemetry.addData("Front left/Right: ", "%4.2f, %4.2f"
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)

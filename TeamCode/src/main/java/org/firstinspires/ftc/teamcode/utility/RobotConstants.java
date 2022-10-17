@@ -41,6 +41,14 @@ public class RobotConstants {
         public static final String LABEL_CONTROLHUB_IMU = "imu_ch";
         public static final String LABEL_EXPANSIONHUB_IMU = "imu_eh";
 
+        public static final String LABEL_MOTOR_LINEAR_SLIDE_LEFT = "linear_slide_left";
+        public static final String LABEL_MOTOR_LINEAR_SLIDE_RIGHT = "linear_slide_right";
+
+        public static final String LABEL_SERVO_CLAW_ROTATE = "claw_rotate";
+        public static final String LABEL_SERVO_CLAW_CLAMP = "claw_clamp";
+
+        public static final String LABEL_CONTROLLER_LIGHTING = "cntl_lighting";
+
     }
 
     public static final class Drivetrain {
@@ -54,10 +62,10 @@ public class RobotConstants {
         public static final String LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC = "ROBOT_CENTRIC";
 
         // List Item - Drivetrain Output Power Levels
-        public static final String LIST_OUTPUT_POWER_HIGH = "High";
-        public static final String LIST_OUTPUT_POWER_MED = "Med";
-        public static final String LIST_OUTPUT_POWER_LOW = "Low";
-        public static final String LIST_OUTPUT_POWER_SNAIL = "Snail";
+        //public static final String LIST_OUTPUT_POWER_HIGH = "High";
+        //public static final String LIST_OUTPUT_POWER_MED = "Med";
+        //public static final String LIST_OUTPUT_POWER_LOW = "Low";
+        //public static final String LIST_OUTPUT_POWER_SNAIL = "Snail";
 
         // Physical Robot Settings
         public static final double DRIVETRAIN_TRACK_WIDTH_INCHES = 1; // <<--- Need to measure!
