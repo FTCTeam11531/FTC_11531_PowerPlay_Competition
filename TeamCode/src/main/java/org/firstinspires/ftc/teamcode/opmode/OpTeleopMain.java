@@ -34,6 +34,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
+import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
@@ -61,9 +62,10 @@ public class OpTeleopMain extends LinearOpMode {
     // -- Drivetrain System
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
-    // -- Claw System
-
     // -- LinearSlide System
+    SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
+
+    // -- Claw System
 
     // -- Lighting System
 
@@ -88,6 +90,7 @@ public class OpTeleopMain extends LinearOpMode {
         // Initialize System(s)
         // ------------------------------------------------------------
         sysDrivetrain.init();
+        sysLinearSlide.init();
 
         // ------------------------------------------------------------
         // Inputs for: Drivetrain
@@ -95,10 +98,6 @@ public class OpTeleopMain extends LinearOpMode {
         double inputAxial = 0;
         double inputLateral = 0;
         double inputYaw = 0;
-
-        // Set Drivetrain Mode Value
-        sysDrivetrain.setDrivetrainModeNext();
-        sysDrivetrain.setDrivetrainOutputPowerNext();
 
         // ------------------------------------------------------------
         // Send telemetry message to signify robot completed initialization and waiting to start;
@@ -119,7 +118,6 @@ public class OpTeleopMain extends LinearOpMode {
         // Command Loop: run until the end of the match (driver presses STOP)
         // ------------------------------------------------------------
         while (opModeIsActive()) {
-
             // ------------------------------------------------------------
             // Drivetrain
             // ------------------------------------------------------------
@@ -148,13 +146,19 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // ------------------------------------------------------------
-            // Claw
-            // ------------------------------------------------------------
-
-
-
-            // ------------------------------------------------------------
             // LinearSlide
+            // ------------------------------------------------------------
+            if(gamepad1.y)
+                sysLinearSlide.moveSlideToEncoderSetPoint(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            if(gamepad1.x)
+                sysLinearSlide.moveSlideToEncoderSetPoint(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            if(gamepad1.b)
+                sysLinearSlide.moveSlideToEncoderSetPoint(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            if(gamepad1.a)
+                sysLinearSlide.moveSlideToEncoderSetPoint(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+
+            // ------------------------------------------------------------
+            // Claw
             // ------------------------------------------------------------
 
 
@@ -195,18 +199,22 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("Robot Heading: ", sysDrivetrain.getIMUHeading());
 
             // ------------------------------------------------------------
-            // - Claw telemetry
-            // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- The Claw");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "<No Data Available>");
-
-            // ------------------------------------------------------------
             // - LinearSlide telemetry
             // ------------------------------------------------------------
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- LinearSlide");
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Linear Encoder Point: ", sysDrivetrain.getLabelDrivetrainOutputPower());
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Slide left/Right: ", "%4.2f, %4.2f"
+                    , sysLinearSlide.getLinearSlideMotorPower(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT)
+                    , sysLinearSlide.getLinearSlideMotorPower(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_RIGHT));
+
+            // ------------------------------------------------------------
+            // - Claw telemetry
+            // ------------------------------------------------------------
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "-- The Claw");
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "<No Data Available>");
 

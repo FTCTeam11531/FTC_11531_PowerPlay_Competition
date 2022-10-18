@@ -58,8 +58,8 @@ public class RobotConstants {
         public static final String COMMENT_DRIVE_WHEEL_TYPE = "Mecanum";
 
         // List Item - Drivetrain Mode Type(s)
-        public static final String LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC = "FIELD_CENTRIC";
-        public static final String LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC = "ROBOT_CENTRIC";
+        public static final String LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC = "Field Centric";
+        public static final String LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC = "Robot Centric";
 
         // List Item - Drivetrain Output Power Levels
         //public static final String LIST_OUTPUT_POWER_HIGH = "High";
@@ -68,34 +68,34 @@ public class RobotConstants {
         //public static final String LIST_OUTPUT_POWER_SNAIL = "Snail";
 
         // Physical Robot Settings
-        public static final double DRIVETRAIN_TRACK_WIDTH_INCHES = 1; // <<--- Need to measure!
-        public static final double DRIVE_WHEEL_DIAMETER_MILLIMETER = 96; // <<--- Need to confirm!
+        public static final double DRIVETRAIN_TRACK_WIDTH_INCHES = 10; // <<--- Need to measure!
+        public static final double WHEEL_DIAMETER_MILLIMETER = 96; // <<--- Need to confirm!
 
-        public static final double DRIVE_WHEEL_DIAMETER_INCHES = DRIVE_WHEEL_DIAMETER_MILLIMETER / CONVERSION_MM_TO_INCH;
-        public static final double DRIVE_WHEEL_RADIUS_MILLIMETER = DRIVE_WHEEL_DIAMETER_MILLIMETER / 2;
-        public static final double DRIVE_WHEEL_RADIUS_INCHES = DRIVE_WHEEL_RADIUS_MILLIMETER / CONVERSION_MM_TO_INCH;
+        public static final double WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETER / CONVERSION_MM_TO_INCH;
+        public static final double WHEEL_RADIUS_MILLIMETER = WHEEL_DIAMETER_MILLIMETER / 2;
+        public static final double WHEEL_RADIUS_INCHES = WHEEL_RADIUS_MILLIMETER / CONVERSION_MM_TO_INCH;
 
-        public static final double DRIVE_EXTERNAL_GEAR_RATIO = 1.0; // 1 = No External Gearing
+        public static final double EXTERNAL_GEAR_RATIO = 1.0; // 1 = No External Gearing
 
         // Motor/Encoder Configuration Settings
-        public static final double DRIVE_MOTOR_MAX_RPM = 312; // Set from Vendor Specs
-        public static final double DRIVE_ENCODER_TICKS_PER_REV = 537.7; // Set from Vendor Specs
+        public static final double MOTOR_MAX_RPM = 312; // Set from Vendor Specs
+        public static final double ENCODER_TICKS_PER_REV = 537.7; // Set from Vendor Specs
 
-        public static final double DRIVE_ENCODER_TICKS_PER_INCH = (DRIVE_ENCODER_TICKS_PER_REV * DRIVE_EXTERNAL_GEAR_RATIO) /
-                                                                    (DRIVE_WHEEL_DIAMETER_INCHES * Math.PI);
+        public static final double ENCODER_TICKS_PER_INCH = (ENCODER_TICKS_PER_REV * EXTERNAL_GEAR_RATIO) /
+                                                                    (WHEEL_DIAMETER_INCHES * Math.PI);
 
         // Motor Encoder PIDF Settings
-        public static final double DRIVE_MOTOR_VELOCITY_P = 0;
-        public static final double DRIVE_MOTOR_VELOCITY_I = 0;
-        public static final double DRIVE_MOTOR_VELOCITY_D = 0;
+        public static final double MOTOR_VELOCITY_P = 0;
+        public static final double MOTOR_VELOCITY_I = 0;
+        public static final double MOTOR_VELOCITY_D = 0;
         public static final PIDFCoefficients DRIVE_MOTOR_VELOCITY_PIDF = new PIDFCoefficients(
-                                                    DRIVE_MOTOR_VELOCITY_P,
-                                                    DRIVE_MOTOR_VELOCITY_I,
-                                                    DRIVE_MOTOR_VELOCITY_D,
-                                                    getMotorVelocityF(DRIVE_MOTOR_MAX_RPM / 60 * DRIVE_ENCODER_TICKS_PER_REV));
+                                                    MOTOR_VELOCITY_P,
+                                                    MOTOR_VELOCITY_I,
+                                                    MOTOR_VELOCITY_D,
+                                                    getMotorVelocityF(MOTOR_MAX_RPM / 60 * ENCODER_TICKS_PER_REV));
 
         // Motor Encoder Feed Forward Configuration(s)
-        public static final double FEED_FORWARD_KV = 1.0 / rpmToVelocity(DRIVE_MOTOR_MAX_RPM); // volts * seconds / distance
+        public static final double FEED_FORWARD_KV = 1.0 / rpmToVelocity(MOTOR_MAX_RPM); // volts * seconds / distance
         public static final double FEED_FORWARD_KA = 0; // volts * seconds^2 / distance
         public static final double FEED_FORWARD_KS = 0; // volts
 
@@ -133,7 +133,7 @@ public class RobotConstants {
         public static double encoderTicksToInches(double inTicks) {
             double outInches = 0;
 
-            outInches = DRIVE_WHEEL_RADIUS_INCHES * 2 * Math.PI * DRIVE_EXTERNAL_GEAR_RATIO * inTicks / DRIVE_ENCODER_TICKS_PER_REV;
+            outInches = WHEEL_RADIUS_INCHES * 2 * Math.PI * EXTERNAL_GEAR_RATIO * inTicks / ENCODER_TICKS_PER_REV;
 
             return outInches;
         }
@@ -156,7 +156,7 @@ public class RobotConstants {
         public static double rpmToVelocity(double inRpm) {
             double outVelocity = 0;
 
-            outVelocity = inRpm * DRIVE_EXTERNAL_GEAR_RATIO * Math.PI * DRIVE_WHEEL_RADIUS_INCHES / 60.0;
+            outVelocity = inRpm * EXTERNAL_GEAR_RATIO * Math.PI * WHEEL_RADIUS_INCHES / 60.0;
 
             return outVelocity;
         }
@@ -187,4 +187,27 @@ public class RobotConstants {
         }
 
     }
+
+    public static final class LinearSlide {
+        // Encoder, and Motor Settings based on the following [comments]:
+        // Linear Slide specific Constants
+        public static final String COMMENT_LINEARSLIDE_MOTOR = "goBuilda Yellow Jacket 5203-2402-0019";
+
+        // Motor/Encoder Configuration Settings
+        public static final double MOTOR_MAX_RPM = 312; // Set from Vendor Specs
+        public static final double ENCODER_TICKS_PER_REV = 537.7; // Set from Vendor Specs
+
+        // Encoder Set Points for each Goal (High/Med/Low/Ground)
+        public static final int ENCODER_SET_POINT_HIGH_GOAL = 2000;
+        public static final int ENCODER_SET_POINT_MED_GOAL = 1500;
+        public static final int ENCODER_SET_POINT_LOW_GOAL = 1000;
+        public static final int ENCODER_SET_POINT_GROUND_GOAL = 500;
+
+        public static final double MOTOR_OUTPUT_POWER_HIGH = 1;
+        public static final double MOTOR_OUTPUT_POWER_MED = 0.75;
+        public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
+        public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.20;
+
+    }
+
 }

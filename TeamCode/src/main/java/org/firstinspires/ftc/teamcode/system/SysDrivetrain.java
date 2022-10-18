@@ -112,16 +112,6 @@ public class SysDrivetrain {
      * <hr>
      */
     public void init()    {
-        // Add Drivetrain Mode(s) to List Iterator
-        //drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC);
-        //drivetrainModeListIterator.add(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC);
-
-        // Add Drivetrain Output Power Setting(s) to List Iterator
-        //drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH);
-        //drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-        //drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
-        //drivetrainOutputPowerListIterator.add(RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_SNAIL);
-
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -222,6 +212,21 @@ public class SysDrivetrain {
 
     }
 
+    /**
+     * <h2>Drivetrain Method: configResetDriveMotorEncoders</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Reset the Linear Slide Motor Encoders
+     * </p>
+     * <p>
+     * This is a standard mecanum drivetrain or a 'Robot Centric' drivetrain
+     * </p>
+     *
+     * @return void
+     */
     public void configResetDriveMotorEncoders() {
 
         // Reset the Drive Motor Encoders
@@ -494,9 +499,7 @@ public class SysDrivetrain {
      * @return double - Output the current output power setting value
      * <br>
      */
-    public double getValueDrivetrainOutputPower() {
-        return stateMaxDriveOutputPower.getValue();
-    }
+    public double getValueDrivetrainOutputPower() { return stateMaxDriveOutputPower.getValue(); }
 
     /**
      * <h2>Drivetrain Method: setDrivetrainModeNext</h2>
@@ -513,7 +516,7 @@ public class SysDrivetrain {
     public void setDrivetrainModeNext() {
 
         // Cycle drivetrain mode
-        stateDrivetrainMode.nextState();
+        stateDrivetrainMode =  stateDrivetrainMode.nextState();
     }
 
     /**
@@ -531,7 +534,7 @@ public class SysDrivetrain {
     public void setDrivetrainOutputPowerNext() {
 
         // Cycle drivetrain output power
-        stateMaxDriveOutputPower.nextState();
+        stateMaxDriveOutputPower = stateMaxDriveOutputPower.nextState();
     }
 
     /**
