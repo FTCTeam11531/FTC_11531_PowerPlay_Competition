@@ -114,6 +114,13 @@ public class SysLinearSlide {
         // Add Motors to an Array/List of Motors
         listMotorsLinearSlide = Arrays.asList(leftLinearSlideMotor, rightLinearSlideMotor);
 
+        // Clone Configuration and apply to all Motors in the list (set max RPM to 100%)
+        for (DcMotorEx itemMotor : listMotorsLinearSlide) {
+            MotorConfigurationType motorConfigurationType = itemMotor.getMotorType().clone();
+            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+            itemMotor.setMotorType(motorConfigurationType);
+        }
+
         // Set Zero Setting to Brake Mode
         setLinearSlideMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
@@ -121,6 +128,10 @@ public class SysLinearSlide {
         leftLinearSlideMotor.setDirection(DcMotor.Direction.FORWARD);
         rightLinearSlideMotor.setDirection(DcMotor.Direction.FORWARD);
 
+        // Reset Linear Slide Motor Encoder(s)
+        setLinearSlideMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Display telemetry
         sysOpMode.telemetry.addData(">", "--------------------------------");
         sysOpMode.telemetry.addData(">", " System: LinearSlide Initialized");
         sysOpMode.telemetry.addData(">", "--------------------------------");
@@ -128,63 +139,28 @@ public class SysLinearSlide {
     }
 
     /**
-     * <h2>Drivetrain Method: configInitDriveMotorEncoders</h2>
+     * <h2>Linear Slide Method: moveLinearSlideToTarget</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
      * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
-     * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
-     * Each motion axis is controlled by one Joystick axis.
+     * Set the Linear Slide to the Target Set Point
      * </p>
-     * <p>
-     * This is a standard mecanum drivetrain or a 'Robot Centric' drivetrain
-     * </p>
-     * <br>
+     * @param inTargetSetPoint int - Target set point to move to
+     * @param inOutputPowerPercent double - Output power percentage for motor
      *
      * @return void
      * <br>
      */
-    public void configInitLinearSlideMotorEncoders() {
+    public void moveLinearSlideToTarget(int inTargetSetPoint, double inOutputPowerPercent) {
 
-        // Reset Drive Motor Encoders
-        configResetLinearSlideMotorEncoders();
-
-        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
+        // Configure Motor Target Set Point and Set motor as Run to Position
+        setLinearSlideTargetPosition(inTargetSetPoint);
         setLinearSlideMotorRunMode(DcMotor.RunMode.RUN_TO_POSITION);
-    }
 
-    public void configResetLinearSlideMotorEncoders() {
-
-        // Reset the Drive Motor Encoders
-        setLinearSlideMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-    }
-
-    /**
-     * <h2>Linear Slide Method: moveSlideToEncoderSetPoint</h2>
-     * <hr>
-     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-     * <hr>
-     * <p>
-     * Set the Linear Slide to the Encoder Set Point
-     * </p>
-     * @param inEncoderSetPoint int - Encoder Set Point to move to
-     *
-     * @return void
-     * <br>
-     */
-    public void moveSlideToEncoderSetPoint(int inEncoderSetPoint, double inOutputPowerPercent) {
-
-        int inputEncoderSetPoint = inEncoderSetPoint;
-
-        leftLinearSlideMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftLinearSlideMotor.setTargetPosition(inEncoderSetPoint);
-        leftLinearSlideMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-
-        leftLinearSlideMotor.setPower(inOutputPowerPercent);
-
-        //rightLinearSlideMotor.setTargetPosition(inputEncoderSetPoint);
+        // Set Output To Motor
+        setLinearSlideMotorPower(inOutputPowerPercent);
     }
 
     /**
@@ -225,6 +201,24 @@ public class SysLinearSlide {
     }
 
     /**
+     * <h2>Linear Slide Method: setLinearSlideTargetPosition</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Set the target position for each motor.
+     * </p>
+     *
+     * @param inTargetPosition
+     */
+    public void setLinearSlideTargetPosition(int inTargetPosition) {
+        for (DcMotorEx itemMotor: listMotorsLinearSlide) {
+            itemMotor.setTargetPosition(inTargetPosition);
+        }
+    }
+
+    /**
      * <h2>Linear Slide Method: setLinearSlideMotorRunMode</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
@@ -261,6 +255,26 @@ public class SysLinearSlide {
     public void setLinearSlideMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior inZeroPowerBehavior) {
         for (DcMotorEx itemMotor : listMotorsLinearSlide) {
             itemMotor.setZeroPowerBehavior(inZeroPowerBehavior);
+        }
+    }
+
+    /**
+     * <h2>Linear Slide Method: setLinearSlideMotorPower</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Set the output power for each motor.
+     * </p>
+     *
+     * @param inOutputPower
+     *
+     * @return void (Nothing)
+     */
+    public void setLinearSlideMotorPower(double inOutputPower) {
+        for (DcMotorEx itemMotor : listMotorsLinearSlide) {
+            itemMotor.setPower(inOutputPower);
         }
     }
 

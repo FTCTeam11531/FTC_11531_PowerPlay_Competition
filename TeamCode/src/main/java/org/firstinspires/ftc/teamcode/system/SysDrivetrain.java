@@ -175,66 +175,14 @@ public class SysDrivetrain {
         // Initialize the IMU unit
         imuRevControlHub.initialize(imuParameters);
 
+        // Reset Drive Motor Encoder(s)
+        setDriveMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        // Display telemetry
         sysOpMode.telemetry.addData(">", "--------------------------------");
         sysOpMode.telemetry.addData(">", " System: Drivetrain Initialized");
         sysOpMode.telemetry.addData(">", "--------------------------------");
         sysOpMode.telemetry.update();
-    }
-
-    /**
-     * <h2>Drivetrain Method: configInitDriveMotorEncoders</h2>
-     * <hr>
-     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-     * <hr>
-     * <p>
-     * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
-     * Each motion axis is controlled by one Joystick axis.
-     * </p>
-     * <p>
-     * This is a standard mecanum drivetrain or a 'Robot Centric' drivetrain
-     * </p>
-     * <br>
-     *
-     * @return void
-     * <br>
-     */
-    public void configInitDriveMotorEncoders() {
-
-        // Reset Drive Motor Encoders
-        configResetDriveMotorEncoders();
-
-        // If there are encoders connected, switch to RUN_USING_ENCODER mode for greater accuracy
-        leftFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-    }
-
-    /**
-     * <h2>Drivetrain Method: configResetDriveMotorEncoders</h2>
-     * <hr>
-     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-     * <hr>
-     * <p>
-     * Reset the Linear Slide Motor Encoders
-     * </p>
-     * <p>
-     * This is a standard mecanum drivetrain or a 'Robot Centric' drivetrain
-     * </p>
-     *
-     * @return void
-     */
-    public void configResetDriveMotorEncoders() {
-
-        // Reset the Drive Motor Encoders
-        leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
     }
 
     /**
@@ -517,6 +465,7 @@ public class SysDrivetrain {
 
         // Cycle drivetrain mode
         stateDrivetrainMode =  stateDrivetrainMode.nextState();
+        sysOpMode.sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
     }
 
     /**
@@ -535,6 +484,7 @@ public class SysDrivetrain {
 
         // Cycle drivetrain output power
         stateMaxDriveOutputPower = stateMaxDriveOutputPower.nextState();
+        sysOpMode.sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
     }
 
     /**

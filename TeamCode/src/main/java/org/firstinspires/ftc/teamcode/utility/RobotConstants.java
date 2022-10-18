@@ -47,8 +47,12 @@ public class RobotConstants {
         public static final String LABEL_SERVO_CLAW_ROTATE = "claw_rotate";
         public static final String LABEL_SERVO_CLAW_CLAMP = "claw_clamp";
 
-        public static final String LABEL_CONTROLLER_LIGHTING = "cntl_lighting";
+        public static final String LABEL_CONTROLLER_LIGHTING = "lighting_control";
 
+    }
+
+    public static final class CommonSettings {
+        public static final int SLEEP_TIMER_MILLISECONDS_DEFAULT = 50;
     }
 
     public static final class Drivetrain {
