@@ -31,34 +31,28 @@ package org.firstinspires.ftc.teamcode.system;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
-import java.util.Arrays;
-import java.util.List;
-
 // Program Copied from FTC example: RobotHardware.java
-// Renamed in TeamCode as: SysLighting.java
+// Renamed in TeamCode as: SysVision.java
 
 /**
- * <h2>System Class for the Robot Lighting and Effects</h2>
+ * <h2>System Class for the Robot Vision</h2>
  * <hr>
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
- * <b>Light Controller:</b> {@value RobotConstants.Lighting#COMMENT_LIGHTING_CONTROLLER}<br>
+ * <b>Camera:</b> {@value RobotConstants.Vision#COMMENT_VISION_CAMERA}<br>
  * <hr>
  * <p>
  * This system defines <b>ALL</b> configures all attributes, configurations, and methods for the robot
- * LED lighting system.
+ * vision system.
  * </p>
  * <hr>
  *
  */
-public class SysLighting {
+public class SysVision {
 
     /* Declare OpMode members. */
     private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
@@ -68,7 +62,7 @@ public class SysLighting {
     public RevBlinkinLedDriver.BlinkinPattern ledLightPattern;
 
     /**
-     * <h2>Lighting System Constructor</h2>
+     * <h2>Vision System Constructor</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
      * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
@@ -79,7 +73,7 @@ public class SysLighting {
      * <hr>
      * @param inOpMode Pass in Calling OpMode
      */
-    public SysLighting(LinearOpMode inOpMode) {
+    public SysVision(LinearOpMode inOpMode) {
         sysOpMode = inOpMode;
     }
 

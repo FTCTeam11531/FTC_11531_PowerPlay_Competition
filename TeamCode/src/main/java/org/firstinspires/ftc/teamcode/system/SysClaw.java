@@ -36,7 +36,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
 // Program Copied from FTC example: RobotHardware.java
-// Renamed in TeamCode as: SysLinearSlide.java
+// Renamed in TeamCode as: SysClaw.java
 
 /**
  * <h2>System Class for The Claw</h2>

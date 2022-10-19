@@ -160,28 +160,28 @@ public class OpTeleopMain extends LinearOpMode {
 
                 // Move Linear Slide to High Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
-                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
             }
 
             if(gamepad1.x) {
 
                 // Move Linear Slide to Medium Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
-                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED);
             }
 
             if(gamepad1.b) {
 
                 // Move Linear Slide to Low Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
-                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW);
             }
 
             if(gamepad1.a) {
 
                 // Move Linear Slide to Ground Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
-                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
             }
 
             // ------------------------------------------------------------
@@ -191,14 +191,14 @@ public class OpTeleopMain extends LinearOpMode {
 
                 // Close the Claw
                 sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
-                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
             }
 
             if(gamepad1.left_bumper) {
 
                 // Open the Claw
                 sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
-                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
             }
 
             if(gamepad1.dpad_left) {
@@ -217,12 +217,14 @@ public class OpTeleopMain extends LinearOpMode {
             if(gamepad1.dpad_up) {
 
                 // Claw up-down movement (Up)
+                sysLighting.setLightPattern(sysLighting.getLightPatternNext());
 
             }
 
             if(gamepad1.dpad_down) {
 
                 // Claw up-down movement (Down)
+                sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
 
             }
 
