@@ -29,14 +29,19 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
+import android.app.Activity;
+
+import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import java.util.List;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
+import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
@@ -57,6 +62,11 @@ import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 @TeleOp(name="Robot Main", group="_main")
 //@Disabled
 public class OpTeleopMain extends LinearOpMode {
+    // ------------------------------------------------------------
+    // Robot Configuration
+    // ------------------------------------------------------------
+    RobotConfigFileManager robotConfigFileManager;
+    String robotConfigName;
 
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -74,12 +84,9 @@ public class OpTeleopMain extends LinearOpMode {
     SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
-
-
-    // ------------------------------------------------------------
-    // Command Object(s)
-    // ------------------------------------------------------------
-
+    SysVision sysVision = new SysVision(this);
+    List<Recognition> listVisionRecognitions = null;
+    Recognition recognitionTargetZone = null;
 
     // ------------------------------------------------------------
     // Misc
@@ -89,6 +96,11 @@ public class OpTeleopMain extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        // ------------------------------------------------------------
+        // Get Hardware Configuration Profile Name
+        // ------------------------------------------------------------
+        robotConfigFileManager = new RobotConfigFileManager((Activity) hardwareMap.appContext);
+        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
         // Initialize System(s)
@@ -97,6 +109,7 @@ public class OpTeleopMain extends LinearOpMode {
         sysLinearSlide.init();
         sysClaw.init();
         sysLighting.init();
+        sysVision.init(robotConfigName);
 
         // ------------------------------------------------------------
         // Inputs for: Drivetrain
@@ -208,11 +221,11 @@ public class OpTeleopMain extends LinearOpMode {
 
             }
 
-            if(gamepad1.dpad_right) {
+            //if(gamepad1.dpad_right) {
 
                 // Claw side-to-side movement (Right)
 
-            }
+            //}
 
             if(gamepad1.dpad_up) {
 
@@ -231,12 +244,14 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Vision
             // ------------------------------------------------------------
-
+            // Get Vision Recognitions
+            listVisionRecognitions = sysVision.getVisonRecognitions();
 
             // ------------------------------------------------------------
             // Driver Hub Feedback
             // ------------------------------------------------------------
             telemetry.addData("Status", "Run Time: " + runtime.toString());
+            telemetry.addData("Hardware Profile: ", robotConfigName);
 
             // ------------------------------------------------------------
             // - Drivetrain telemetry
@@ -296,15 +311,41 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Vision");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "<No Data Available>");
+            telemetry.addData("TensorFlow Model: ", RobotConstants.Vision.TENSORFLOW_MODEL_SELECTION);
+            telemetry.addData("-", "------------------------------");
+
+            // Process results for each Recognition
+            if (listVisionRecognitions != null) {
+                telemetry.addData("Objects Detected: ", listVisionRecognitions.size());
+
+                for (Recognition objRecognition : listVisionRecognitions) {
+                    double objColumn = (objRecognition.getLeft() + objRecognition.getRight()) / 2;
+                    double objRow = (objRecognition.getTop()  + objRecognition.getBottom()) / 2;
+                    double objWidth = Math.abs(objRecognition.getRight() - objRecognition.getLeft());
+                    double objHeight = Math.abs(objRecognition.getTop()  - objRecognition.getBottom());
+
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("Image", "%s (%.0f %% Conf.)", objRecognition.getLabel(), objRecognition.getConfidence() * 100 );
+                    telemetry.addData("- Position (Row/Col)","%.0f / %.0f", objRow, objColumn);
+                    telemetry.addData("- Size (Width/Height)","%.0f / %.0f", objWidth, objHeight);
+                }
+
+            }
+            else {
+                telemetry.addData("-", "<No Data Available>");
+            }
 
             // ------------------------------------------------------------
             // - send telemetry to driver hub
             // ------------------------------------------------------------
-            telemetry.update();
+
+            // Temporary!! input assignment to 'pause' telemetry update(s)
+            if (!gamepad1.dpad_right) {
+                telemetry.update();
+            }
 
             // Pace this loop so hands move at a reasonable speed.
-            //sleep(50);
+            //sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
         }
     }
 }

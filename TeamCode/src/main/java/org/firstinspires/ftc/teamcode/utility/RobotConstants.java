@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.utility;
 // Program Class created from new Java Class
 // Named in TeamCode as: RobotConstants.java
 
+import android.os.Environment;
+
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -25,13 +27,39 @@ public class RobotConstants {
     // - - Divide Millimeters by Conversion to get Inches
     // - - Multiply Inches by Conversion to get mm
     public static final double CONVERSION_MM_TO_INCH = 25.4;
+    public static final String DEVICE_EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getPath();
 
+    /**
+     *  <h2>Robot Constant Values - About The Robot</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Defines 'About the Team' robot constant settings and properties.
+     * </p>
+     * <li>Program Team</li>
+     * <li>Development Season</li>
+     * <br>
+     */
     public static final class About {
         // Document Comments and any other 'About the Program' reference
         public static final String COMMENT_AUTHOR_NAME = "FTC Team 11531 - Green Team";
         public static final String COMMENT_SEASON_PERIOD = "2022 / 2023";
     }
 
+    /**
+     *  <h2>Robot Constant Values - Configuration</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Defines robot configuration robot constant settings and properties.
+     * </p>
+     * <li>Hardware Configuration (Label Names)</li>
+     * <br>
+     */
     public static final class Configuration {
         // Hardware Configuration from Control Hub and/or Expansion Hub
         public static final String LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT = "left_front_drive";
@@ -55,25 +83,44 @@ public class RobotConstants {
 
     }
 
+    /**
+     *  <h2>Robot Constant Values - Common</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Defines common constants used throughout.
+     * Can include timeout values, math functions, etc.
+     * </p>
+     * <li>Command Sleep Timeout(s)</li>
+     * <li>Math Constants</li>
+     * <br>
+     */
     public static final class CommonSettings {
         public static final int SLEEP_TIMER_MILLISECONDS_DEFAULT = 50;
     }
 
+    /**
+     *  <h2>Robot Constant Values - Drivetrain</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Anything and everything related to Drivetrain constants
+     * </p>
+     * <li>Drivetrain Constants</li>
+     * <br>
+     */
     public static final class Drivetrain {
         // Hardware Settings based on the following [comments]:
-        // Drivetrain specific Constants
         public static final String COMMENT_DRIVE_MOTOR = "goBuilda Yellow Jacket 5203-2402-0019";
         public static final String COMMENT_DRIVE_WHEEL_TYPE = "Mecanum";
 
         // List Item - Drivetrain Mode Type(s)
         public static final String LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC = "Field Centric";
         public static final String LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC = "Robot Centric";
-
-        // List Item - Drivetrain Output Power Levels
-        //public static final String LIST_OUTPUT_POWER_HIGH = "High";
-        //public static final String LIST_OUTPUT_POWER_MED = "Med";
-        //public static final String LIST_OUTPUT_POWER_LOW = "Low";
-        //public static final String LIST_OUTPUT_POWER_SNAIL = "Snail";
 
         // Physical Robot Settings
         public static final double DRIVETRAIN_TRACK_WIDTH_INCHES = 10; // <<--- Need to measure!
@@ -196,9 +243,20 @@ public class RobotConstants {
 
     }
 
+    /**
+     *  <h2>Robot Constant Values - Linear Slide</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Anything and everything related to Linear Slide constants
+     * </p>
+     * <li>Linear Slide Constants</li>
+     * <br>
+     */
     public static final class LinearSlide {
         // Hardware Settings based on the following [comments]:
-        // Linear Slide specific Constants
         public static final String COMMENT_LINEARSLIDE_MOTOR = "<enter motor maker/model>";
 
         // Motor/Encoder Configuration Settings
@@ -218,9 +276,20 @@ public class RobotConstants {
 
     }
 
+    /**
+     *  <h2>Robot Constant Values - Claw</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Anything and everything related to Claw constants
+     * </p>
+     * <li>Claw Constants</li>
+     * <br>
+     */
     public static final class Claw {
         // Hardware Settings based on the following [comments]:
-        // 'The Claw' specific Constants
         public static final String COMMENT_CLAW_SERVO = "<enter servo maker/model>";
 
         // Servo Position(s)
@@ -242,9 +311,20 @@ public class RobotConstants {
 
     }
 
+    /**
+     *  <h2>Robot Constant Values - Lighting</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Anything and everything related to Lighting constants
+     * </p>
+     * <li>Lighting Constants</li>
+     * <br>
+     */
     public static final class Lighting {
         // Hardware Settings based on the following [comments]:
-        // Lighting specific Constants
         public static final String COMMENT_LIGHTING_CONTROLLER = "<enter controller maker/model>";
 
         // Default Light Pattern
@@ -262,10 +342,75 @@ public class RobotConstants {
 
     }
 
+    /**
+     *  <h2>Robot Constant Values - Vision</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Anything and everything related to Vision constants
+     * </p>
+     * <li>Vision Constants</li>
+     * <br>
+     */
     public static final class Vision {
         // Hardware Settings based on the following [comments]:
-        // 'The Claw' specific Constants
         public static final String COMMENT_VISION_CAMERA = "<enter camera maker/model>";
+
+        // TensorFlow Model
+        public static final String TENSORFLOW_MODEL_SELECTION = "config_first_comp"; // config_green_comp // config_blue_comp
+
+        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_FIRST = "first";
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST = "PowerPlay.tflite";
+
+        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_GREEN = "config_green_comp";
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN = "/sdcard/FIRST/tflitemodels/tfmodel_powerplay_sleve_ftc11531.tflite";
+        //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN = DEVICE_EXTERNAL_STORAGE_PATH + "FIRST/tflitemodels/tfmodel_powerplay_sleve_ftc11531.tflite";
+
+        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_BLUE = "config_blue_comp";
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE = "/sdcard/FIRST/tflitemodels/tfmodel_powerplay_sleve_ftc18092.tflite";
+        //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE = DEVICE_EXTERNAL_STORAGE_PATH + "FIRST/tflitemodels/tfmodel_powerplay_sleve_ftc18092.tflite";
+
+        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST = {
+                "1 Bolt",
+                "2 Bulb",
+                "3 Panel"
+        };
+
+        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN = {
+                "1 Bolt",
+                "2 Bulb",
+                "3 Panel"
+        };
+
+        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE = {
+                "1 Ace",
+                "2 Deuce",
+                "3 Deck"
+        };
+
+        // Vuforia Initialization
+        public static final String VUFORIA_LICENSE_KEY = "";
+
+        // Tensor Flow Configuration
+        public static final String TENSORFLOW_CONFIG_MONITOR_VIEW_ID = "tensorFlowMonitorViewID";
+        public static final String TENSORFLOW_CONFIG_MONITOR_VIEW_DEF_TYPE = "id";
+
+        // Tensor Flow Image Processing
+        public static final double TENSORFLOW_IMAGE_PROCESSING_IMAGE_WIDTH = 16.0;
+        public static final double TENSORFLOW_IMAGE_PROCESSING_IMAGE_HEIGHT = 9.0;
+        public static final double TENSORFLOW_IMAGE_PROCESSING_MAGNIFICATION = 1.0;
+        public static final double TENSORFLOW_IMAGE_PROCESSING_ASPECT_RATIO = TENSORFLOW_IMAGE_PROCESSING_IMAGE_WIDTH
+                                                                            / TENSORFLOW_IMAGE_PROCESSING_IMAGE_HEIGHT;
+        // Tensor Flow Parameter(s)
+        public static final float TENSORFLOW_PARAMETER_MIN_RESULT_CONFIDENCE = 0.75f;
+        public static final boolean TENSORFLOW_PARAMETER_IS_MODEL_TENSORFLOW2 = true;
+        public static final int TENSORFLOW_PARAMETER_INPUT_SIZE = 300;
+
+
+
+
 
     }
 
