@@ -55,12 +55,7 @@ import java.util.List;
  * <hr>
  * <p>
  * This system defines <b>ALL</b> configures all attributes, configurations, and methods for the Robot
- * drivetrain. The hardware configuration is for a mecanum drivetrain.
- * </p>
- * <br>
- * <p>
- * <b>This drivetrain system includes methods for:</b> standard mecanum drive,  field centric mecanum
- * drive, encoder distance drive, and encoder timed drive.
+ * linear slide.
  * </p>
  * <hr>
  *
@@ -70,7 +65,7 @@ public class SysLinearSlide {
     /* Declare OpMode members. */
     private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
 
-    // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
+    // Define hardware objects  (Make them private so they can't be accessed externally)
     private DcMotorEx leftLinearSlideMotor, rightLinearSlideMotor;
     private List<DcMotorEx> listMotorsLinearSlide;
 

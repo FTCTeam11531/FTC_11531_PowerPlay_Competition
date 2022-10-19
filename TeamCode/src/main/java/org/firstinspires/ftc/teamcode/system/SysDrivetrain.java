@@ -70,12 +70,12 @@ public class SysDrivetrain {
     private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define Drivetrain Mode Enumerator
-    public StateDrivetrainMode stateDrivetrainMode = StateDrivetrainMode.Field_Centric;
+    public StateDrivetrainMode stateDrivetrainMode;
 
     // Define Drivetrain Output Power Enumerator
-    public StateDriveMotorMaxOutputPower stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.High;
+    public StateDriveMotorMaxOutputPower stateMaxDriveOutputPower;
 
-    // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
+    // Define hardware objects  (Make them private so they can't be accessed externally)
     private DcMotorEx leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
     private List<DcMotorEx> listMotorsDrivetrain;
 
@@ -111,7 +111,11 @@ public class SysDrivetrain {
      * All of the hardware devices are accessed via the hardware map, and initialized.
      * <hr>
      */
-    public void init()    {
+    public void init() {
+        // Set Drivetrain Enumerator default value(s)
+        stateDrivetrainMode = StateDrivetrainMode.Field_Centric;
+        stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.High;
+
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
@@ -208,7 +212,6 @@ public class SysDrivetrain {
      * @param inYaw     [R] Rotating Clockwise and counter clockwise
      * @param inOutputPowerPercent Percent of power to apply to motors
      *
-     * @return void
      * <br>
      */
     public void driveMecanum(double inAxial, double inLateral, double inYaw, double inOutputPowerPercent) {
@@ -258,7 +261,6 @@ public class SysDrivetrain {
      * @param inYaw     [R] Rotating Clockwise and counter clockwise
      * @param inOutputPowerPercent Percent of power to apply to motors
      *
-     * @return void
      * <br>
      */
     public void driveMecanumFieldCentric(double inAxial, double inLateral, double inYaw, double inOutputPowerPercent) {
@@ -300,7 +302,6 @@ public class SysDrivetrain {
      * <p>
      * {enter information here!!}
      * </p>
-     * @return void
      * <br>
      */
     public void driveMecanumByEncoder(double inSpeed, double inLeftInches, double inRightInches, double inTimeoutSeconds) {
@@ -458,7 +459,6 @@ public class SysDrivetrain {
      * <p>
      * Get the next value of the Drivetrain mode from List Iterator.
      * </p>
-     * @return void
      * <br>
      */
     public void setDrivetrainModeNext() {
@@ -477,7 +477,6 @@ public class SysDrivetrain {
      * <p>
      * Set the next value of the Drivetrain output power setting from List Iterator.
      * </p>
-     * @return void
      * <br>
      */
     public void setDrivetrainOutputPowerNext() {
@@ -501,7 +500,6 @@ public class SysDrivetrain {
      * @param leftBackPower   Power to Left Back Wheel
      * @param rightBackPower  Power to Right Back Wheel
      *
-     * @return N/A (Nothing)
      * <br>
      */
     private void setDriveMotorPower(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
@@ -523,9 +521,8 @@ public class SysDrivetrain {
      * Set the run mode for each drive motor.
      * </p>
      *
-     * @param inRunMode
+     * @param inRunMode DcMotor.RunMode - Set the run mode for each drive motor
      *
-     * @return void (Nothing)
      */
     public void setDriveMotorRunMode(DcMotor.RunMode inRunMode) {
         for (DcMotorEx itemMotor: listMotorsDrivetrain) {
@@ -543,9 +540,8 @@ public class SysDrivetrain {
      * Set the 'Zero Behavior' for each drive motor. Brake/Coast
      * </p>
      *
-     * @param inZeroPowerBehavior
+     * @param inZeroPowerBehavior DcMotor.ZeroPowerBehavior - Set the Zero Power behavior for each drive motor(s)
      *
-     * @return void (Nothing)
      */
     public void setDriveMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior inZeroPowerBehavior) {
         for (DcMotorEx itemMotor : listMotorsDrivetrain) {

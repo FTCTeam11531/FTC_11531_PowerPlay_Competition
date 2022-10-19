@@ -33,7 +33,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
+import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
@@ -66,8 +68,10 @@ public class OpTeleopMain extends LinearOpMode {
     SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
 
     // -- Claw System
+    SysClaw sysClaw = new SysClaw(this);
 
     // -- Lighting System
+    SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
 
@@ -91,6 +95,8 @@ public class OpTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         sysDrivetrain.init();
         sysLinearSlide.init();
+        sysClaw.init();
+        sysLighting.init();
 
         // ------------------------------------------------------------
         // Inputs for: Drivetrain
@@ -133,39 +139,92 @@ public class OpTeleopMain extends LinearOpMode {
             // This way it's also easy to just drive straight, or just turn.
             inputYaw =  gamepad1.right_stick_x;
 
-            // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
-            if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC)) {
-                inputAxial = -(gamepad1.left_stick_x);
-                inputLateral = -(gamepad1.left_stick_y);  // Note: pushing stick forward gives negative value
-                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
-            }
-            else {
+            // Drivetrain Type determined by 'Drivetrain Mode' enumeration selection (Default to Field Centric)
+            if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC)) {
+                // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
                 inputAxial = -(gamepad1.left_stick_y);
                 inputLateral = gamepad1.left_stick_x;  // Note: pushing stick forward gives negative value
                 sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
+            }
+            else {
+                // Send gamepad input for drivetrain to driveMecanumFieldCentric method in the drivetrain system class
+                inputAxial = -(gamepad1.left_stick_x);
+                inputLateral = -(gamepad1.left_stick_y);  // Note: pushing stick forward gives negative value
+                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
             }
 
             // ------------------------------------------------------------
             // LinearSlide
             // ------------------------------------------------------------
-            if(gamepad1.y)
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-            if(gamepad1.x)
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-            if(gamepad1.b)
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-            if(gamepad1.a)
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            if(gamepad1.y) {
+
+                // Move Linear Slide to High Goal
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
+                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+            }
+
+            if(gamepad1.x) {
+
+                // Move Linear Slide to Medium Goal
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
+                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED);
+            }
+
+            if(gamepad1.b) {
+
+                // Move Linear Slide to Low Goal
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
+                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW);
+            }
+
+            if(gamepad1.a) {
+
+                // Move Linear Slide to Ground Goal
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
+                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
+            }
 
             // ------------------------------------------------------------
             // Claw
             // ------------------------------------------------------------
+            if(gamepad1.right_bumper) {
+
+                // Close the Claw
+                sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
+            }
+
+            if(gamepad1.left_bumper) {
+
+                // Open the Claw
+                sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
+                sysLighting.displayLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
+            }
+
+            if(gamepad1.dpad_left) {
+
+                // Claw side-to-side movement (Left)
 
 
-            // ------------------------------------------------------------
-            // Lighting
-            // ------------------------------------------------------------
+            }
 
+            if(gamepad1.dpad_right) {
+
+                // Claw side-to-side movement (Right)
+
+            }
+
+            if(gamepad1.dpad_up) {
+
+                // Claw up-down movement (Up)
+
+            }
+
+            if(gamepad1.dpad_down) {
+
+                // Claw up-down movement (Down)
+
+            }
 
             // ------------------------------------------------------------
             // Vision
@@ -216,7 +275,10 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- The Claw");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "<No Data Available>");
+            telemetry.addData("Claw Clamp/Side/UpDown: ", "%4.2f, %4.2f, %4.2f"
+                    , sysClaw.getClawClampPosition()
+                    , sysClaw.getClawSidePosition()
+                    , sysClaw.getClawUpDownPosition());
 
             // ------------------------------------------------------------
             // - Lighting telemetry

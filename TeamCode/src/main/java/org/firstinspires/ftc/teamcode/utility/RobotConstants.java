@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.utility;
 // Program Class created from new Java Class
 // Named in TeamCode as: RobotConstants.java
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 /**
@@ -44,10 +45,13 @@ public class RobotConstants {
         public static final String LABEL_MOTOR_LINEAR_SLIDE_LEFT = "linear_slide_left";
         public static final String LABEL_MOTOR_LINEAR_SLIDE_RIGHT = "linear_slide_right";
 
-        public static final String LABEL_SERVO_CLAW_ROTATE = "claw_rotate";
+        public static final String LABEL_SERVO_CLAW_ROTATE_SIDE = "claw_rotate_side";
+        public static final String LABEL_SERVO_CLAW_ROTATE_UPDOWN = "claw_rotate_updown";
         public static final String LABEL_SERVO_CLAW_CLAMP = "claw_clamp";
 
         public static final String LABEL_CONTROLLER_LIGHTING = "lighting_control";
+
+        public static final String LABEL_CAMERA_VISION_TRACKING = "camera_vision_track";
 
     }
 
@@ -56,7 +60,7 @@ public class RobotConstants {
     }
 
     public static final class Drivetrain {
-        // Encoder, Motor, and Drivetrain Settings based on the following [comments]:
+        // Hardware Settings based on the following [comments]:
         // Drivetrain specific Constants
         public static final String COMMENT_DRIVE_MOTOR = "goBuilda Yellow Jacket 5203-2402-0019";
         public static final String COMMENT_DRIVE_WHEEL_TYPE = "Mecanum";
@@ -193,9 +197,9 @@ public class RobotConstants {
     }
 
     public static final class LinearSlide {
-        // Encoder, and Motor Settings based on the following [comments]:
+        // Hardware Settings based on the following [comments]:
         // Linear Slide specific Constants
-        public static final String COMMENT_LINEARSLIDE_MOTOR = "goBuilda Yellow Jacket 5203-2402-0019";
+        public static final String COMMENT_LINEARSLIDE_MOTOR = "<enter motor maker/model>";
 
         // Motor/Encoder Configuration Settings
         public static final double MOTOR_MAX_RPM = 312; // Set from Vendor Specs
@@ -211,6 +215,57 @@ public class RobotConstants {
         public static final double MOTOR_OUTPUT_POWER_MED = 0.75;
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
         public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.20;
+
+    }
+
+    public static final class Claw {
+        // Hardware Settings based on the following [comments]:
+        // 'The Claw' specific Constants
+        public static final String COMMENT_CLAW_SERVO = "<enter servo maker/model>";
+
+        // Servo Position(s)
+        // Claw Clamp
+        public static final double SERVO_POSITION_CLAW_CLAMP_START = .50;
+        public static final double SERVO_POSITION_CLAW_CLAMP_OPEN = .10;
+        public static final double SERVO_POSITION_CLAW_CLAMP_CLOSE = .80;
+
+        // Claw Rotate Side-to-side
+        public static final double SERVO_POSITION_CLAW_ROTATE_SIDE_START = .50;
+        public static final double SERVO_POSITION_CLAW_ROTATE_SIDE_LEFT = .10;
+        public static final double SERVO_POSITION_CLAW_ROTATE_SIDE_RIGHT = .90;
+
+        // Claw Rotate Up-Down
+        public static final double SERVO_POSITION_CLAW_ROTATE_UPDOWN_START = .50;
+        public static final double SERVO_POSITION_CLAW_ROTATE_UPDOWN_UP = .10;
+        public static final double SERVO_POSITION_CLAW_ROTATE_UPDOWN_DOWN = .90;
+
+
+    }
+
+    public static final class Lighting {
+        // Hardware Settings based on the following [comments]:
+        // Lighting specific Constants
+        public static final String COMMENT_LIGHTING_CONTROLLER = "<enter controller maker/model>";
+
+        // Default Light Pattern
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+
+        // Light Patterns for Robot State(s) - Linear Slide
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_OCEAN_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
+
+        // Light Patterns for Robot State(s) - Claw
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_OPEN = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_CLOSED = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
+
+    }
+
+    public static final class Vision {
+        // Hardware Settings based on the following [comments]:
+        // 'The Claw' specific Constants
+        public static final String COMMENT_VISION_CAMERA = "<enter camera maker/model>";
 
     }
 
