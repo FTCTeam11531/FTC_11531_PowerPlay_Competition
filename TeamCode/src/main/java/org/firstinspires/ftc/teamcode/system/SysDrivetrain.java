@@ -305,6 +305,8 @@ public class SysDrivetrain {
      * <br>
      */
     public void driveMecanumByEncoder(double inSpeed, double inLeftInches, double inRightInches, double inTimeoutSeconds) {
+
+        
 /*
         double modMaintainMotorRatio;
 

@@ -20,7 +20,7 @@ public enum StateDriveMotorMaxOutputPower {
 
         // Output Power Value
         @Override
-        public double getValue() { return .75; }
+        public double getValue() { return RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH; }
 
         // Output Power Value Label (Text)
         @Override
@@ -34,7 +34,7 @@ public enum StateDriveMotorMaxOutputPower {
 
         // Output Power Value
         @Override
-        public double getValue() { return .50; }
+        public double getValue() { return RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED; }
 
         // Output Power Value Label (Text)
         @Override
@@ -48,7 +48,7 @@ public enum StateDriveMotorMaxOutputPower {
 
         // Output Power Value
         @Override
-        public double getValue() { return .35; }
+        public double getValue() { return RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW; }
 
         // Output Power Value Label (Text)
         @Override
@@ -62,7 +62,7 @@ public enum StateDriveMotorMaxOutputPower {
 
         // Output Power Value
         @Override
-        public double getValue() { return .20; }
+        public double getValue() { return RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_SNAIL; }
 
         // Output Power Value Label (Text)
         @Override
