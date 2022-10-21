@@ -113,6 +113,54 @@ public class SysClaw {
     }
 
     /**
+     * <h2>Claw Method: getClawClampPosition</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the current position for the claw clamp.
+     * </p>
+     * @return double - servo position
+     * <br>
+     */
+    public double getClawClampPosition() {
+        return clampClawServo.getPosition();
+    }
+
+    /**
+     * <h2>Claw Method: getClawSidePosition</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the current position for the claw clamp.
+     * </p>
+     * @return double - servo position
+     * <br>
+     */
+    public double getClawSidePosition() {
+        return rotateSideClawServo.getPosition();
+    }
+
+    /**
+     * <h2>Claw Method: getClawUpDownPosition</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the current position for the claw clamp.
+     * </p>
+     * @return double - servo position
+     * <br>
+     */
+    public double getClawUpDownPosition() {
+        return rotateUpDownClawServo.getPosition();
+    }
+
+    /**
      * <h2>Claw Method: setClawClampPosition</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
@@ -167,54 +215,6 @@ public class SysClaw {
 
         // Move Clamp to position
         rotateUpDownClawServo.setPosition(inTargetPosition);
-    }
-
-    /**
-     * <h2>Claw Method: getClawClampPosition</h2>
-     * <hr>
-     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-     * <hr>
-     * <p>
-     * Get the current position for the claw clamp.
-     * </p>
-     * @return double - servo position
-     * <br>
-     */
-    public double getClawClampPosition() {
-        return clampClawServo.getPosition();
-    }
-
-    /**
-     * <h2>Claw Method: getClawSidePosition</h2>
-     * <hr>
-     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-     * <hr>
-     * <p>
-     * Get the current position for the claw clamp.
-     * </p>
-     * @return double - servo position
-     * <br>
-     */
-    public double getClawSidePosition() {
-        return rotateSideClawServo.getPosition();
-    }
-
-    /**
-     * <h2>Claw Method: getClawUpDownPosition</h2>
-     * <hr>
-     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-     * <hr>
-     * <p>
-     * Get the current position for the claw clamp.
-     * </p>
-     * @return double - servo position
-     * <br>
-     */
-    public double getClawUpDownPosition() {
-        return rotateUpDownClawServo.getPosition();
     }
 
 }

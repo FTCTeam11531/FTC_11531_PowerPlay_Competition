@@ -27,7 +27,11 @@ public class RobotConstants {
     // - - Divide Millimeters by Conversion to get Inches
     // - - Multiply Inches by Conversion to get mm
     public static final double CONVERSION_MM_TO_INCH = 25.4;
+
+    // Device Storage (External Storage)
     public static final String DEVICE_EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getPath();
+    public static final String TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY = "FIRST/tflitemodels/";
+    public static final String TENSORFLOW_MODEL_EXTERNAL_STORAGE_PATH = DEVICE_EXTERNAL_STORAGE_PATH + TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY;
 
     /**
      *  <h2>Robot Constant Values - About The Robot</h2>
@@ -99,6 +103,7 @@ public class RobotConstants {
      */
     public static final class CommonSettings {
         public static final int SLEEP_TIMER_MILLISECONDS_DEFAULT = 50;
+
     }
 
     /**
@@ -123,14 +128,14 @@ public class RobotConstants {
         public static final String LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC = "Robot Centric";
 
         // Physical Robot Settings
-        public static final double DRIVETRAIN_TRACK_WIDTH_INCHES = 10; // <<--- Need to measure!
-        public static final double WHEEL_DIAMETER_MILLIMETER = 96; // <<--- Need to confirm!
+        public static final double DRIVETRAIN_TRACK_WIDTH_INCHES = 10; // !! need to tune !!
+        public static final double WHEEL_DIAMETER_MILLIMETER = 96; // !! need to tune !!
+        public static final double WHEEL_DIAMETER_INCHES = convertMillimetersToInches(WHEEL_DIAMETER_MILLIMETER);
 
-        public static final double WHEEL_DIAMETER_INCHES = WHEEL_DIAMETER_MILLIMETER / CONVERSION_MM_TO_INCH;
         public static final double WHEEL_RADIUS_MILLIMETER = WHEEL_DIAMETER_MILLIMETER / 2;
-        public static final double WHEEL_RADIUS_INCHES = WHEEL_RADIUS_MILLIMETER / CONVERSION_MM_TO_INCH;
+        public static final double WHEEL_RADIUS_INCHES = convertMillimetersToInches(WHEEL_RADIUS_MILLIMETER);
 
-        public static final double EXTERNAL_GEAR_RATIO = 1.0; // 1 = No External Gearing
+        public static final double EXTERNAL_GEAR_RATIO = 1.0; // 1 = No External Gearing // !! need to tune !!
 
         // Motor/Encoder Configuration Settings
         public static final double MOTOR_MAX_RPM = 312; // Set from Vendor Specs
@@ -140,9 +145,9 @@ public class RobotConstants {
                                                                     (WHEEL_DIAMETER_INCHES * Math.PI);
 
         // Motor Encoder PIDF Settings
-        public static final double MOTOR_VELOCITY_P = 0;
-        public static final double MOTOR_VELOCITY_I = 0;
-        public static final double MOTOR_VELOCITY_D = 0;
+        public static final double MOTOR_VELOCITY_P = 0; // !! need to tune !!
+        public static final double MOTOR_VELOCITY_I = 0; // !! need to tune !!
+        public static final double MOTOR_VELOCITY_D = 0; // !! need to tune !!
         public static final PIDFCoefficients DRIVE_MOTOR_VELOCITY_PIDF = new PIDFCoefficients(
                                                     MOTOR_VELOCITY_P,
                                                     MOTOR_VELOCITY_I,
@@ -155,10 +160,10 @@ public class RobotConstants {
         public static final double FEED_FORWARD_KS = 0; // volts
 
         // Motor Limit 'Max' Settings
-        public static final double LIMIT_MAX_VELOCITY = 30;
-        public static final double LIMIT_MAX_ACCELERATION = 30;
-        public static final double LIMIT_MAX_ANGLE_VELOCITY = Math.toRadians(60);
-        public static final double LIMIT_MAX_ANGLE_ACCELERATION = Math.toRadians(60);
+        public static final double LIMIT_MAX_VELOCITY = 30; // !! need to tune !!
+        public static final double LIMIT_MAX_ACCELERATION = 30; // !! need to tune !!
+        public static final double LIMIT_MAX_ANGLE_VELOCITY = Math.toRadians(60); // !! need to tune !!
+        public static final double LIMIT_MAX_ANGLE_ACCELERATION = Math.toRadians(60); // !! need to tune !!
 
 
         // Motor Output Setting(s)
@@ -168,7 +173,7 @@ public class RobotConstants {
         public static final double MOTOR_OUTPUT_POWER_HIGH = 1;
         public static final double MOTOR_OUTPUT_POWER_MED = 0.75;
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
-        public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.20;
+        public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.15;
 
         /**
          * <h2>Convert: Encoder Ticks to Inches</h2>
@@ -269,6 +274,9 @@ public class RobotConstants {
         public static final int ENCODER_SET_POINT_LOW_GOAL = 1000;
         public static final int ENCODER_SET_POINT_GROUND_GOAL = 500;
 
+        // Motor Output Setting(s)
+        public static final double MOTOR_OUTPUT_POWER_MAX = 1;
+
         public static final double MOTOR_OUTPUT_POWER_HIGH = 1;
         public static final double MOTOR_OUTPUT_POWER_MED = 0.75;
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
@@ -292,7 +300,7 @@ public class RobotConstants {
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_CLAW_SERVO = "<enter servo maker/model>";
 
-        // Servo Position(s)
+        // Servo Position(s) [0.00 - 1.00]
         // Claw Clamp
         public static final double SERVO_POSITION_CLAW_CLAMP_START = .50;
         public static final double SERVO_POSITION_CLAW_CLAMP_OPEN = .10;
@@ -307,7 +315,6 @@ public class RobotConstants {
         public static final double SERVO_POSITION_CLAW_ROTATE_UPDOWN_START = .50;
         public static final double SERVO_POSITION_CLAW_ROTATE_UPDOWN_UP = .10;
         public static final double SERVO_POSITION_CLAW_ROTATE_UPDOWN_DOWN = .90;
-
 
     }
 
@@ -325,10 +332,17 @@ public class RobotConstants {
      */
     public static final class Lighting {
         // Hardware Settings based on the following [comments]:
-        public static final String COMMENT_LIGHTING_CONTROLLER = "<enter controller maker/model>";
+        public static final String COMMENT_LIGHTING_CONTROLLER = "REV-11-1105 Blinkin LED Driver";
 
         // Default Light Pattern
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+
+        // System Initialize Light Patter/state
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LIGHTING = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_GRAY;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE = RevBlinkinLedDriver.BlinkinPattern.BREATH_RED;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_CLAW = RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_PARTY_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_VISION = RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_FAST;
 
         // Light Patterns for Robot State(s) - Linear Slide
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE;
@@ -358,40 +372,21 @@ public class RobotConstants {
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_VISION_CAMERA = "<enter camera maker/model>";
 
-        // TensorFlow Model
-        public static final String TENSORFLOW_MODEL_SELECTION = "config_first_comp"; // config_green_comp // config_blue_comp
-
-        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_FIRST = "first";
-        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST = "PowerPlay.tflite";
-
-        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_GREEN = "config_green_comp";
-        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN = "/sdcard/FIRST/tflitemodels/tfmodel_powerplay_sleve_ftc11531.tflite";
-        //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN = DEVICE_EXTERNAL_STORAGE_PATH + "FIRST/tflitemodels/tfmodel_powerplay_sleve_ftc11531.tflite";
-
-        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_BLUE = "config_blue_comp";
-        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE = "/sdcard/FIRST/tflitemodels/tfmodel_powerplay_sleve_ftc18092.tflite";
-        //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE = DEVICE_EXTERNAL_STORAGE_PATH + "FIRST/tflitemodels/tfmodel_powerplay_sleve_ftc18092.tflite";
-
-        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST = {
-                "1 Bolt",
-                "2 Bulb",
-                "3 Panel"
-        };
-
-        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN = {
-                "1 Bolt",
-                "2 Bulb",
-                "3 Panel"
-        };
-
-        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE = {
-                "1 Ace",
-                "2 Deuce",
-                "3 Deck"
-        };
-
+        /*
+         * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
+         * 'parameters.vuforiaLicenseKey' is initialized is for illustration only, and will not function.
+         * A Vuforia 'Development' license key, can be obtained free of charge from the Vuforia developer
+         * web site at https://developer.vuforia.com/license-manager.
+         *
+         * Vuforia license keys are always 380 characters long, and look as if they contain mostly
+         * random data. As an example, here is a example of a fragment of a valid key:
+         *      ... yIgIzTqZ4mWjk9wd3cZO9T1axEqzuhxoGlfOOI2dRzKS4T0hQ8kT ...
+         * Once you've obtained a license key, copy the string from the Vuforia web site
+         * and paste it in to your code on the next line, between the double quotes.
+         */
         // Vuforia Initialization
-        public static final String VUFORIA_LICENSE_KEY = "";
+        public static final String VUFORIA_LICENSE_KEY = "ATRnn8b/////AAABmeFNnAK1Okq+liJrV5mh0AgBKJo6aYC+NHCSsDAJnM8e8aw6DFF//uTcG+lY97v3ldt8xMDSpQrkf4IM67uu89gHXA6CH+txR6GEEMWahM0/7/uTY5NoOmVqBOP6bQZ8SmQQJtveI+ab2DOZmJj2zG1QzPJG1rBbNo6a5SPXMXGrRSaIoWxG+8ZmSQ0IcB28A+NwS9O5lMRQvvEtHb2v5zJnZuUo+8Fwi4tJNM16xZkTeMTIqlP5p8K+Zn9wqsFAUysWFlLU0l1HAM/2G0C8PVFFSjYdBFBlpSWq07UiN6HJpx7/0wlApfIlg06+aepqiZpNOe8Sp2EeJcfYkbe6uvb6AN5c1hkdR16RspDFMSY8";
+        public static final String VUFORIA_LICENSE_KEY_NAME = "ftc11531_green";
 
         // Tensor Flow Configuration
         public static final String TENSORFLOW_CONFIG_MONITOR_VIEW_ID = "tensorFlowMonitorViewID";
@@ -402,16 +397,80 @@ public class RobotConstants {
         public static final double TENSORFLOW_IMAGE_PROCESSING_IMAGE_HEIGHT = 9.0;
         public static final double TENSORFLOW_IMAGE_PROCESSING_MAGNIFICATION = 1.0;
         public static final double TENSORFLOW_IMAGE_PROCESSING_ASPECT_RATIO = TENSORFLOW_IMAGE_PROCESSING_IMAGE_WIDTH
-                                                                            / TENSORFLOW_IMAGE_PROCESSING_IMAGE_HEIGHT;
+                                                                                / TENSORFLOW_IMAGE_PROCESSING_IMAGE_HEIGHT;
+
         // Tensor Flow Parameter(s)
         public static final float TENSORFLOW_PARAMETER_MIN_RESULT_CONFIDENCE = 0.75f;
         public static final boolean TENSORFLOW_PARAMETER_IS_MODEL_TENSORFLOW2 = true;
         public static final int TENSORFLOW_PARAMETER_INPUT_SIZE = 300;
 
+        // TensorFlow Model
+        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_FIRST = "config_first_comp";
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST = "PowerPlay.tflite";
 
+        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_GREEN = "config_green_comp";
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILE = "tf_ftc11531_powerplay.tflite";
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_PATH = TENSORFLOW_MODEL_EXTERNAL_STORAGE_PATH;
+        //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_PATH = "/sdcard/" + TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY;
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH = TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_PATH + TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILE;
 
+        public static final String TENSORFLOW_MODEL_ID_POWERPLAY_BLUE = "config_blue_comp";
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILE = "tf_ftc18092_powerplay.tflite";
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH = TENSORFLOW_MODEL_EXTERNAL_STORAGE_PATH;
+        //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH = "/sdcard/" + TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY;
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH = TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH + TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILE;
 
+        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST = {
+                "1 Bolt",
+                "2 Bulb",
+                "3 Panel"
+        };
+
+        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN = {
+                "1 Peaches",
+                "2 Trojan",
+                "3 Cards"
+        };
+
+        public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE = {
+                "1 Peaches",
+                "2 Trojan",
+                "3 Cards"
+        };
 
     }
 
+    /**
+     * <h2>RobotConstants Method: convertMillimetersToInches</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Convert a value from millimeters to inches
+     * </p>
+     * @param inValueInMillimeters - value to be converted (in millimeters)
+     *
+     * @return double - value converted to inches
+     */
+    public static double convertMillimetersToInches(double inValueInMillimeters) {
+        return inValueInMillimeters / CONVERSION_MM_TO_INCH;
+    }
+
+    /**
+     * <h2>RobotConstants Method: convertInchesToMillimeters</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Convert a value from inches to millimeters
+     * </p>
+     * @param inValueInInches - value to be converted (in inches)
+     *
+     * @return double - value converted to millimeters
+     */
+    public static double convertInchesToMillimeters(double inValueInInches) {
+        return inValueInInches * CONVERSION_MM_TO_INCH;
+    }
 }

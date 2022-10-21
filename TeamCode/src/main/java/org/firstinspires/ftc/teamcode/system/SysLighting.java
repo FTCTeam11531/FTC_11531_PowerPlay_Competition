@@ -113,14 +113,34 @@ public class SysLighting {
         sysOpMode.telemetry.update();
     }
 
-
-
+    /**
+     * <h2>Lighting Method: getLightPatternNext</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the next light pattern
+     * </p>
+     * @return RevBlinkinLedDriver.BlinkinPattern - LED Light Pattern (next)
+     */
     public RevBlinkinLedDriver.BlinkinPattern getLightPatternNext() {
 
         // Return the next light pattern
         return ledLightPattern.next();
     }
 
+    /**
+     * <h2>Lighting Method: getLightPatternPrevious</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the previous light pattern
+     * </p>
+     * @return RevBlinkinLedDriver.BlinkinPattern - LED Light Pattern (previous)
+     */
     public RevBlinkinLedDriver.BlinkinPattern getLightPatternPrevious() {
 
         // Return the previous light pattern

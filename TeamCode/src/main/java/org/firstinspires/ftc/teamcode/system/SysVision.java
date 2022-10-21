@@ -29,7 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.system;
 
-import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -60,11 +59,15 @@ import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 public class SysVision {
 
     /* Declare OpMode members. */
-    private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
+    private LinearOpMode sysOpMode;   // gain access to methods in the calling OpMode.
 
     // Define hardware objects  (Make them private so they can't be accessed externally)
     private VuforiaLocalizer vuforiaLocalizer;
     private TFObjectDetector tensorFlowObjectDetector;
+
+    // Tensor Flow Model used
+    private String modelSelectionFileName;
+    private String modelSelectionFilePath;
 
     /**
      * <h2>Vision System Constructor</h2>
@@ -178,19 +181,39 @@ public class SysVision {
 
         if(inTensorFlowModelSelection.equals(RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_GREEN)) {
             // TensorFlow Model for Green Team
-            tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN
+            tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH
                     , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN);
+
+            // Store the value(s) for the model to be referenced
+            modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILE;
+            modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH;
         }
         else if(inTensorFlowModelSelection.equals(RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_BLUE)) {
             // TensorFlow Model for Blue Team
-            tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE
+            tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH
                     , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE);
+
+            // Store the value(s) for the model to be referenced
+            modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILE;
+            modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH;
         }
         else {
             // TensorFlow Model for Default First Images
             tensorFlowObjectDetector.loadModelFromAsset(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST
                     , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST);
+
+            // Store the value(s) for the model to be referenced
+            modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
+            modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
         }
+    }
+
+    public String getCurrentModelFileName() {
+        return modelSelectionFileName;
+    }
+
+    public String getCurrentModelFilePath() {
+        return modelSelectionFilePath;
     }
 
 

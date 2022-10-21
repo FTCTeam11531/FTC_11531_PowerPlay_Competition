@@ -76,7 +76,7 @@ public class SysDrivetrain {
     public StateDriveMotorMaxOutputPower stateMaxDriveOutputPower;
 
     // Define hardware objects  (Make them private so they can't be accessed externally)
-    private DcMotorEx leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive;
+    private DcMotorEx leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive;
     private List<DcMotorEx> listMotorsDrivetrain;
 
     private BNO055IMU imuRevControlHub = null;
@@ -114,18 +114,18 @@ public class SysDrivetrain {
     public void init() {
         // Set Drivetrain Enumerator default value(s)
         stateDrivetrainMode = StateDrivetrainMode.Field_Centric;
-        stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.High;
+        stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.Low;
 
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
         leftFrontDrive  = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT);
-        leftBackDrive  = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK);
         rightFrontDrive = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT);
+        leftBackDrive  = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK);
         rightBackDrive = sysOpMode.hardwareMap.get(DcMotorEx.class, RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK);
 
         // Add Motors to an Array/List of Motors
-        listMotorsDrivetrain = Arrays.asList(leftFrontDrive, leftBackDrive, rightFrontDrive, rightBackDrive);
+        listMotorsDrivetrain = Arrays.asList(leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive);
 
         // Clone Configuration and apply to all Motors in the list (set max RPM to 100%)
         for (DcMotorEx itemMotor : listMotorsDrivetrain) {
@@ -143,8 +143,8 @@ public class SysDrivetrain {
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.REVERSE);
 
         // If the hub containing the IMU you are using is mounted so that the "REV" logo does
@@ -497,20 +497,20 @@ public class SysDrivetrain {
      * <p>
      * Pass the requested wheel motor powers to the appropriate hardware drive motors.
      * </p>
-     * @param leftFrontPower  Power to Left Front Wheel
-     * @param rightFrontPower Power to Right Front Wheel
-     * @param leftBackPower   Power to Left Back Wheel
-     * @param rightBackPower  Power to Right Back Wheel
+     * @param inleftFrontPower  Power to Left Front Wheel
+     * @param inrightFrontPower Power to Right Front Wheel
+     * @param inleftBackPower   Power to Left Back Wheel
+     * @param inrightBackPower  Power to Right Back Wheel
      *
      * <br>
      */
-    private void setDriveMotorPower(double leftFrontPower, double rightFrontPower, double leftBackPower, double rightBackPower) {
+    private void setDriveMotorPower(double inleftFrontPower, double inrightFrontPower, double inleftBackPower, double inrightBackPower) {
 
         // Send calculated power to wheels
-        leftFrontDrive.setPower(leftFrontPower);
-        rightFrontDrive.setPower(rightFrontPower);
-        leftBackDrive.setPower(leftBackPower);
-        rightBackDrive.setPower(rightBackPower);
+        leftFrontDrive.setPower(inleftFrontPower);
+        rightFrontDrive.setPower(inrightFrontPower);
+        leftBackDrive.setPower(inleftBackPower);
+        rightBackDrive.setPower(inrightBackPower);
     }
 
     /**

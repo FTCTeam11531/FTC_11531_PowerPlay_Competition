@@ -34,6 +34,7 @@ import android.app.Activity;
 import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
@@ -103,13 +104,27 @@ public class OpTeleopMain extends LinearOpMode {
         robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
-        // Initialize System(s)
+        // Initialize System(s) - set difference lightmode between each system init
         // ------------------------------------------------------------
-        sysDrivetrain.init();
-        sysLinearSlide.init();
-        sysClaw.init();
         sysLighting.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
+
+        sysDrivetrain.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
+
+        sysLinearSlide.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE);
+
+        sysClaw.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
+
         sysVision.init(robotConfigName);
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+
+        // ------------------------------------------------------------
+        // Configure drivetrain for Teleop Mode
+        // ------------------------------------------------------------
+        sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // ------------------------------------------------------------
         // Inputs for: Drivetrain
@@ -127,6 +142,7 @@ public class OpTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         // Wait for the game to start (driver presses PLAY)
         // ------------------------------------------------------------
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
         waitForStart();
         runtime.reset();
 
@@ -172,28 +188,28 @@ public class OpTeleopMain extends LinearOpMode {
             if(gamepad1.y) {
 
                 // Move Linear Slide to High Goal
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
             }
 
             if(gamepad1.x) {
 
                 // Move Linear Slide to Medium Goal
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED);
             }
 
             if(gamepad1.b) {
 
                 // Move Linear Slide to Low Goal
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW);
             }
 
             if(gamepad1.a) {
 
                 // Move Linear Slide to Ground Goal
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_LOW);
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
             }
 
@@ -256,9 +272,6 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // - Drivetrain telemetry
             // ------------------------------------------------------------
-            //String dataDrivetrainMode = sysDrivetrain.getDrivetrainModeCurrent();
-            //double dataDrivetrainOutputPower = sysDrivetrain.getDrivetrainOutputPowerCurrent();
-
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Drivetrain");
             telemetry.addData("-", "------------------------------");
@@ -303,7 +316,7 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Lighting");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "<No Data Available>");
+            telemetry.addData("Pattern", sysLighting.ledLightPattern.toString());
 
             // ------------------------------------------------------------
             // - Vision telemetry
@@ -311,7 +324,8 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Vision");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("TensorFlow Model: ", RobotConstants.Vision.TENSORFLOW_MODEL_SELECTION);
+            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
+            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
             telemetry.addData("-", "------------------------------");
 
             // Process results for each Recognition
@@ -325,9 +339,9 @@ public class OpTeleopMain extends LinearOpMode {
                     double objHeight = Math.abs(objRecognition.getTop()  - objRecognition.getBottom());
 
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("Image", "%s (%.0f %% Conf.)", objRecognition.getLabel(), objRecognition.getConfidence() * 100 );
-                    telemetry.addData("- Position (Row/Col)","%.0f / %.0f", objRow, objColumn);
-                    telemetry.addData("- Size (Width/Height)","%.0f / %.0f", objWidth, objHeight);
+                    telemetry.addData("Image: ", "%s (%.0f %% Conf.)", objRecognition.getLabel(), objRecognition.getConfidence() * 100 );
+                    telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", objRow, objColumn);
+                    telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", objWidth, objHeight);
                 }
 
             }
