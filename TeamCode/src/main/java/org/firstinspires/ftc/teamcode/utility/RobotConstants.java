@@ -328,14 +328,58 @@ public class RobotConstants {
      * Anything and everything related to Lighting constants
      * </p>
      * <li>Lighting Constants</li>
+     *
+     * CP2 = Green?
+     * CP1 = Blue?
+     *
+     * CP1_2_COLOR_GRADIENT
+     * BEATS_PER_MINUTE_FOREST_PALETTE
+     * BEATS_PER_MINUTE_OCEAN_PALETTE
+     * BEATS_PER_MINUTE_PARTY_PALETTE
+     * SHOT_WHITE
+     * CP2_SHOT
+     * CP2_BREATH_SLOW
+     * CP2_HEARTBEAT_SLOW
+     * CP2_LARSON_SCANNER
+     *
+     * CP2_LIGHT_CHASE
+     *
+     * CONFETTI
+     * RAINBOW_LAVA_PALETTE
+     * RAINBOW_PARTY_PALETTE
+     * RAINBOW_WITH_GLITTER
+     * RAINBOW_FOREST_PALETTE
+     * RAINBOW_OCEAN_PALETTE
+     *
+     * CP1_2_SPARKLE_2_ON_1
+     * CP1_2_SINELON
+     * CP1_2_BEATS_PER_MINUTE
+     *
+     * CP1_2_TWINKLES **
+     * TWINKLES_FOREST_PALETTE **
+     *
+     * CP1_2_NO_BLENDING
+     *
+     * CP1_STROBE
+     *
+     * STROBE_BLUE
+     *
+     * FIRE_LARGE
+     *
+     *
+     *
+     * HEARTBEAT_BLUE
      * <br>
      */
     public static final class Lighting {
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_LIGHTING_CONTROLLER = "REV-11-1105 Blinkin LED Driver";
 
+        // Patterns to Avoid
+        public static final String LIGHT_PATTERN_AVOID_KEYWORD_TWINKLES = "Twinkles";
+
         // Default Light Pattern
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.GREEN;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.CP2_BREATH_SLOW;
 
         // System Initialize Light Patter/state
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LIGHTING = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE;
@@ -343,6 +387,14 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE = RevBlinkinLedDriver.BlinkinPattern.BREATH_RED;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_CLAW = RevBlinkinLedDriver.BlinkinPattern.COLOR_WAVES_PARTY_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_VISION = RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_FAST;
+
+        // Light Pattern(s) for Autonomous
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_ID_ONE = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_ID_TWO = RevBlinkinLedDriver.BlinkinPattern.AQUA;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_ID_THREE = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_PARK_ONE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_PARK_TWO = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_PARK_THREE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
 
         // Light Patterns for Robot State(s) - Linear Slide
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE;

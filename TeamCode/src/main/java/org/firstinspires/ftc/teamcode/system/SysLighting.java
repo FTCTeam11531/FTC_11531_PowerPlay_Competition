@@ -126,8 +126,16 @@ public class SysLighting {
      */
     public RevBlinkinLedDriver.BlinkinPattern getLightPatternNext() {
 
+        // Get Next LED Light Pattern
+        RevBlinkinLedDriver.BlinkinPattern outLightPattern = ledLightPattern.next();
+
+        // Avoid Patterns that currently appear to cause the pattern to stop cycling
+        while(checkValidLightPattern(outLightPattern)) {
+            outLightPattern = ledLightPattern.next();
+        }
+
         // Return the next light pattern
-        return ledLightPattern.next();
+        return outLightPattern;
     }
 
     /**
@@ -143,8 +151,45 @@ public class SysLighting {
      */
     public RevBlinkinLedDriver.BlinkinPattern getLightPatternPrevious() {
 
+        // Get Next LED Light Pattern
+        RevBlinkinLedDriver.BlinkinPattern outLightPattern = ledLightPattern.previous();
+
+        // Avoid Patterns that currently appear to cause the pattern to stop cycling
+        while(checkValidLightPattern(outLightPattern)) {
+            outLightPattern = ledLightPattern.previous();
+        }
+
         // Return the previous light pattern
-        return ledLightPattern.previous();
+        return outLightPattern;
+    }
+
+    /**
+     * <h2>Lighting Method: checkValidLightPattern</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Check that the light pattern is a valid pattern
+     * </p>
+     * @param inLightPattern RevBlinkinLedDriver.BlinkinPattern - Light Pattern Setting
+     *
+     * @return boolean - True of valid / False if invalid
+     */
+    public boolean checkValidLightPattern(RevBlinkinLedDriver.BlinkinPattern inLightPattern) {
+
+        // Variable to check if pattern is valid
+        // Pattern will always be true to start and false if the checks find a match
+        boolean isValid = true;
+
+        // Check pattern against avoided pattern(s) when pattern is not one of the avoided keywords
+
+        // Avoid TWINKLES
+        if(inLightPattern.toString().contains(RobotConstants.Lighting.LIGHT_PATTERN_AVOID_KEYWORD_TWINKLES)) {
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     /**
@@ -162,9 +207,13 @@ public class SysLighting {
      */
     public void setLightPattern(RevBlinkinLedDriver.BlinkinPattern inLightPattern) {
 
-        // Set the Light Pattern on the Lighting Controller
-        ledLightPattern = inLightPattern;
-        ledLightController.setPattern(ledLightPattern);
+        // Check to verify the pattern is valid
+        if(checkValidLightPattern(inLightPattern)) {
+
+            // Set the Light Pattern on the Lighting Controller
+            ledLightPattern = inLightPattern;
+            ledLightController.setPattern(ledLightPattern);
+        }
 
     }
 
