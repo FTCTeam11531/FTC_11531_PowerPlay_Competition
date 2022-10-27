@@ -37,6 +37,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -183,9 +185,8 @@ public class SysDrivetrain {
         setDriveMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         // Display telemetry
-        sysOpMode.telemetry.addData(">", "--------------------------------");
+        sysOpMode.telemetry.addData(">", "------------------------------------");
         sysOpMode.telemetry.addData(">", " System: Drivetrain Initialized");
-        sysOpMode.telemetry.addData(">", "--------------------------------");
         sysOpMode.telemetry.update();
     }
 
@@ -294,6 +295,44 @@ public class SysDrivetrain {
     }
 
     /**
+     * <h2>Drivetrain Method: driveMecanumFieldCentric</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
+     * Each motion axis is controlled by one Joystick axis.
+     * </p>
+     * <br>
+     * @param inAxial - forward and backward movement
+     * @param inLateral - Left and Right movement
+     * @param inYaw - Rotational movement
+     * @param inOutputPowerPercent - Max output power to apply to motors
+     * @param inTimeSeconds - Time in seconds to run for
+     */
+    public void driveMecanumFieldCentricTimed(double inAxial, double inLateral, double inYaw, double inOutputPowerPercent, double inTimeSeconds) {
+
+        // Drive time clock define and reset
+        ElapsedTime driveTime = new ElapsedTime();
+        driveTime.reset();
+
+        while (driveTime.seconds() < inTimeSeconds) {
+
+            // Perform timed drive until the timer completes
+            driveMecanumFieldCentric(inAxial, inLateral, inYaw, inOutputPowerPercent);
+        }
+
+        // Stop driving once time has elapsed
+        driveMecanumFieldCentric(0, 0, 0, 0);
+    }
+
+    public void driveMecanumFieldCentricDistance(double inAxial, double inLateral, double inYaw, double inOutputPowerPercent, double inDistanceInches) {
+
+
+    }
+
+    /**
      * <h2>Drivetrain Method: driveMecanumByEncoder</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
@@ -336,6 +375,11 @@ public class SysDrivetrain {
         setDriveMotorPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
 
  */
+    }
+
+
+    public void driveTurn180Degrees() {
+
     }
 
     /**

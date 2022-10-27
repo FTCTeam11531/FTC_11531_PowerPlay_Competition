@@ -74,6 +74,7 @@ public class RobotConstants {
         public static final String LABEL_CONTROLHUB_IMU = "imu_ch";
         public static final String LABEL_EXPANSIONHUB_IMU = "imu_eh";
 
+        public static final String LABEL_MOTOR_LINEAR_SLIDE_PRIMARY = "linear_slide_left";
         public static final String LABEL_MOTOR_LINEAR_SLIDE_LEFT = "linear_slide_left";
         public static final String LABEL_MOTOR_LINEAR_SLIDE_RIGHT = "linear_slide_right";
 
@@ -264,9 +265,17 @@ public class RobotConstants {
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_LINEARSLIDE_MOTOR = "<enter motor maker/model>";
 
+        // Using Single Motor
+        // -- if true: be sure to set the correct motor label in config
+        public static final boolean IS_USING_SINGLE_MOTOR = true;
+
         // Motor/Encoder Configuration Settings
         public static final double MOTOR_MAX_RPM = 312; // Set from Vendor Specs
         public static final double ENCODER_TICKS_PER_REV = 537.7; // Set from Vendor Specs
+
+        // Limit Set Points
+        public static final int ENCODER_SET_POINT_LIMIT_MAX = 2300;
+        public static final int ENCODER_SET_POINT_LIMIT_MIN = 200;
 
         // Encoder Set Points for each Goal (High/Med/Low/Ground)
         public static final int ENCODER_SET_POINT_HIGH_GOAL = 2000;
@@ -389,12 +398,13 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_VISION = RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_FAST;
 
         // Light Pattern(s) for Autonomous
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_ID_ONE = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_ID_TWO = RevBlinkinLedDriver.BlinkinPattern.AQUA;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_ID_THREE = RevBlinkinLedDriver.BlinkinPattern.GOLD;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_PARK_ONE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_PARK_TWO = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTER_AUTONOMOUS_ZONE_PARK_THREE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO = RevBlinkinLedDriver.BlinkinPattern.AQUA;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID = RevBlinkinLedDriver.BlinkinPattern.FIRE_LARGE;
 
         // Light Patterns for Robot State(s) - Linear Slide
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE;
@@ -423,6 +433,9 @@ public class RobotConstants {
     public static final class Vision {
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_VISION_CAMERA = "<enter camera maker/model>";
+
+        // Image Detection Criteria
+        public static final double RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN = .90;
 
         /*
          * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -472,23 +485,32 @@ public class RobotConstants {
         //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH = "/sdcard/" + TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY;
         public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH = TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH + TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILE;
 
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE1 = "1 Bolt";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2 = "2 Bulb";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3 = "3 Panel";
+
         public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST = {
-                "1 Bolt",
-                "2 Bulb",
-                "3 Panel"
-        };
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE1,
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2,
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3};
+
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1 = "1 Peaches";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2 = "2 Trojan";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3 = "3 Cards";
 
         public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN = {
-                "1 Peaches",
-                "2 Trojan",
-                "3 Cards"
-        };
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1,
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2,
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3};
+
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1 + "[B]";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2 + "[B]";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3 + "[B]";
 
         public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE = {
-                "1 Peaches",
-                "2 Trojan",
-                "3 Cards"
-        };
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1,
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2,
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3};
 
     }
 

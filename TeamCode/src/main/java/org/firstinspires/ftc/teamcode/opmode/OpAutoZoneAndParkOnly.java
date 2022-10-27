@@ -29,12 +29,19 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
+import android.app.Activity;
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.system.SysLighting;
+import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
+import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import java.util.List;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
 // Renamed in TeamCode as: OpAutoZoneAndParkOnly.java
@@ -54,8 +61,13 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * <hr>
  */
 @Autonomous(name="Auto: Zone and Park", group="_auto")
-@Disabled
+//@Disabled
 public class OpAutoZoneAndParkOnly extends LinearOpMode {
+    // ------------------------------------------------------------
+    // Robot Configuration
+    // ------------------------------------------------------------
+    RobotConfigFileManager robotConfigFileManager;
+    String robotConfigName;
 
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -68,9 +80,13 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // -- LinearSlide System
 
     // -- Lighting System
+    SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
+    SysVision sysVision = new SysVision(this);
 
+    // Settings for captured image
+    Recognition recognitionTargetZone;
 
     // ------------------------------------------------------------
     // Misc
@@ -80,58 +96,179 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        // ------------------------------------------------------------
+        // Configure Telemetry
+        // ------------------------------------------------------------
+        // Set telemetry mode to append
+        telemetry.setAutoClear(false);
+        telemetry.clearAll();
+
+        // ------------------------------------------------------------
+        // Get Hardware Configuration Profile Name
+        // ------------------------------------------------------------
+        robotConfigFileManager = new RobotConfigFileManager((Activity) hardwareMap.appContext);
+        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
         // Initialize System(s)
         // ------------------------------------------------------------
+        sysLighting.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
+
         sysDrivetrain.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
+
+        sysVision.init(robotConfigName);
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+
+        // ------------------------------------------------------------
+        // Configure drivetrain for Autonomous Mode
+        // -- Set to run using encoder for encoder drive mode
+        // ------------------------------------------------------------
+        sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // ------------------------------------------------------------
         // Send telemetry message to signify robot completed initialization and waiting to start;
         // ------------------------------------------------------------
+        telemetry.addData(">", "------------------------------------");
         telemetry.addData(">", "All Systems Ready - Waiting to Start");
         telemetry.update();
 
         // ------------------------------------------------------------
         // Wait for the game to start (driver presses PLAY)
         // ------------------------------------------------------------
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
         waitForStart();
+
+        // ------------------------------------------------------------
+        // Configure Telemetry
+        // ------------------------------------------------------------
+        // Set telemetry mode to append
+        telemetry.setAutoClear(false);
+        telemetry.clearAll();
+
         runtime.reset();
 
         // Return if a Stop Action is requested
         if (isStopRequested()) return;
 
-        // ------------------------------------------------------------
-        // Command Loop: run until the end of the autonomous period (or STOP action)
-        // ------------------------------------------------------------
-        while (opModeIsActive()) {
-
-            // ------------------------------------------------------------
-            // Commands to Run
-            // ------------------------------------------------------------
-
-
+        if (opModeIsActive()) {
 
             // ------------------------------------------------------------
             // Driver Hub Feedback
             // ------------------------------------------------------------
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-
-            // ------------------------------------------------------------
-            // - Telemetry Data
-            // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Autonomous               --");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "<No Data Available>");
-
-            // ------------------------------------------------------------
-            // - send telemetry to driver hub
-            // ------------------------------------------------------------
+            telemetry.addData("Hardware Profile: ", robotConfigName);
             telemetry.update();
 
-            // Pace this loop so hands move at a reasonable speed.
-            //sleep(50);
+            // ------------------------------------------------------------
+            // Get Cone Sleeve Image
+            // ------------------------------------------------------------
+            boolean isImageFound = false;
+            while (opModeIsActive() && !isImageFound) {
+
+                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
+
+                if(recognitionTargetZone != null) {
+                    isImageFound = true;
+                }
+
+            }
+
+            // ------------------------------------------------------------
+            // - Vision telemetry
+            // ------------------------------------------------------------
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "-- Vision");
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
+            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
+            telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
+            telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
+            telemetry.update();
+
+            // ------------------------------------------------------------
+            // Drive and Park in Correct Zone!
+            // ------------------------------------------------------------
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "-- Drivetrain");
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Drivetrain Mode", sysDrivetrain.getLabelDrivetrainMode());
+            telemetry.addData("Drivetrain Power", sysDrivetrain.getLabelDrivetrainOutputPower());
+            telemetry.addData("-", "------------------------------");
+
+            switch(recognitionTargetZone.getLabel()) {
+
+                // Drive to Zone 1
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE1):
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1):
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1):
+
+                    // Drive to Zone One
+                    // TO-DO //
+
+                    telemetry.addData("Zone 1", recognitionTargetZone.getLabel());
+
+                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE);
+                    break;
+
+                // Drive to Zone 2
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2):
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2):
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2):
+
+                    // Drive to Zone Two
+                    // TO-DO //
+
+                    telemetry.addData("Zone 2", recognitionTargetZone.getLabel());
+
+                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);
+                    break;
+
+                // Drive to Zone 3
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3):
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3):
+                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3):
+
+                    // Drive to Zone Three
+                    // TO-DO //
+
+                    telemetry.addData("Zone 3", recognitionTargetZone.getLabel());
+
+                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE);
+                    break;
+
+                default:
+                    // Default
+                    telemetry.addData("None", recognitionTargetZone.getLabel());
+
+                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+            }
+
+            // ------------------------------------------------------------
+            // - Lighting telemetry
+            // ------------------------------------------------------------
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "-- Lighting");
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Pattern", sysLighting.ledLightPattern.toString());
+            telemetry.update();
+
         }
+
+        // ------------------------------------------------------------
+        // - send telemetry to driver hub
+        // ------------------------------------------------------------
+        telemetry.addData("-", "------------------------------");
+        telemetry.addData("-", "-- Autonomous Routine Complete");
+        telemetry.addData("-", "------------------------------");
+        telemetry.update();
+
+        // Set telemetry mode back to auto-clear
+        telemetry.setAutoClear(true);
+
+        // Pace this loop so hands move at a reasonable speed.
+        //sleep(50);
     }
 }

@@ -86,8 +86,8 @@ public class OpTeleopMain extends LinearOpMode {
 
     // -- Vision System
     SysVision sysVision = new SysVision(this);
-    List<Recognition> listVisionRecognitions = null;
-    Recognition recognitionTargetZone = null;
+    List<Recognition> listVisionRecognitions;
+    Recognition recognitionTargetZone;
 
     // ------------------------------------------------------------
     // Misc
@@ -97,6 +97,13 @@ public class OpTeleopMain extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        // ------------------------------------------------------------
+        // Configure Telemetry
+        // ------------------------------------------------------------
+        // Set telemetry mode to append
+        telemetry.setAutoClear(false);
+        telemetry.clearAll();
+
         // ------------------------------------------------------------
         // Get Hardware Configuration Profile Name
         // ------------------------------------------------------------
@@ -129,13 +136,12 @@ public class OpTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         // Inputs for: Drivetrain
         // ------------------------------------------------------------
-        double inputAxial = 0;
-        double inputLateral = 0;
-        double inputYaw = 0;
+        double inputAxial, inputLateral, inputYaw;
 
         // ------------------------------------------------------------
         // Send telemetry message to signify robot completed initialization and waiting to start;
         // ------------------------------------------------------------
+        telemetry.addData(">", "------------------------------------");
         telemetry.addData(">", "All Systems Ready - Waiting to Start");
         telemetry.update();
 
@@ -144,6 +150,14 @@ public class OpTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
         waitForStart();
+
+        // ------------------------------------------------------------
+        // Configure Telemetry
+        // ------------------------------------------------------------
+        // Set telemetry mode to auto-clear
+        telemetry.setAutoClear(true);
+        telemetry.clearAll();
+
         runtime.reset();
 
         // Return if a Stop Action is requested
@@ -153,6 +167,30 @@ public class OpTeleopMain extends LinearOpMode {
         // Command Loop: run until the end of the match (driver presses STOP)
         // ------------------------------------------------------------
         while (opModeIsActive()) {
+
+            // ------------------------------------------------------------
+            // Controls
+            // ------------------------------------------------------------
+            // Gamepad1 = Main Driver
+            // -- Robot Movement
+            // -- -- Axis: Drive
+            // -- -- X: 180 spin
+            //
+            // Gamepad2 = Co-Driver
+            // -- Linear Slide
+            // -- -- Y: High Limit
+            // -- -- X: Middle Limit
+            // -- -- B: Low Limit
+            // -- -- A: Ground Limit
+            // -- -- Axis: Move up/down (restrict movement beyond High/Ground)
+            // -- Claw
+            // -- -- Left Bumper: Open
+            // -- -- Right Bumper: Close
+            // -- -- Axis: Left/Right (0-1)
+            // -- -- Axis: Up/Down (0-1)
+
+
+
             // ------------------------------------------------------------
             // Drivetrain
             // ------------------------------------------------------------
@@ -185,28 +223,28 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // LinearSlide
             // ------------------------------------------------------------
-            if(gamepad1.y) {
+            if(gamepad2.y) {
 
                 // Move Linear Slide to High Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
             }
 
-            if(gamepad1.x) {
+            if(gamepad2.x) {
 
                 // Move Linear Slide to Medium Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED);
             }
 
-            if(gamepad1.b) {
+            if(gamepad2.b) {
 
                 // Move Linear Slide to Low Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW);
             }
 
-            if(gamepad1.a) {
+            if(gamepad2.a) {
 
                 // Move Linear Slide to Ground Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
@@ -256,12 +294,6 @@ public class OpTeleopMain extends LinearOpMode {
                 sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
 
             }
-
-            // ------------------------------------------------------------
-            // Vision
-            // ------------------------------------------------------------
-            // Get Vision Recognitions
-            listVisionRecognitions = sysVision.getVisonRecognitions();
 
             // ------------------------------------------------------------
             // Driver Hub Feedback
@@ -317,37 +349,6 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "-- Lighting");
             telemetry.addData("-", "------------------------------");
             telemetry.addData("Pattern", sysLighting.ledLightPattern.toString());
-
-            // ------------------------------------------------------------
-            // - Vision telemetry
-            // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Vision");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
-            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
-            telemetry.addData("-", "------------------------------");
-
-            // Process results for each Recognition
-            if (listVisionRecognitions != null) {
-                telemetry.addData("Objects Detected: ", listVisionRecognitions.size());
-
-                for (Recognition objRecognition : listVisionRecognitions) {
-                    double objColumn = (objRecognition.getLeft() + objRecognition.getRight()) / 2;
-                    double objRow = (objRecognition.getTop()  + objRecognition.getBottom()) / 2;
-                    double objWidth = Math.abs(objRecognition.getRight() - objRecognition.getLeft());
-                    double objHeight = Math.abs(objRecognition.getTop()  - objRecognition.getBottom());
-
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("Image: ", "%s (%.0f %% Conf.)", objRecognition.getLabel(), objRecognition.getConfidence() * 100 );
-                    telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", objRow, objColumn);
-                    telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", objWidth, objHeight);
-                }
-
-            }
-            else {
-                telemetry.addData("-", "<No Data Available>");
-            }
 
             // ------------------------------------------------------------
             // - send telemetry to driver hub

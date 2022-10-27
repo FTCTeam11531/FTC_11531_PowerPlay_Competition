@@ -118,9 +118,8 @@ public class SysVision {
         }
 
         // Display telemetry
-        sysOpMode.telemetry.addData(">", "--------------------------------");
+        sysOpMode.telemetry.addData(">", "------------------------------------");
         sysOpMode.telemetry.addData(">", " System: Vision Initialized");
-        sysOpMode.telemetry.addData(">", "--------------------------------");
         sysOpMode.telemetry.update();
     }
 
@@ -230,16 +229,96 @@ public class SysVision {
      *
      * <br>
      */
-    public List<Recognition> getVisonRecognitions() {
-        List<Recognition> outputRecognition = null;
+    public List<Recognition> getRecognitionList() {
+        List<Recognition> outputRecognitionList = null;
 
         // Process the Current Image from the camera and return recognition data for the image
         if (tensorFlowObjectDetector != null) {
             // getUpdatedRecognitions() will return null if no new information is available since
             // the last time that call was made.
-            outputRecognition = tensorFlowObjectDetector.getUpdatedRecognitions();
+            outputRecognitionList = tensorFlowObjectDetector.getUpdatedRecognitions();
         }
-        return outputRecognition;
+        return outputRecognitionList;
+    }
+
+    /**
+     *
+     * @param inListRecognition
+     * @return
+     */
+    public Recognition getRecognition(List<Recognition> inListRecognition) {
+        Recognition outRecognition = null;
+
+        if(inListRecognition != null) {
+            for (Recognition objRecognition : inListRecognition) {
+
+                if (objRecognition.getConfidence() >= RobotConstants.Vision.RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN) {
+                    // Found an image with high confidence
+                    outRecognition = objRecognition;
+                }
+            }
+        }
+
+        return outRecognition;
+    }
+
+    /**
+     *
+     * @param inRecognition
+     * @return
+     */
+    public double getRecognitionColumn(Recognition inRecognition) {
+        double outRecognitionColumn = 0;
+
+        if(inRecognition != null) {
+            outRecognitionColumn = (inRecognition.getLeft() + inRecognition.getRight()) / 2;
+        }
+
+        return outRecognitionColumn;
+    }
+
+    /**
+     *
+     * @param inRecognition
+     * @return
+     */
+    public double getRecognitionRow(Recognition inRecognition) {
+        double outRecognitionRow = 0;
+
+        if(inRecognition != null) {
+            outRecognitionRow = (inRecognition.getTop()  + inRecognition.getBottom()) / 2;
+        }
+        return outRecognitionRow;
+    }
+
+    /**
+     *
+     * @param inRecognition
+     * @return
+     */
+    public double getRecognitionWidth(Recognition inRecognition) {
+        double outRecognitionWidth = 0;
+
+        if(inRecognition != null) {
+            outRecognitionWidth = Math.abs(inRecognition.getRight() - inRecognition.getLeft());
+        }
+
+        return outRecognitionWidth;
+    }
+
+    /**
+     *
+     * @param inRecognition
+     * @return
+     */
+    public double getRecognitionHeight(Recognition inRecognition) {
+        double outRecognitionHeight = 0;
+
+        if(inRecognition != null) {
+            outRecognitionHeight = Math.abs(inRecognition.getTop()  - inRecognition.getBottom());
+        }
+
+        return outRecognitionHeight;
     }
 
 }
