@@ -29,6 +29,10 @@
 
 package org.firstinspires.ftc.teamcode.system;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
 import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
@@ -38,6 +42,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import java.util.Arrays;
 import java.util.List;
@@ -81,7 +86,9 @@ public class SysDrivetrain {
     private DcMotorEx leftFrontDrive, rightFrontDrive, leftBackDrive, rightBackDrive;
     private List<DcMotorEx> listMotorsDrivetrain;
 
-    private BNO055IMU imuRevControlHub = null;
+    // Robot Heading
+    private BNO055IMU imuUnit = null;
+    private double trackHeadingRobot, trackHeadingOffset, trackHeadingError;
 
     /**
      * <h2>Drivetrain System Constructor</h2>
@@ -172,17 +179,18 @@ public class SysDrivetrain {
         // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         // Initialize the IMU board/unit on the Rev Control Hub
-        imuRevControlHub = sysOpMode.hardwareMap.get(BNO055IMU.class, RobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
+        imuUnit = sysOpMode.hardwareMap.get(BNO055IMU.class, RobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
         BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
 
         // Set the Angle Unit to Radians
         imuParameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
 
         // Initialize the IMU unit
-        imuRevControlHub.initialize(imuParameters);
+        imuUnit.initialize(imuParameters);
 
         // Reset Drive Motor Encoder(s)
         setDriveMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setHeadingRobot();
 
         // Display telemetry
         sysOpMode.telemetry.addData(">", "------------------------------------");
@@ -377,9 +385,32 @@ public class SysDrivetrain {
  */
     }
 
+    /**
+     *
+     * @param inTargetHeading
+     * @param inMaxTurnSpeed
+     */
+    public void driveTurnToHeading(double inTargetHeading, double inMaxTurnSpeed) {
+        //
+        double robotTurnOutput;
 
-    public void driveTurn180Degrees() {
 
+        // Calculate the current error
+        getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_DRIVE_GAIN);
+
+        // Loop while not at heading
+        while ((Math.abs(trackHeadingError) > RobotConstants.Drivetrain.AUTO_HEADING_THRESHOLD)) {
+
+            // Determine steering to keep heading
+            robotTurnOutput = Range.clip(getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_TURN_GAIN), -inMaxTurnSpeed, inMaxTurnSpeed);
+
+            // Move Robot
+            driveMecanumFieldCentric(0, 0, robotTurnOutput, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+        }
+
+        // Stop Robot
+        driveMecanumFieldCentric(0, 0, 0, 0);
     }
 
     /**
@@ -400,9 +431,34 @@ public class SysDrivetrain {
 
         // Get heading value from the IMU
         // Read inverse IMU heading, as the IMU heading is CW positive
-        outIMUHeadingValue = -imuRevControlHub.getAngularOrientation().firstAngle;
+        outIMUHeadingValue = -imuUnit.getAngularOrientation().firstAngle;
 
         return outIMUHeadingValue;
+    }
+
+    /**
+     * read the raw (un-offset Gyro heading) directly from the IMU
+     * <hr>
+     * @return double Gyro Heading from IMU
+     */
+    public double getRawHeading() {
+        Orientation rawHeadingAngle = imuUnit.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        return rawHeadingAngle.firstAngle;
+    }
+
+    public double getSteeringCorrection(double inTargetHeader, double inProportionalGain) {
+
+        // Determine the robot heading current PID error
+        trackHeadingRobot = getRawHeading() - trackHeadingOffset;
+
+        // Determine the heading current error
+        trackHeadingError = inTargetHeader - trackHeadingRobot;
+
+        // Normalize the error to be within +/- 180 degrees
+        while (trackHeadingError > 180) trackHeadingError -= 360;
+        while (trackHeadingError <= -180) trackHeadingError += 360;
+
+        return Range.clip(trackHeadingError * inProportionalGain, -1, 1);
     }
 
     /**
@@ -593,6 +649,18 @@ public class SysDrivetrain {
         for (DcMotorEx itemMotor : listMotorsDrivetrain) {
             itemMotor.setZeroPowerBehavior(inZeroPowerBehavior);
         }
+    }
+
+    /**
+     *
+     */
+    public void setHeadingRobot() {
+
+        // Set the Heading Offset to the IMU raw heading
+        trackHeadingOffset = getRawHeading();
+
+        // Reset the Robot Heading to Zero
+        trackHeadingRobot = 0;
     }
 
 }

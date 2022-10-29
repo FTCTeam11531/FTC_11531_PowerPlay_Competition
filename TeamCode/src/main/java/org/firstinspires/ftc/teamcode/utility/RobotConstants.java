@@ -155,6 +155,20 @@ public class RobotConstants {
                                                     MOTOR_VELOCITY_D,
                                                     getMotorVelocityF(MOTOR_MAX_RPM / 60 * ENCODER_TICKS_PER_REV));
 
+        // Proportional control coefficient (or GAIN) for "heading control"
+        // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
+        // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
+        // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
+        public static final double HEADING_P_TURN_GAIN = 0.02;   // Larger is more responsive, but also less stable
+        public static final double HEADING_P_DRIVE_GAIN = 0.03;  // Larger is more responsive, but also less stable
+
+        // These constants define the desired driving/control characteristics
+        // They can/should be tweaked to suit the specific robot drive train.
+        public static final double AUTO_DRIVE_SPEED = 0;         // Max driving speed for better distance accuracy.
+        public static final double AUTO_TURN_SPEED = 0;          // Max Turn speed to limit turn rate
+        public static final double AUTO_HEADING_THRESHOLD = 1.0; // How close must the heading get to the target before moving to next step.
+                                                                 // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
+
         // Motor Encoder Feed Forward Configuration(s)
         public static final double FEED_FORWARD_KV = 1.0 / rpmToVelocity(MOTOR_MAX_RPM); // volts * seconds / distance
         public static final double FEED_FORWARD_KA = 0; // volts * seconds^2 / distance
