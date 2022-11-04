@@ -83,7 +83,7 @@ public class OpAutoTimedMovement extends LinearOpMode {
     SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
-    SysVision sysVision = new SysVision(this);
+//    SysVision sysVision = new SysVision(this);
 
     // Settings for captured image
     Recognition recognitionTargetZone;
@@ -118,7 +118,7 @@ public class OpAutoTimedMovement extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-        sysVision.init(robotConfigName);
+//        sysVision.init(robotConfigName);
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         // ------------------------------------------------------------
@@ -171,33 +171,37 @@ public class OpAutoTimedMovement extends LinearOpMode {
             // Position 1
             sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE);
 
+            // Current Config
+            // forward =  -1 | backward = 1
+            // left = -1 | right = 1
+
             // Drive forward for 2 seconds
-            inputAxial = 0;
-            inputLateral = 1;
-            inputYaw = 0;
-            inputTimeSeconds = 2;
-            sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-
-            // Drive left for 2 seconds
-            inputAxial = 1;
-            inputLateral = 0;
-            inputYaw = 0;
-            inputTimeSeconds = 2;
-            sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-
-            // Drive right for 2 seconds
-            inputAxial = -1;
-            inputLateral = 0;
-            inputYaw = 0;
-            inputTimeSeconds = 2;
-            sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-
-            // Drive backwards for 2 seconds
             inputAxial = 0;
             inputLateral = -1;
             inputYaw = 0;
             inputTimeSeconds = 2;
-            sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
+            sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
+
+            // Drive left for 2 seconds
+            inputAxial = -1;
+            inputLateral = 0;
+            inputYaw = 0;
+            inputTimeSeconds = 2;
+            sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
+
+            // Drive right for 2 seconds
+            inputAxial = 1;
+            inputLateral = 0;
+            inputYaw = 0;
+            inputTimeSeconds = 2;
+            sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
+
+            // Drive backwards for 2 seconds
+            inputAxial = 0;
+            inputLateral = 1;
+            inputYaw = 0;
+            inputTimeSeconds = 2;
+            sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
 
             // Position 2
             sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);

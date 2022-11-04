@@ -44,6 +44,7 @@ import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
+import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
 // Renamed in TeamCode as: OpTeleopMain.java
@@ -85,7 +86,7 @@ public class OpTeleopMain extends LinearOpMode {
     SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
-    SysVision sysVision = new SysVision(this);
+//    SysVision sysVision = new SysVision(this);
     List<Recognition> listVisionRecognitions;
     Recognition recognitionTargetZone;
 
@@ -125,7 +126,7 @@ public class OpTeleopMain extends LinearOpMode {
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
 
-        sysVision.init(robotConfigName);
+//        sysVision.init(robotConfigName);
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         // ------------------------------------------------------------
@@ -173,8 +174,11 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Gamepad1 = Main Driver
             // -- Robot Movement
-            // -- -- Axis: Drive
+            // -- -- Axis (left_stick_x, left_stick_y): Drive
+            // -- -- Axis (right_stick_x, left_stick_y): Rotate
             // -- -- X: 180 spin
+            // -- -- Y: Set Output Speed to Med
+            // -- -- A: Set Output Speed to Snail
             //
             // Gamepad2 = Co-Driver
             // -- Linear Slide
@@ -182,24 +186,35 @@ public class OpTeleopMain extends LinearOpMode {
             // -- -- X: Middle Limit
             // -- -- B: Low Limit
             // -- -- A: Ground Limit
-            // -- -- Axis: Move up/down (restrict movement beyond High/Ground)
+            // -- -- Axis (right_stick_y): Move up/down (restrict movement beyond High/Ground)
             // -- Claw
             // -- -- Left Bumper: Open
             // -- -- Right Bumper: Close
-            // -- -- Axis: Left/Right (0-1)
-            // -- -- Axis: Up/Down (0-1)
-
+            // -- -- Axis (left_stick_y): Up/Down (0-1)
+            // -- -- Axis (left_stick_x): Left/Right (0-1)
 
 
             // ------------------------------------------------------------
             // Drivetrain
             // ------------------------------------------------------------
-            // Select / Change Drive mode
+
+            // Button Action - Cycle Drive mode
             if(gamepad1.back)
                 sysDrivetrain.setDrivetrainModeNext();
 
+            // Button Action - Cycle Output Power Setting
             if(gamepad1.start)
                 sysDrivetrain.setDrivetrainOutputPowerNext();
+
+            // Button Action - Set Output Power Mode to Medium
+            if(gamepad1.y) {
+                sysDrivetrain.stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.Medium;
+            }
+
+            // Button Action - Set Output Power Mode to Snail
+            if(gamepad1.a) {
+                sysDrivetrain.stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.Low;
+            }
 
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
@@ -215,65 +230,80 @@ public class OpTeleopMain extends LinearOpMode {
             }
             else {
                 // Send gamepad input for drivetrain to driveMecanumFieldCentric method in the drivetrain system class
-                inputAxial = -(gamepad1.left_stick_x);
-                inputLateral = -(gamepad1.left_stick_y);  // Note: pushing stick forward gives negative value
+                inputAxial = (gamepad1.left_stick_x);
+                inputLateral = (gamepad1.left_stick_y);  // Note: pushing stick forward gives negative value
                 sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
             }
+
+            // Button Action - Turn robot 180 degrees (180 deg spin)
+//            if(gamepad1.x) {
+//                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+//            }
 
             // ------------------------------------------------------------
             // LinearSlide
             // ------------------------------------------------------------
+
+            // Manually control Linear Slide
+            //sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
+
+            // Button Action - Set Linear Slide to High Goal
             if(gamepad2.y) {
 
                 // Move Linear Slide to High Goal
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
             }
 
+            // Button Action - Set Linear Slide to Medium Goal
             if(gamepad2.x) {
 
                 // Move Linear Slide to Medium Goal
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED);
             }
 
+            // Button Action - Set Linear Slide to Low Goal
             if(gamepad2.b) {
 
                 // Move Linear Slide to Low Goal
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW);
             }
 
+            // Button Action - Set Linear Slide to Ground Goal
             if(gamepad2.a) {
 
                 // Move Linear Slide to Ground Goal
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_SNAIL);
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
             }
 
             // ------------------------------------------------------------
             // Claw
             // ------------------------------------------------------------
-            if(gamepad1.right_bumper) {
+            // Button Action - Close the claw
+            if(gamepad2.right_bumper) {
 
                 // Close the Claw
                 sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
             }
 
-            if(gamepad1.left_bumper) {
+            // Button Action - Open the claw
+            if(gamepad2.left_bumper) {
 
                 // Open the Claw
                 sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
             }
 
-            if(gamepad1.dpad_left) {
+            //if(gamepad1.dpad_left) {
 
                 // Claw side-to-side movement (Left)
 
 
-            }
+            //}
 
             //if(gamepad1.dpad_right) {
 
@@ -281,25 +311,25 @@ public class OpTeleopMain extends LinearOpMode {
 
             //}
 
-            if(gamepad1.dpad_up) {
+            //if(gamepad1.dpad_up) {
 
                 // Claw up-down movement (Up)
-                sysLighting.setLightPattern(sysLighting.getLightPatternNext());
+            //    sysLighting.setLightPattern(sysLighting.getLightPatternNext());
 
-            }
+            //}
 
-            if(gamepad1.dpad_down) {
+            //if(gamepad1.dpad_down) {
 
                 // Claw up-down movement (Down)
-                sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
+            //    sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
 
-            }
+            //}
 
             // ------------------------------------------------------------
             // Driver Hub Feedback
             // ------------------------------------------------------------
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Hardware Profile: ", robotConfigName);
+            telemetry.addData("Run Time", runtime.toString());
+            telemetry.addData("Hardware Profile", robotConfigName);
 
             // ------------------------------------------------------------
             // - Drivetrain telemetry
@@ -307,17 +337,17 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Drivetrain");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Drivetrain Mode: ", sysDrivetrain.getLabelDrivetrainMode());
-            telemetry.addData("Drivetrain Power: ", sysDrivetrain.getLabelDrivetrainOutputPower());
+            telemetry.addData("Drivetrain Mode", sysDrivetrain.getLabelDrivetrainMode());
+            telemetry.addData("Drivetrain Power", sysDrivetrain.getLabelDrivetrainOutputPower());
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Front left/Right: ", "%4.2f, %4.2f"
+            telemetry.addData("Front left/Right", "%4.2f, %4.2f"
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-            telemetry.addData("Back  left/Right: ", "%4.2f, %4.2f"
+            telemetry.addData("Back  left/Right", "%4.2f, %4.2f"
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Robot Heading: ", sysDrivetrain.getIMUHeading());
+            telemetry.addData("Robot Heading", sysDrivetrain.getIMUHeading());
 
             // ------------------------------------------------------------
             // - LinearSlide telemetry
@@ -325,9 +355,9 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- LinearSlide");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Linear Encoder Point: ", sysDrivetrain.getLabelDrivetrainOutputPower());
+            telemetry.addData("Linear Encoder Point", sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT));
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Slide left/Right: ", "%4.2f, %4.2f"
+            telemetry.addData("Slide left/Right", "%4.2f, %4.2f"
                     , sysLinearSlide.getLinearSlideMotorPower(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT)
                     , sysLinearSlide.getLinearSlideMotorPower(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_RIGHT));
 
@@ -337,7 +367,7 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- The Claw");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Claw Clamp/Side/UpDown: ", "%4.2f, %4.2f, %4.2f"
+            telemetry.addData("Claw Clamp/Side/UpDown", "%4.2f, %4.2f, %4.2f"
                     , sysClaw.getClawClampPosition()
                     , sysClaw.getClawSidePosition()
                     , sysClaw.getClawUpDownPosition());

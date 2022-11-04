@@ -120,6 +120,7 @@ public class RobotConstants {
      * <br>
      */
     public static final class Drivetrain {
+
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_DRIVE_MOTOR = "goBuilda Yellow Jacket 5203-2402-0019";
         public static final String COMMENT_DRIVE_WHEEL_TYPE = "Mecanum";
@@ -288,19 +289,19 @@ public class RobotConstants {
         public static final double ENCODER_TICKS_PER_REV = 537.7; // Set from Vendor Specs
 
         // Limit Set Points
-        public static final int ENCODER_SET_POINT_LIMIT_MAX = 2300;
-        public static final int ENCODER_SET_POINT_LIMIT_MIN = 200;
+        public static final int ENCODER_SET_POINT_LIMIT_MAX = 6500;
+        public static final int ENCODER_SET_POINT_LIMIT_MIN = -15;
 
         // Encoder Set Points for each Goal (High/Med/Low/Ground)
-        public static final int ENCODER_SET_POINT_HIGH_GOAL = 2000;
-        public static final int ENCODER_SET_POINT_MED_GOAL = 1500;
-        public static final int ENCODER_SET_POINT_LOW_GOAL = 1000;
-        public static final int ENCODER_SET_POINT_GROUND_GOAL = 500;
+        public static final int ENCODER_SET_POINT_HIGH_GOAL = 6000;
+        public static final int ENCODER_SET_POINT_MED_GOAL = 2500;
+        public static final int ENCODER_SET_POINT_LOW_GOAL = 1500;
+        public static final int ENCODER_SET_POINT_GROUND_GOAL = 0;
 
         // Motor Output Setting(s)
         public static final double MOTOR_OUTPUT_POWER_MAX = 1;
 
-        public static final double MOTOR_OUTPUT_POWER_HIGH = 1;
+        public static final double MOTOR_OUTPUT_POWER_HIGH = 0.90;
         public static final double MOTOR_OUTPUT_POWER_MED = 0.75;
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
         public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.20;
@@ -508,9 +509,9 @@ public class RobotConstants {
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3};
 
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1 = "1 Peaches";
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2 = "2 Trojan";
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3 = "3 Cards";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1 = "Peaches";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2 = "Trojan";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3 = "Cards";
 
         public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN = {
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1,

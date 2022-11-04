@@ -118,11 +118,11 @@ public class SysLinearSlide {
         }
 
         // Clone Configuration and apply to all Motors in the list (set max RPM to 100%)
-        for (DcMotorEx itemMotor : listMotorsLinearSlide) {
-            MotorConfigurationType motorConfigurationType = itemMotor.getMotorType().clone();
-            motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-            itemMotor.setMotorType(motorConfigurationType);
-        }
+        //for (DcMotorEx itemMotor : listMotorsLinearSlide) {
+        //    MotorConfigurationType motorConfigurationType = itemMotor.getMotorType().clone();
+        //    motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
+        //    itemMotor.setMotorType(motorConfigurationType);
+        //}
 
         if(RobotConstants.LinearSlide.IS_USING_SINGLE_MOTOR) {
             // Linear Slide Motor Direction
@@ -157,19 +157,41 @@ public class SysLinearSlide {
      * Set the Linear Slide to the Target Set Point
      * </p>
      * @param inTargetSetPoint int - Target set point to move to
-     * @param inOutputPowerPercent double - Output power percentage for motor
+     * @param inMaxOutputPowerPercent double - Output power percentage for motor
      *
      * @return void
      * <br>
      */
-    public void moveLinearSlideToTarget(int inTargetSetPoint, double inOutputPowerPercent) {
+    public void moveLinearSlideToTarget(int inTargetSetPoint, double inMaxOutputPowerPercent) {
 
         // Configure Motor Target Set Point and Set motor as Run to Position
         setLinearSlideTargetPosition(inTargetSetPoint);
         setLinearSlideMotorRunMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         // Move linear slide within min/max limits
-        moveLinearSlideWithinLimits(inOutputPowerPercent);
+        moveLinearSlideWithinLimits(inMaxOutputPowerPercent);
+    }
+
+    /**
+     * <h2>Linear Slide Method: moveLinearSlideManually</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Set the Linear Slide using manual input
+     * </p>
+     *
+     * @param inAppliedPower
+     * @param inMaxOutputPowerPercent
+     */
+    public void moveLinearSlideManually(double inAppliedPower, double inMaxOutputPowerPercent) {
+
+        // Configure Motor Target Set Point and Set motor as Run to Position
+        setLinearSlideMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // Move linear slide within min/max limits
+        moveLinearSlideWithinLimits((inAppliedPower * inMaxOutputPowerPercent));
     }
 
     /**
@@ -181,16 +203,16 @@ public class SysLinearSlide {
      * <p>
      * Move linear slide within min/max limits
      * </p>
-     * @param inOutputPowerPercent double - Output power percentage for motor
+     * @param inMaxOutputPowerPercent double - Output power percentage for motor
      */
-    public void moveLinearSlideWithinLimits(double inOutputPowerPercent) {
+    public void moveLinearSlideWithinLimits(double inMaxOutputPowerPercent) {
 
-        double calcLinearSlideMovement = getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) + inOutputPowerPercent;
+        double calcLinearSlideMovement = getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) + inMaxOutputPowerPercent;
 
         // Allow motor output within min/max limits
         if((calcLinearSlideMovement < RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX)
             && (calcLinearSlideMovement > RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN)) {
-            setLinearSlideMotorPower(inOutputPowerPercent);
+            setLinearSlideMotorPower(inMaxOutputPowerPercent);
         }
         else {
             setLinearSlideMotorPower(0);
@@ -216,19 +238,26 @@ public class SysLinearSlide {
         // Variable for output Power value for drivetrain motor(s)
         int outEncoderPosition = 0;
 
-        // Get value for motor specified in method call
-        switch (inMotorLabel) {
-            // Linear Slide Motor - Left Front
-            case RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT:
-                outEncoderPosition = leftLinearSlideMotor.getCurrentPosition();
-                break;
-            // Linear Slide Motor - Left Back
-            case RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_RIGHT:
-                outEncoderPosition = rightLinearSlideMotor.getCurrentPosition();
-                break;
-            // Default - No match
-            default:
-                outEncoderPosition = 0;
+        if(RobotConstants.LinearSlide.IS_USING_SINGLE_MOTOR) {
+
+            outEncoderPosition = singleLinearSlideMotor.getCurrentPosition();
+        }
+        else {
+
+            // Get value for motor specified in method call
+            switch (inMotorLabel) {
+                // Linear Slide Motor - Left
+                case RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT:
+                    outEncoderPosition = leftLinearSlideMotor.getCurrentPosition();
+                    break;
+                // Linear Slide Motor - Right
+                case RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_RIGHT:
+                    outEncoderPosition = rightLinearSlideMotor.getCurrentPosition();
+                    break;
+                // Default - No match
+                default:
+                    outEncoderPosition = 0;
+            }
         }
 
         // Return value
@@ -253,19 +282,26 @@ public class SysLinearSlide {
         // Variable for output Power value for drivetrain motor(s)
         double outPowerValue = 0;
 
-        // Get value for motor specified in method call
-        switch (inMotorLabel) {
-            // Linear Slide Motor - Left Front
-            case RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT:
-                outPowerValue = leftLinearSlideMotor.getPower();
-                break;
-            // Linear Slide Motor - Left Back
-            case RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_RIGHT:
-                outPowerValue = rightLinearSlideMotor.getPower();
-                break;
-            // Default - No match
-            default:
-                outPowerValue = 0;
+        if(RobotConstants.LinearSlide.IS_USING_SINGLE_MOTOR) {
+
+            outPowerValue = singleLinearSlideMotor.getPower();
+        }
+        else {
+
+            // Get value for motor specified in method call
+            switch (inMotorLabel) {
+                // Linear Slide Motor - Left Front
+                case RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT:
+                    outPowerValue = leftLinearSlideMotor.getPower();
+                    break;
+                // Linear Slide Motor - Left Back
+                case RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_RIGHT:
+                    outPowerValue = rightLinearSlideMotor.getPower();
+                    break;
+                // Default - No match
+                default:
+                    outPowerValue = 0;
+            }
         }
 
         // Return value

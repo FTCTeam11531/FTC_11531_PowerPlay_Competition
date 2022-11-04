@@ -37,6 +37,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
 import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.bosch.BNO055IMUImpl;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -163,14 +164,14 @@ public class SysDrivetrain {
         //             |
         //             |
         //             |
-        //      _______|_____________     +Y axis
+        //      _______|_____________     +Y axis (roll)
         //     /       |_____________/|__________
         //    /   REV / EXPANSION   //
         //   /       / HUB         //
         //  /_______/_____________//
         // |_______/_____________|/
         //        /
-        //       / +X axis
+        //       / +X axis (pitch)
         //
         // This diagram is derived from the axes in section 3.4 https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf
         // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
@@ -190,7 +191,7 @@ public class SysDrivetrain {
 
         // Reset Drive Motor Encoder(s)
         setDriveMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setHeadingRobot();
+        setRobotHeadingReset();
 
         // Display telemetry
         sysOpMode.telemetry.addData(">", "------------------------------------");
@@ -219,17 +220,17 @@ public class SysDrivetrain {
      * @param inAxial   [Y] Driving forward and backward
      * @param inLateral [X] Strafing right and left
      * @param inYaw     [R] Rotating Clockwise and counter clockwise
-     * @param inOutputPowerPercent Percent of power to apply to motors
+     * @param inMaxOutputPowerPercent Percent of power to apply to motors
      *
      * <br>
      */
-    public void driveMecanum(double inAxial, double inLateral, double inYaw, double inOutputPowerPercent) {
+    public void driveMecanum(double inAxial, double inLateral, double inYaw, double inMaxOutputPowerPercent) {
 
         double modMaintainMotorRatio;
 
-        double inputAxial   = (inAxial * inOutputPowerPercent);  // Note: pushing stick forward gives negative value
-        double inputLateral = (inLateral * inOutputPowerPercent) * RobotConstants.Drivetrain.MOTOR_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
-        double inputYaw     = (inYaw * inOutputPowerPercent);
+        double inputAxial   = (inAxial * inMaxOutputPowerPercent);  // Note: pushing stick forward gives negative value
+        double inputLateral = (inLateral * inMaxOutputPowerPercent) * RobotConstants.Drivetrain.MOTOR_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
+        double inputYaw     = (inYaw * inMaxOutputPowerPercent);
 
         // Normalize the values so no wheel power exceeds 100%
         // This ensures that the robot maintains the desired motion.
@@ -268,17 +269,17 @@ public class SysDrivetrain {
      * @param inAxial   [Y] Driving forward and backward
      * @param inLateral [X] Strafing right and left
      * @param inYaw     [R] Rotating Clockwise and counter clockwise
-     * @param inOutputPowerPercent Percent of power to apply to motors
+     * @param inMaxOutputPowerPercent Percent of power to apply to motors
      *
      * <br>
      */
-    public void driveMecanumFieldCentric(double inAxial, double inLateral, double inYaw, double inOutputPowerPercent) {
+    public void driveMecanumFieldCentric(double inAxial, double inLateral, double inYaw, double inMaxOutputPowerPercent) {
 
         double modMaintainMotorRatio;
 
-        double inputAxial   = (inAxial * inOutputPowerPercent);  // Note: pushing stick forward gives negative value
-        double inputLateral = (inLateral * inOutputPowerPercent) * RobotConstants.Drivetrain.MOTOR_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
-        double inputYaw     = (inYaw * inOutputPowerPercent);
+        double inputAxial   = (inAxial * inMaxOutputPowerPercent);  // Note: pushing stick forward gives negative value
+        double inputLateral = (inLateral * inMaxOutputPowerPercent) * RobotConstants.Drivetrain.MOTOR_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
+        double inputYaw     = (inYaw * inMaxOutputPowerPercent);
 
         // Get heading value from the IMU
         double botHeading = getIMUHeading();
@@ -303,114 +304,99 @@ public class SysDrivetrain {
     }
 
     /**
-     * <h2>Drivetrain Method: driveMecanumFieldCentric</h2>
+     * <h2>Drivetrain Method: driveInputTimed</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
      * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
      * Holonomic drives provide the ability for the robot to move in three axes (directions) simultaneously.
-     * Each motion axis is controlled by one Joystick axis.
+     * This method will run the desired inputs for the specified time.
      * </p>
      * <br>
      * @param inAxial - forward and backward movement
      * @param inLateral - Left and Right movement
      * @param inYaw - Rotational movement
-     * @param inOutputPowerPercent - Max output power to apply to motors
+     * @param inMaxOutputPowerPercent - Max output power to apply to motors
      * @param inTimeSeconds - Time in seconds to run for
      */
-    public void driveMecanumFieldCentricTimed(double inAxial, double inLateral, double inYaw, double inOutputPowerPercent, double inTimeSeconds) {
+    public void driveInputTimed(double inAxial, double inLateral, double inYaw, double inMaxOutputPowerPercent, double inTimeSeconds) {
 
         // Drive time clock define and reset
         ElapsedTime driveTime = new ElapsedTime();
         driveTime.reset();
 
-        while (driveTime.seconds() < inTimeSeconds) {
+        while (sysOpMode.opModeIsActive() && (driveTime.seconds() < inTimeSeconds)) {
 
             // Perform timed drive until the timer completes
-            driveMecanumFieldCentric(inAxial, inLateral, inYaw, inOutputPowerPercent);
+            driveMecanumFieldCentric(inAxial, inLateral, inYaw, inMaxOutputPowerPercent);
         }
 
         // Stop driving once time has elapsed
         driveMecanumFieldCentric(0, 0, 0, 0);
     }
 
-    public void driveMecanumFieldCentricDistance(double inAxial, double inLateral, double inYaw, double inOutputPowerPercent, double inDistanceInches) {
-
-
-    }
-
     /**
-     * <h2>Drivetrain Method: driveMecanumByEncoder</h2>
+     * <h2>Drivetrain Method: driveTurnToHeading</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
      * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
      * <hr>
      * <p>
-     * {enter information here!!}
+     * Use the IMU to turn the robot to a new target heading.
      * </p>
      * <br>
-     */
-    public void driveMecanumByEncoder(double inSpeed, double inLeftInches, double inRightInches, double inTimeoutSeconds) {
-
-        
-/*
-        double modMaintainMotorRatio;
-
-        double inputAxial   = (inAxial * inOutputPowerPercent);  // Note: pushing stick forward gives negative value
-        double inputLateral = (inLateral * inOutputPowerPercent) * RobotConstants.Drivetrain.MOD_LATERAL_MOVEMENT_STRAFING_CORRECTION; // Mod to even out strafing
-        double inputYaw     = (inYaw * inOutputPowerPercent);
-
-        // Get heading value from the IMU
-        double botHeading = getIMUHeading();
-
-        // Adjust the lateral and axial movements based on heading
-        double adjLateral = inputLateral * Math.cos(botHeading) - inputAxial * Math.sin(botHeading);
-        double adjAxial = inputLateral * Math.sin(botHeading) + inputAxial * Math.cos(botHeading);
-
-        // Normalize the values so no wheel power exceeds 100%
-        // This ensures that the robot maintains the desired motion.
-        modMaintainMotorRatio = Math.max(Math.abs(inputAxial) + Math.abs(inputLateral) + Math.abs(inputYaw), RobotConstants.Drivetrain.MOD_OUTPUT_POWER_MAX);
-
-        // Combine the joystick requests for each axis-motion to determine each wheel's power.
-        // Set up a variable for each drive wheel to save the power level for telemetry.
-        double leftFrontPower  = (adjAxial + adjLateral + inputYaw) / modMaintainMotorRatio;
-        double rightFrontPower = (adjAxial - adjLateral - inputYaw) / modMaintainMotorRatio;
-        double leftBackPower   = (adjAxial - adjLateral + inputYaw) / modMaintainMotorRatio;
-        double rightBackPower  = (adjAxial + adjLateral - inputYaw) / modMaintainMotorRatio;
-
-        // Use existing function to drive both wheels.
-        setDriveMotorPower(leftFrontPower, rightFrontPower, leftBackPower, rightBackPower);
-
- */
-    }
-
-    /**
      *
      * @param inTargetHeading
-     * @param inMaxTurnSpeed
+     * @param inMaxOutputPowerPercent
      */
-    public void driveTurnToHeading(double inTargetHeading, double inMaxTurnSpeed) {
-        //
-        double robotTurnOutput;
+    public void driveTurnToHeading(double inTargetHeading, double inMaxOutputPowerPercent) {
+        // local variable for turn output power
+        double robotTurnSpeed;
 
-
-        // Calculate the current error
+        // Pre-Calculate the current error
         getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_DRIVE_GAIN);
 
         // Loop while not at heading
-        while ((Math.abs(trackHeadingError) > RobotConstants.Drivetrain.AUTO_HEADING_THRESHOLD)) {
+        while (sysOpMode.opModeIsActive() && (Math.abs(trackHeadingError) > RobotConstants.Drivetrain.AUTO_HEADING_THRESHOLD)) {
+
+            // Calculate the current error
+            robotTurnSpeed = getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_DRIVE_GAIN);
 
             // Determine steering to keep heading
-            robotTurnOutput = Range.clip(getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_TURN_GAIN), -inMaxTurnSpeed, inMaxTurnSpeed);
+            robotTurnSpeed = Range.clip(robotTurnSpeed, -inMaxOutputPowerPercent, inMaxOutputPowerPercent);
 
             // Move Robot
-            driveMecanumFieldCentric(0, 0, robotTurnOutput, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            driveMecanumFieldCentric(0, 0, robotTurnSpeed, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
         }
 
         // Stop Robot
         driveMecanumFieldCentric(0, 0, 0, 0);
+    }
+
+    /**
+     *
+     * @param inAxialInches
+     * @param inLateralInches
+     * @param inMaxOutputPowerPercent
+     */
+    public void driveDistance(double inAxialInches, double inLateralInches, double inMaxOutputPowerPercent) {
+
+        // Set target position
+        leftFrontDrive.setTargetPosition(100);
+        leftBackDrive.setTargetPosition(-100);
+        rightFrontDrive.setTargetPosition(100);
+        rightBackDrive.setTargetPosition(-100);
+
+        // Turn on RUN_TO_POSITION (moved encoders to that position)
+        setDriveMotorRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Make sure all motors are stopped after completed path
+        setDriveMotorPower(0, 0, 0, 0);
+
+        // Turn off RUN_TO_POSITION
+        setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /**
@@ -446,6 +432,12 @@ public class SysDrivetrain {
         return rawHeadingAngle.firstAngle;
     }
 
+    /**
+     *
+     * @param inTargetHeader
+     * @param inProportionalGain
+     * @return
+     */
     public double getSteeringCorrection(double inTargetHeader, double inProportionalGain) {
 
         // Determine the robot heading current PID error
@@ -654,7 +646,7 @@ public class SysDrivetrain {
     /**
      *
      */
-    public void setHeadingRobot() {
+    public void setRobotHeadingReset() {
 
         // Set the Heading Offset to the IMU raw heading
         trackHeadingOffset = getRawHeading();
