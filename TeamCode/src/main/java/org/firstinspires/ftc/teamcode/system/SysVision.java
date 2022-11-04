@@ -224,21 +224,36 @@ public class SysVision {
     }
 
     /**
+     * <h2>Vision Method: getCurrentModelFileName</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * TensorFlow Model information
+     * </p>
      *
-     * @return
+     * @return String - Return the name of the TensorFlow model used
      */
     public String getCurrentModelFileName() {
         return modelSelectionFileName;
     }
 
     /**
+     * <h2>Vision Method: getCurrentModelFilePath</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * TensorFlow Model information
+     * </p>
      *
-     * @return
+     * @return String - Return the file path to the TensorFlow model used
      */
     public String getCurrentModelFilePath() {
         return modelSelectionFilePath;
     }
-
 
     /**
      * <h2>Vision Method: getVisonRecognitions</h2>
@@ -266,9 +281,16 @@ public class SysVision {
     }
 
     /**
-     *
-     * @param inListRecognition
-     * @return
+     * <h2>Vision Method: getRecognition</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get recognition from list
+     * </p>
+     * @param inListRecognition - Get viable recognition from input list
+     * @return Recognition - Return the recognition from the list
      */
     public Recognition getRecognition(List<Recognition> inListRecognition) {
         Recognition outRecognition = null;
@@ -287,9 +309,16 @@ public class SysVision {
     }
 
     /**
-     *
-     * @param inRecognition
-     * @return
+     * <h2>Vision Method: getRecognitionColumn</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get recognition information - column info
+     * </p>
+     * @param inRecognition - recognition to get information from
+     * @return double - column information
      */
     public double getRecognitionColumn(Recognition inRecognition) {
         double outRecognitionColumn = 0;
@@ -302,9 +331,16 @@ public class SysVision {
     }
 
     /**
-     *
-     * @param inRecognition
-     * @return
+     * <h2>Vision Method: getRecognitionRow</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get recognition information - row info
+     * </p>
+     * @param inRecognition - recognition to get information from
+     * @return double - row information
      */
     public double getRecognitionRow(Recognition inRecognition) {
         double outRecognitionRow = 0;
@@ -316,9 +352,16 @@ public class SysVision {
     }
 
     /**
-     *
-     * @param inRecognition
-     * @return
+     * <h2>Vision Method: getRecognitionWidth</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get recognition information - width info
+     * </p>
+     * @param inRecognition - recognition to get information from
+     * @return double - width information
      */
     public double getRecognitionWidth(Recognition inRecognition) {
         double outRecognitionWidth = 0;
@@ -331,9 +374,16 @@ public class SysVision {
     }
 
     /**
-     *
-     * @param inRecognition
-     * @return
+     * <h2>Vision Method: getRecognitionHeight</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get recognition information - height info
+     * </p>
+     * @param inRecognition - recognition to get information from
+     * @return double - height information
      */
     public double getRecognitionHeight(Recognition inRecognition) {
         double outRecognitionHeight = 0;
@@ -345,48 +395,73 @@ public class SysVision {
         return outRecognitionHeight;
     }
 
+    /**
+     * <h2>Vision Method: getTargetZone</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the target zone from the identified vision target label
+     * </p>
+     * @param inVisionTargetLabel - identified vision target label
+     * @return int - return the target zone identifier (1,2,3)
+     */
     public int getTargetZone(String inVisionTargetLabel) {
-        int outTargetZone = 0;
+        int outTargetZone;
 
         // Switch on TensorFlow Model - Default is FIRST Robotics
-        // NOTE: Should be able to clean this logic up a bit.
+        // Then switch on vision label
+        // NOTE: Should be able to clean this logic up a bit. Not completely sold on the double switch.
         // - Cannot do a simple single switch on zone because green and blue values are the same
         // - Maybe do a single switch/case based on model_id combined with zone label (will need to think about it)
         switch(robotConfigName) {
             case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_GREEN):
-                if(inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1))
-                    outTargetZone = 1;
-                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2))
-                    outTargetZone = 2;
-                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3))
-                    outTargetZone = 3;
-                else
-                    outTargetZone = 0;
-
+                switch(inVisionTargetLabel) {
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1):
+                        outTargetZone = 1;
+                        break;
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2):
+                        outTargetZone = 2;
+                        break;
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3):
+                        outTargetZone = 3;
+                        break;
+                    default:
+                        outTargetZone = 0;
+                }
                 break;
 
             case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_BLUE):
-                if(inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1))
-                    outTargetZone = 1;
-                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2))
-                    outTargetZone = 2;
-                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3))
-                    outTargetZone = 3;
-                else
-                    outTargetZone = 0;
-
+                switch(inVisionTargetLabel) {
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1):
+                        outTargetZone = 1;
+                        break;
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2):
+                        outTargetZone = 2;
+                        break;
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3):
+                        outTargetZone = 3;
+                        break;
+                    default:
+                        outTargetZone = 0;
+                }
                 break;
 
             default:
-                if(inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE1))
-                    outTargetZone = 1;
-                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2))
-                    outTargetZone = 2;
-                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3))
-                    outTargetZone = 3;
-                else
-                    outTargetZone = 0;
-
+                switch(inVisionTargetLabel) {
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE1):
+                        outTargetZone = 1;
+                        break;
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2):
+                        outTargetZone = 2;
+                        break;
+                    case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3):
+                        outTargetZone = 3;
+                        break;
+                    default:
+                        outTargetZone = 0;
+                }
         }
 
         return outTargetZone;
