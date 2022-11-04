@@ -93,6 +93,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // ------------------------------------------------------------
     // -- Command Runtime
     private ElapsedTime runtime = new ElapsedTime();
+    private int targetZone = 0;
 
     @Override
     public void runOpMode() {
@@ -118,7 +119,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-        sysVision.init(robotConfigName);
+        sysVision.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         // ------------------------------------------------------------
@@ -174,9 +175,6 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
 
             }
 
-            // Turn 180 Degrees?
-            sysDrivetrain.driveTurnToHeading(180, 0.5);
-
             // ------------------------------------------------------------
             // - Vision telemetry
             // ------------------------------------------------------------
@@ -201,51 +199,79 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             telemetry.addData("Drivetrain Power", sysDrivetrain.getLabelDrivetrainOutputPower());
             telemetry.addData("-", "------------------------------");
 
-            switch(recognitionTargetZone.getLabel()) {
+            // Get the target zone from recongnition
+            targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+
+            switch (targetZone) {
 
                 // Drive to Zone 1
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE1):
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1):
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1):
-
-                    // Drive to Zone One
-                    // TO-DO //
-
+                case 1:
                     telemetry.addData("Zone 1", recognitionTargetZone.getLabel());
 
+                    // Drive to Zone One
+                    // [Y] - Axial - Driving forward and backward
+                    // [X] - Lateral - Strafing right and left
+                    // [R] - Yaw - Rotating Clockwise and counter clockwise
+
+                    // Drive Forward - Two Seconds
+                    sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
+
+                    // Drive Left - One Second
+                    sysDrivetrain.driveInputTimed(0, -1, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 1);
+
+                    // Zone Parking Complete
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE);
                     break;
 
                 // Drive to Zone 2
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2):
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2):
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2):
-
-                    // Drive to Zone Two
-                    // TO-DO //
-
+                case 2:
                     telemetry.addData("Zone 2", recognitionTargetZone.getLabel());
 
+                    // Drive to Zone Two
+                    // [Y] - Axial - Driving forward and backward
+                    // [X] - Lateral - Strafing right and left
+                    // [R] - Yaw - Rotating Clockwise and counter clockwise
+
+                    // Drive Forward - Two Seconds
+                    sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
+
+                    // Zone Parking Complete
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);
                     break;
 
                 // Drive to Zone 3
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3):
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3):
-                case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3):
-
-                    // Drive to Zone Three
-                    // TO-DO //
-
+                case 3:
                     telemetry.addData("Zone 3", recognitionTargetZone.getLabel());
 
+                    // Drive to Zone Three
+                    // [Y] - Axial - Driving forward and backward
+                    // [X] - Lateral - Strafing right and left
+                    // [R] - Yaw - Rotating Clockwise and counter clockwise
+
+                    // Drive Forward - Two Seconds
+                    sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
+
+                    // Drive Right - One Second
+                    sysDrivetrain.driveInputTimed(0, 1, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 1);
+
+                    // Zone Parking Complete
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE);
                     break;
 
+                // Action to perform when Zone was not determined!
                 default:
-                    // Default
                     telemetry.addData("None", recognitionTargetZone.getLabel());
 
+                    // Default
+                    // [Y] - Axial - Driving forward and backward
+                    // [X] - Lateral - Strafing right and left
+                    // [R] - Yaw - Rotating Clockwise and counter clockwise
+
+                    // Drive Forward - Two Seconds
+                    sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
+
+
+                    // Zone Parking Invalid :(
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
             }
 
@@ -259,6 +285,9 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             telemetry.update();
 
         }
+
+        // Update the Transition Adjustment Value for the IMU
+        RobotConstants.CommonSettings.IMU_TRANSITION_ADJUSTMENT = sysDrivetrain.getIMUHeading();
 
         // ------------------------------------------------------------
         // - send telemetry to driver hub

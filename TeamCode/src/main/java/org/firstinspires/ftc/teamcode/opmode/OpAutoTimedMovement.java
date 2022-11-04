@@ -335,11 +335,13 @@ public class OpAutoTimedMovement extends LinearOpMode {
 */
         }
 
+        // Update the Transition Adjustment Value for the IMU
+        RobotConstants.CommonSettings.IMU_TRANSITION_ADJUSTMENT = sysDrivetrain.getIMUHeading();
+
         // ------------------------------------------------------------
         // - send telemetry to driver hub
         // ------------------------------------------------------------
         telemetry.update();
-
 
         // Pace this loop so hands move at a reasonable speed.
         //sleep(50);

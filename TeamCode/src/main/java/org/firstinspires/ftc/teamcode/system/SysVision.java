@@ -29,6 +29,9 @@
 
 package org.firstinspires.ftc.teamcode.system;
 
+import android.app.Activity;
+
+import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -65,6 +68,10 @@ public class SysVision {
     private VuforiaLocalizer vuforiaLocalizer;
     private TFObjectDetector tensorFlowObjectDetector;
 
+    // Robot hardware configuration (used to determine Tensor Flow Model)
+    private RobotConfigFileManager robotConfigFileManager;
+    private String robotConfigName;
+
     // Tensor Flow Model used
     private String modelSelectionFileName;
     private String modelSelectionFilePath;
@@ -98,16 +105,20 @@ public class SysVision {
      * <br>
      * All of the hardware devices are accessed via the hardware map, and initialized.
      * <hr>
-     * @param inTensorFlowModelSelection String - Tensor Flow Model to use
      */
-    public void init(String inTensorFlowModelSelection)    {
+    public void init()    {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
 
+        // The robot config name is passed into the initialization of this system
+        // The robot config name is used to determine which TensorFlow model to use
+        robotConfigFileManager = new RobotConfigFileManager((Activity) sysOpMode.hardwareMap.appContext);
+        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
+
         // Initialize Vuforia and Tensor Flow
         initializeVuforia();
-        initializeTensorFlow(inTensorFlowModelSelection);
+        initializeTensorFlow();
 
         // Activate Tensor Flow during Init (before start)
         if (tensorFlowObjectDetector != null) {
@@ -155,10 +166,9 @@ public class SysVision {
      * <p>
      * Initialize the TensorFlow Object Detection engine.
      * </p>
-     * @param inTensorFlowModelSelection String - Tensor Flow Model to use
      * <br>
      */
-    private void initializeTensorFlow(String inTensorFlowModelSelection) {
+    private void initializeTensorFlow() {
         // Tensor Flow Hardware Configuration/Id
         int tensorFlowMonitorViewID = sysOpMode.hardwareMap.appContext.getResources().getIdentifier(
                 RobotConstants.Vision.TENSORFLOW_CONFIG_MONITOR_VIEW_ID
@@ -177,40 +187,54 @@ public class SysVision {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
+        switch(robotConfigName) {
+            case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_GREEN):
+                // TensorFlow Model for Green Team
+                tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH
+                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN);
 
-        if(inTensorFlowModelSelection.equals(RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_GREEN)) {
-            // TensorFlow Model for Green Team
-            tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH
-                    , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN);
+                // Store the value(s) for the model to be referenced
+                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILE;
+                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH;
 
-            // Store the value(s) for the model to be referenced
-            modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILE;
-            modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH;
+                break;
+
+            case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_BLUE):
+                // TensorFlow Model for Blue Team
+                tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH
+                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE);
+
+                // Store the value(s) for the model to be referenced
+                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILE;
+                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH;
+
+                break;
+
+            default:
+                // TensorFlow Model for Default First Images
+                tensorFlowObjectDetector.loadModelFromAsset(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST
+                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST);
+
+                // Store the value(s) for the model to be referenced
+                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
+                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
+
         }
-        else if(inTensorFlowModelSelection.equals(RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_BLUE)) {
-            // TensorFlow Model for Blue Team
-            tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH
-                    , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE);
 
-            // Store the value(s) for the model to be referenced
-            modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILE;
-            modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH;
-        }
-        else {
-            // TensorFlow Model for Default First Images
-            tensorFlowObjectDetector.loadModelFromAsset(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST
-                    , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST);
-
-            // Store the value(s) for the model to be referenced
-            modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
-            modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
-        }
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCurrentModelFileName() {
         return modelSelectionFileName;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCurrentModelFilePath() {
         return modelSelectionFilePath;
     }
@@ -319,6 +343,53 @@ public class SysVision {
         }
 
         return outRecognitionHeight;
+    }
+
+    public int getTargetZone(String inVisionTargetLabel) {
+        int outTargetZone = 0;
+
+        // Switch on TensorFlow Model - Default is FIRST Robotics
+        // NOTE: Should be able to clean this logic up a bit.
+        // - Cannot do a simple single switch on zone because green and blue values are the same
+        // - Maybe do a single switch/case based on model_id combined with zone label (will need to think about it)
+        switch(robotConfigName) {
+            case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_GREEN):
+                if(inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1))
+                    outTargetZone = 1;
+                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2))
+                    outTargetZone = 2;
+                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3))
+                    outTargetZone = 3;
+                else
+                    outTargetZone = 0;
+
+                break;
+
+            case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_BLUE):
+                if(inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1))
+                    outTargetZone = 1;
+                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2))
+                    outTargetZone = 2;
+                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3))
+                    outTargetZone = 3;
+                else
+                    outTargetZone = 0;
+
+                break;
+
+            default:
+                if(inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE1))
+                    outTargetZone = 1;
+                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2))
+                    outTargetZone = 2;
+                else if (inVisionTargetLabel.equals(RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3))
+                    outTargetZone = 3;
+                else
+                    outTargetZone = 0;
+
+        }
+
+        return outTargetZone;
     }
 
 }

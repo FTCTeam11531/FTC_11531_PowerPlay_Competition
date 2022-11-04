@@ -282,7 +282,7 @@ public class SysDrivetrain {
         double inputYaw     = (inYaw * inMaxOutputPowerPercent);
 
         // Get heading value from the IMU
-        double botHeading = getIMUHeading();
+        double botHeading = getIMUHeading() + RobotConstants.CommonSettings.IMU_TRANSITION_ADJUSTMENT;
 
         // Adjust the lateral and axial movements based on heading
         double adjLateral = inputLateral * Math.cos(botHeading) - inputAxial * Math.sin(botHeading);

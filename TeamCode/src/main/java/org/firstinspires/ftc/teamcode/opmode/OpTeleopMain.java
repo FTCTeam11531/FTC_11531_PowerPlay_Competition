@@ -86,7 +86,7 @@ public class OpTeleopMain extends LinearOpMode {
     SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
-//    SysVision sysVision = new SysVision(this);
+    SysVision sysVision = new SysVision(this);
     List<Recognition> listVisionRecognitions;
     Recognition recognitionTargetZone;
 
@@ -126,7 +126,7 @@ public class OpTeleopMain extends LinearOpMode {
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
 
-//        sysVision.init(robotConfigName);
+        sysVision.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         // ------------------------------------------------------------
@@ -199,19 +199,19 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
 
             // Button Action - Cycle Drive mode
-            if(gamepad1.back)
-                sysDrivetrain.setDrivetrainModeNext();
+            //if(gamepad1.back)
+            //    sysDrivetrain.setDrivetrainModeNext();
 
             // Button Action - Cycle Output Power Setting
-            if(gamepad1.start)
-                sysDrivetrain.setDrivetrainOutputPowerNext();
+            //if(gamepad1.start)
+            //    sysDrivetrain.setDrivetrainOutputPowerNext();
 
             // Button Action - Set Output Power Mode to Medium
             if(gamepad1.y) {
                 sysDrivetrain.stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.Medium;
             }
 
-            // Button Action - Set Output Power Mode to Snail
+            // Button Action - Set Output Power Mode to Low
             if(gamepad1.a) {
                 sysDrivetrain.stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.Low;
             }
@@ -245,7 +245,9 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
 
             // Manually control Linear Slide
-            //sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
+            if(Math.abs(gamepad2.right_stick_y) == 1) {
+                sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
+            }
 
             // Button Action - Set Linear Slide to High Goal
             if(gamepad2.y) {

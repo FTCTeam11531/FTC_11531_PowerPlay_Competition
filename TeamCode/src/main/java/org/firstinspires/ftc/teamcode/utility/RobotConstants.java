@@ -23,10 +23,15 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 public class RobotConstants {
 
     // General 'Global' Constants
-    // Conversions
+    // ---------------------------------------
+
+    // ---------------------------------------
+    // Conversion Factor(s)
+    // ---------------------------------------
+    // Conversion Millimeters and Inches
     // - - Divide Millimeters by Conversion to get Inches
     // - - Multiply Inches by Conversion to get mm
-    public static final double CONVERSION_MM_TO_INCH = 25.4;
+    public static final double CONVERSION_FACTOR_MM_INCH = 25.4;
 
     // Device Storage (External Storage)
     public static final String DEVICE_EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getPath();
@@ -66,6 +71,9 @@ public class RobotConstants {
      */
     public static final class Configuration {
         // Hardware Configuration from Control Hub and/or Expansion Hub
+        // ------------------------------------------------------------
+
+        // Drivetrain
         public static final String LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT = "left_front_drive";
         public static final String LABEL_DRIVETRAIN_MOTOR_LEFT_BACK = "left_back_drive";
         public static final String LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT = "right_front_drive";
@@ -74,16 +82,20 @@ public class RobotConstants {
         public static final String LABEL_CONTROLHUB_IMU = "imu_ch";
         public static final String LABEL_EXPANSIONHUB_IMU = "imu_eh";
 
+        // Linear Slide
         public static final String LABEL_MOTOR_LINEAR_SLIDE_PRIMARY = "linear_slide_left";
         public static final String LABEL_MOTOR_LINEAR_SLIDE_LEFT = "linear_slide_left";
         public static final String LABEL_MOTOR_LINEAR_SLIDE_RIGHT = "linear_slide_right";
 
+        // The Claw
         public static final String LABEL_SERVO_CLAW_ROTATE_SIDE = "claw_rotate_side";
         public static final String LABEL_SERVO_CLAW_ROTATE_UPDOWN = "claw_rotate_updown";
         public static final String LABEL_SERVO_CLAW_CLAMP = "claw_clamp";
 
+        // Lighting
         public static final String LABEL_CONTROLLER_LIGHTING = "lighting_control";
 
+        // Vision
         public static final String LABEL_CAMERA_VISION_TRACKING = "camera_vision_track";
 
     }
@@ -105,6 +117,8 @@ public class RobotConstants {
     public static final class CommonSettings {
         public static final int SLEEP_TIMER_MILLISECONDS_DEFAULT = 50;
 
+        // Transition from Autonomous to Teleop - Global Static variables (not constants)
+        public static double IMU_TRANSITION_ADJUSTMENT = 0;
     }
 
     /**
@@ -278,7 +292,7 @@ public class RobotConstants {
      */
     public static final class LinearSlide {
         // Hardware Settings based on the following [comments]:
-        public static final String COMMENT_LINEARSLIDE_MOTOR = "<enter motor maker/model>";
+        public static final String COMMENT_LINEARSLIDE_MOTOR = "goBuilda Yellow Jacket 5203-2402-0019";
 
         // Using Single Motor
         // -- if true: be sure to set the correct motor label in config
@@ -301,7 +315,7 @@ public class RobotConstants {
         // Motor Output Setting(s)
         public static final double MOTOR_OUTPUT_POWER_MAX = 1;
 
-        public static final double MOTOR_OUTPUT_POWER_HIGH = 0.90;
+        public static final double MOTOR_OUTPUT_POWER_HIGH = 1.00;
         public static final double MOTOR_OUTPUT_POWER_MED = 0.75;
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
         public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.20;
@@ -322,7 +336,7 @@ public class RobotConstants {
      */
     public static final class Claw {
         // Hardware Settings based on the following [comments]:
-        public static final String COMMENT_CLAW_SERVO = "<enter servo maker/model>";
+        public static final String COMMENT_CLAW_SERVO = "Servo";
 
         // Servo Position(s) [0.00 - 1.00]
         // Claw Clamp
@@ -509,18 +523,18 @@ public class RobotConstants {
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE2,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE3};
 
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1 = "Peaches";
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2 = "Trojan";
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3 = "Cards";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1 = "PeachBasket";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2 = "TrojanHead";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3 = "CardDeck";
 
         public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN = {
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3};
 
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1 + "[B]";
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2 + "[B]";
-        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3 + "[B]";
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1;
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2;
+        public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3;
 
         public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE = {
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1,
@@ -528,6 +542,11 @@ public class RobotConstants {
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3};
 
     }
+
+    // --------------------------------------------
+    // General Method(s)
+    // --------------------------------------------
+
 
     /**
      * <h2>RobotConstants Method: convertMillimetersToInches</h2>
@@ -543,7 +562,7 @@ public class RobotConstants {
      * @return double - value converted to inches
      */
     public static double convertMillimetersToInches(double inValueInMillimeters) {
-        return inValueInMillimeters / CONVERSION_MM_TO_INCH;
+        return inValueInMillimeters / CONVERSION_FACTOR_MM_INCH;
     }
 
     /**
@@ -560,6 +579,6 @@ public class RobotConstants {
      * @return double - value converted to millimeters
      */
     public static double convertInchesToMillimeters(double inValueInInches) {
-        return inValueInInches * CONVERSION_MM_TO_INCH;
+        return inValueInInches * CONVERSION_FACTOR_MM_INCH;
     }
 }
