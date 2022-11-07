@@ -87,9 +87,9 @@ public class OpTeleopMain extends LinearOpMode {
     SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
-    SysVision sysVision = new SysVision(this);
-    List<Recognition> listVisionRecognitions;
-    Recognition recognitionTargetZone;
+    //SysVision sysVision = new SysVision(this);
+    //List<Recognition> listVisionRecognitions;
+    //Recognition recognitionTargetZone;
 
     // ------------------------------------------------------------
     // Misc
@@ -127,8 +127,8 @@ public class OpTeleopMain extends LinearOpMode {
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
 
-        sysVision.init();
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+        //sysVision.init();
+        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Teleop Mode
