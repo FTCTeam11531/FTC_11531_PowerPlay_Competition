@@ -175,9 +175,6 @@ public class SysDrivetrain {
         //
         // This diagram is derived from the axes in section 3.4 https://www.bosch-sensortec.com/media/boschsensortec/downloads/datasheets/bst-bno055-ds000.pdf
         // and the placement of the dot/orientation from https://docs.revrobotics.com/rev-control-system/control-system-overview/dimensions#imu-location
-        //
-        // For example, if +Y in this diagram faces downwards, you would use AxisDirection.NEG_Y.
-        // BNO055IMUUtil.remapZAxis(imu, AxisDirection.NEG_Y);
 
         // Initialize the IMU board/unit on the Rev Control Hub
         imuUnit = sysOpMode.hardwareMap.get(BNO055IMU.class, RobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
@@ -282,7 +279,7 @@ public class SysDrivetrain {
         double inputYaw     = (inYaw * inMaxOutputPowerPercent);
 
         // Get heading value from the IMU
-        double botHeading = getIMUHeading() + RobotConstants.CommonSettings.IMU_TRANSITION_ADJUSTMENT;
+        double botHeading = getIMUHeading() + RobotConstants.CommonSettings.getImuTransitionAdjustment();
 
         // Adjust the lateral and axial movements based on heading
         double adjLateral = inputLateral * Math.cos(botHeading) - inputAxial * Math.sin(botHeading);
@@ -383,6 +380,10 @@ public class SysDrivetrain {
      */
     public void driveDistance(double inAxialInches, double inLateralInches, double inMaxOutputPowerPercent) {
 
+        // ---------------------
+        // WORK IN PROGRESS!!
+        // ---------------------
+
         // Set target position
         leftFrontDrive.setTargetPosition(100);
         leftBackDrive.setTargetPosition(-100);
@@ -417,19 +418,14 @@ public class SysDrivetrain {
 
         // Get heading value from the IMU
         // Read inverse IMU heading, as the IMU heading is CW positive
-        outIMUHeadingValue = -imuUnit.getAngularOrientation().firstAngle;
+        outIMUHeadingValue = -(imuUnit.getAngularOrientation().firstAngle);
+
+        // Should the IMU heading be inversed? Does it matter?
+        // Will need to view the heading readout on the driver hub
+
+        //imuUnit.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle
 
         return outIMUHeadingValue;
-    }
-
-    /**
-     * read the raw (un-offset Gyro heading) directly from the IMU
-     * <hr>
-     * @return double Gyro Heading from IMU
-     */
-    public double getRawHeading() {
-        Orientation rawHeadingAngle = imuUnit.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
-        return rawHeadingAngle.firstAngle;
     }
 
     /**
@@ -441,7 +437,7 @@ public class SysDrivetrain {
     public double getSteeringCorrection(double inTargetHeader, double inProportionalGain) {
 
         // Determine the robot heading current PID error
-        trackHeadingRobot = getRawHeading() - trackHeadingOffset;
+        trackHeadingRobot = getIMUHeading() - trackHeadingOffset;
 
         // Determine the heading current error
         trackHeadingError = inTargetHeader - trackHeadingRobot;
@@ -496,6 +492,42 @@ public class SysDrivetrain {
 
         // Return value
         return outPowerValue;
+    }
+
+    /**
+     *
+     * @param inMotorLabel
+     * @return
+     */
+    public int getDrivetrainMotorEncoderPosition(String inMotorLabel) {
+        // Variable for output Encoder value for drivetrain motor(s)
+        int outEncoderValue = 0;
+
+        // Get value for motor specified in method call
+        switch (inMotorLabel) {
+            // Drivetrain Motor - Left Front
+            case RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT:
+                outEncoderValue = leftFrontDrive.getCurrentPosition();
+                break;
+            // Drivetrain Motor - Left Back
+            case RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK:
+                outEncoderValue = leftBackDrive.getCurrentPosition();
+                break;
+            // Drivetrain Motor - Right Front
+            case RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT:
+                outEncoderValue = rightFrontDrive.getCurrentPosition();
+                break;
+            // Drivetrain Motor - Right Back
+            case RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK:
+                outEncoderValue = rightBackDrive.getCurrentPosition();
+                break;
+            // Default - No match
+            default:
+                outEncoderValue = 0;
+        }
+
+        // Return value
+        return outEncoderValue;
     }
 
     /**
@@ -649,7 +681,7 @@ public class SysDrivetrain {
     public void setRobotHeadingReset() {
 
         // Set the Heading Offset to the IMU raw heading
-        trackHeadingOffset = getRawHeading();
+        trackHeadingOffset = getIMUHeading();
 
         // Reset the Robot Heading to Zero
         trackHeadingRobot = 0;

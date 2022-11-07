@@ -31,7 +31,9 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import android.app.Activity;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
+import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
@@ -76,8 +78,10 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
     // -- Claw System
+    SysClaw sysClaw = new SysClaw(this);
 
     // -- LinearSlide System
+    SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
 
     // -- Lighting System
     SysLighting sysLighting = new SysLighting(this);
@@ -121,6 +125,12 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
 
         sysVision.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+
+        sysClaw.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
+
+        sysLinearSlide.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Autonomous Mode
@@ -190,6 +200,12 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             telemetry.update();
 
             // ------------------------------------------------------------
+            // Claw - Clamp starting cone
+            // ------------------------------------------------------------
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
+
+            // ------------------------------------------------------------
             // Drive and Park in Correct Zone!
             // ------------------------------------------------------------
             telemetry.addData("-", "------------------------------");
@@ -198,80 +214,198 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             telemetry.addData("Drivetrain Mode", sysDrivetrain.getLabelDrivetrainMode());
             telemetry.addData("Drivetrain Power", sysDrivetrain.getLabelDrivetrainOutputPower());
             telemetry.addData("-", "------------------------------");
+            telemetry.update();
 
             // Get the target zone from recongnition
             targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
 
             switch (targetZone) {
 
+                // ---------------------------
                 // Drive to Zone 1
+                // ---------------------------
                 case 1:
                     telemetry.addData("Zone 1", recognitionTargetZone.getLabel());
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- Before (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
 
-                    // Drive to Zone One
+                    // Drive to Zone 1
+                    // ---------------------------
                     // [Y] - Axial - Driving forward and backward
                     // [X] - Lateral - Strafing right and left
                     // [R] - Yaw - Rotating Clockwise and counter clockwise
 
                     // Drive Forward - Two Seconds
+                    // ---------------------------
                     sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
 
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
+
                     // Drive Left - One Second
+                    // ---------------------------
                     sysDrivetrain.driveInputTimed(0, -1, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 1);
 
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
+
                     // Zone Parking Complete
+                    // ---------------------------
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE);
                     break;
 
+                // ---------------------------
                 // Drive to Zone 2
+                // ---------------------------
                 case 2:
                     telemetry.addData("Zone 2", recognitionTargetZone.getLabel());
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- Before (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
 
-                    // Drive to Zone Two
+                    // Drive to Zone 2
+                    // ---------------------------
                     // [Y] - Axial - Driving forward and backward
                     // [X] - Lateral - Strafing right and left
                     // [R] - Yaw - Rotating Clockwise and counter clockwise
 
                     // Drive Forward - Two Seconds
+                    // ---------------------------
                     sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
 
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
+
                     // Zone Parking Complete
+                    // ---------------------------
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);
                     break;
 
+                // ---------------------------
                 // Drive to Zone 3
+                // ---------------------------
                 case 3:
                     telemetry.addData("Zone 3", recognitionTargetZone.getLabel());
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- Before (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
 
-                    // Drive to Zone Three
+                    // Drive to Zone 3
+                    // ---------------------------
                     // [Y] - Axial - Driving forward and backward
                     // [X] - Lateral - Strafing right and left
                     // [R] - Yaw - Rotating Clockwise and counter clockwise
 
                     // Drive Forward - Two Seconds
+                    // ---------------------------
                     sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
 
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
+
                     // Drive Right - One Second
+                    // ---------------------------
                     sysDrivetrain.driveInputTimed(0, 1, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 1);
 
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
+
                     // Zone Parking Complete
+                    // ---------------------------
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE);
                     break;
 
+                // ------------------------------------------------
                 // Action to perform when Zone was not determined!
+                // ------------------------------------------------
                 default:
                     telemetry.addData("None", recognitionTargetZone.getLabel());
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- Before (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
 
                     // Default
+                    // ---------------------------
                     // [Y] - Axial - Driving forward and backward
                     // [X] - Lateral - Strafing right and left
                     // [R] - Yaw - Rotating Clockwise and counter clockwise
 
                     // Drive Forward - Two Seconds
+                    // ---------------------------
                     sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
 
+                    telemetry.addData("-", "------------------------------");
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+                    telemetry.update();
 
                     // Zone Parking Invalid :(
+                    // ---------------------------
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
             }
 
@@ -287,7 +421,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         }
 
         // Update the Transition Adjustment Value for the IMU
-        RobotConstants.CommonSettings.IMU_TRANSITION_ADJUSTMENT = sysDrivetrain.getIMUHeading();
+        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getIMUHeading());
 
         // ------------------------------------------------------------
         // - send telemetry to driver hub

@@ -119,6 +119,38 @@ public class RobotConstants {
 
         // Transition from Autonomous to Teleop - Global Static variables (not constants)
         public static double IMU_TRANSITION_ADJUSTMENT = 0;
+
+        /**
+         * <h2>Drivetrain Method: getImuTransitionAdjustment</h2>
+         * <hr>
+         * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+         * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+         * <hr>
+         * <p>
+         * Get the IMU Heading from an OpMode transition
+         * </p>
+         *
+         * @return double - return the IMU adjustment from OpMode transition
+         */
+        public static double getImuTransitionAdjustment() {
+            return IMU_TRANSITION_ADJUSTMENT;
+        }
+
+        /**
+         * <h2>Drivetrain Method: setImuTransitionAdjustment</h2>
+         * <hr>
+         * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+         * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+         * <hr>
+         * <p>
+         * Set the IMU Heading from an OpMode transition
+         * </p>
+         *
+         * @param inHeading - Input Heading from OpMode transition
+         */
+        public static void setImuTransitionAdjustment(double inHeading) {
+            IMU_TRANSITION_ADJUSTMENT = inHeading;
+        }
     }
 
     /**
@@ -185,7 +217,7 @@ public class RobotConstants {
                                                                  // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
 
         // Motor Encoder Feed Forward Configuration(s)
-        public static final double FEED_FORWARD_KV = 1.0 / rpmToVelocity(MOTOR_MAX_RPM); // volts * seconds / distance
+        public static final double FEED_FORWARD_KV = 1.0 / getRpmToVelocity(MOTOR_MAX_RPM); // volts * seconds / distance
         public static final double FEED_FORWARD_KA = 0; // volts * seconds^2 / distance
         public static final double FEED_FORWARD_KS = 0; // volts
 
@@ -220,7 +252,7 @@ public class RobotConstants {
          *
          * @return double (Inches)
          */
-        public static double encoderTicksToInches(double inTicks) {
+        public static double getEncoderTicksToInches(double inTicks) {
             double outInches = 0;
 
             outInches = WHEEL_RADIUS_INCHES * 2 * Math.PI * EXTERNAL_GEAR_RATIO * inTicks / ENCODER_TICKS_PER_REV;
@@ -243,7 +275,7 @@ public class RobotConstants {
          *
          * @return double (Velocity)
          */
-        public static double rpmToVelocity(double inRpm) {
+        public static double getRpmToVelocity(double inRpm) {
             double outVelocity = 0;
 
             outVelocity = inRpm * EXTERNAL_GEAR_RATIO * Math.PI * WHEEL_RADIUS_INCHES / 60.0;
@@ -312,6 +344,13 @@ public class RobotConstants {
         public static final int ENCODER_SET_POINT_LOW_GOAL = 1500;
         public static final int ENCODER_SET_POINT_GROUND_GOAL = 0;
 
+        // Encoder Set Points for cone stack (cone 5 (top), cone 4, 3, 2, cone 1 (bottom))
+        public static final int ENCODER_SET_POINT_CONE_STACK_5 = 500;
+        public static final int ENCODER_SET_POINT_CONE_STACK_4 = 400;
+        public static final int ENCODER_SET_POINT_CONE_STACK_3 = 300;
+        public static final int ENCODER_SET_POINT_CONE_STACK_2 = 200;
+        public static final int ENCODER_SET_POINT_CONE_STACK_1 = 100;
+
         // Motor Output Setting(s)
         public static final double MOTOR_OUTPUT_POWER_MAX = 1;
 
@@ -338,7 +377,7 @@ public class RobotConstants {
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_CLAW_SERVO = "Servo";
 
-        // Servo Position(s) [0.00 - 1.00]
+        // Servo Position(s) [0.00 - 1.00] = 0 - 180 (degrees)
         // Claw Clamp
         public static final double SERVO_POSITION_CLAW_CLAMP_START = .50;
         public static final double SERVO_POSITION_CLAW_CLAMP_OPEN = .10;

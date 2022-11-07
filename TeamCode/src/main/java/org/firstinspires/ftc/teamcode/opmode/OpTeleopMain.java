@@ -45,6 +45,7 @@ import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
+import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
 // Renamed in TeamCode as: OpTeleopMain.java
@@ -199,8 +200,14 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
 
             // Button Action - Cycle Drive mode
-            //if(gamepad1.back)
-            //    sysDrivetrain.setDrivetrainModeNext();
+            if(gamepad1.back) {
+                if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC)) {
+                    sysDrivetrain.stateDrivetrainMode = StateDrivetrainMode.Robot_Centric;
+                }
+                else {
+                    sysDrivetrain.stateDrivetrainMode = StateDrivetrainMode.Field_Centric;
+                }
+            }
 
             // Button Action - Cycle Output Power Setting
             //if(gamepad1.start)
@@ -237,7 +244,7 @@ public class OpTeleopMain extends LinearOpMode {
 
             // Button Action - Turn robot 180 degrees (180 deg spin)
 //            if(gamepad1.x) {
-//                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+//                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 //            }
 
             // ------------------------------------------------------------
@@ -334,6 +341,21 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("Hardware Profile", robotConfigName);
 
             // ------------------------------------------------------------
+            // - Gamepad telemetry
+            // ------------------------------------------------------------
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "-- Gamepad");
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Gamepad 1 - [Y] Axial", "%4.2f", gamepad1.left_stick_y);
+            telemetry.addData("Gamepad 1 - [X] Lateral", "%4.2f", gamepad1.left_stick_x);
+            telemetry.addData("Gamepad 1 - [R] Rotation", "%4.2f", gamepad1.right_stick_x);
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Gamepad 2 - Linear Slide", "%4.2f", gamepad2.right_stick_y);
+            telemetry.addData("Gamepad 2 - Claw Up-Down", "%4.2f", gamepad2.left_stick_y);
+            telemetry.addData("Gamepad 2 - Claw Side-to-Side", "%4.2f", gamepad2.left_stick_x);
+            telemetry.addData("-", "------------------------------");
+
+            // ------------------------------------------------------------
             // - Drivetrain telemetry
             // ------------------------------------------------------------
             telemetry.addData("-", "------------------------------");
@@ -394,5 +416,12 @@ public class OpTeleopMain extends LinearOpMode {
             // Pace this loop so hands move at a reasonable speed.
             //sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
         }
+
+        // ------------------------------------------------------------
+        // Closing Teleop
+        // ------------------------------------------------------------
+        // Update the Transition Adjustment Value for the IMU
+        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getIMUHeading());
+
     }
 }

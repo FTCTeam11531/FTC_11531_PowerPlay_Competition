@@ -37,8 +37,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
+import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import java.util.List;
@@ -76,14 +78,16 @@ public class OpAutoTimedMovement extends LinearOpMode {
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
     // -- Claw System
+    SysClaw sysClaw = new SysClaw(this);
 
     // -- LinearSlide System
+    SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
 
     // -- Lighting System
     SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
-//    SysVision sysVision = new SysVision(this);
+    SysVision sysVision = new SysVision(this);
 
     // Settings for captured image
     Recognition recognitionTargetZone;
@@ -118,8 +122,14 @@ public class OpAutoTimedMovement extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-//        sysVision.init(robotConfigName);
+        sysVision.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+
+        sysClaw.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
+
+        sysLinearSlide.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Autonomous Mode
@@ -163,6 +173,12 @@ public class OpAutoTimedMovement extends LinearOpMode {
             // SETUP FOR TESTING ONLY //
             // ---------------------- //
             inputOutputPower = .5;
+
+            // ------------------------------------------------------------
+            // Claw - Clamp starting cone
+            // ------------------------------------------------------------
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
 
             // ------------------------------------------------------------
             // Commands to Run
@@ -336,7 +352,7 @@ public class OpAutoTimedMovement extends LinearOpMode {
         }
 
         // Update the Transition Adjustment Value for the IMU
-        RobotConstants.CommonSettings.IMU_TRANSITION_ADJUSTMENT = sysDrivetrain.getIMUHeading();
+        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getIMUHeading());
 
         // ------------------------------------------------------------
         // - send telemetry to driver hub
