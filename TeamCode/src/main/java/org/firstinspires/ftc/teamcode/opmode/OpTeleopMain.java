@@ -136,9 +136,10 @@ public class OpTeleopMain extends LinearOpMode {
         sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         // ------------------------------------------------------------
-        // Inputs for: Drivetrain
+        // Variables for OpMode
         // ------------------------------------------------------------
         double inputAxial, inputLateral, inputYaw;
+        boolean isManualSlideMode = false;
 
         // ------------------------------------------------------------
         // Send telemetry message to signify robot completed initialization and waiting to start;
@@ -253,10 +254,12 @@ public class OpTeleopMain extends LinearOpMode {
             // Manually control Linear Slide
             if(Math.abs(gamepad2.right_stick_y) == 1) {
                 sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
+                isManualSlideMode = true;
             }
 
             // Button Action - Set Linear Slide to High Goal
             if(gamepad2.y) {
+                isManualSlideMode = false;
 
                 // Move Linear Slide to High Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
@@ -265,6 +268,7 @@ public class OpTeleopMain extends LinearOpMode {
 
             // Button Action - Set Linear Slide to Medium Goal
             if(gamepad2.x) {
+                isManualSlideMode = false;
 
                 // Move Linear Slide to Medium Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
@@ -273,6 +277,7 @@ public class OpTeleopMain extends LinearOpMode {
 
             // Button Action - Set Linear Slide to Low Goal
             if(gamepad2.b) {
+                isManualSlideMode = false;
 
                 // Move Linear Slide to Low Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
@@ -281,6 +286,7 @@ public class OpTeleopMain extends LinearOpMode {
 
             // Button Action - Set Linear Slide to Ground Goal
             if(gamepad2.a) {
+                isManualSlideMode = false;
 
                 // Move Linear Slide to Ground Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
@@ -288,7 +294,7 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // Apply 'Break' to Linear Slide (when returning from manual override)
-            if(Math.abs(gamepad2.right_stick_y) != 1 && !gamepad2.y && !gamepad2.x && !gamepad2.b && !gamepad2.a) {
+            if(Math.abs(gamepad2.right_stick_y) != 1 && isManualSlideMode) {
                 sysLinearSlide.moveLinearSlideToTarget(sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
