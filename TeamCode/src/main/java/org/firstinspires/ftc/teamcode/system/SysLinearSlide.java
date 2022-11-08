@@ -223,6 +223,7 @@ public class SysLinearSlide {
             }
         }
 
+// Original logic to limit movement between min/max setpoints. Reworked to allow movement in opposite direction.
 //        if((calcLinearSlideMovement < RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX)
 //            && (calcLinearSlideMovement > RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN)) {
 //            setLinearSlideMotorPower(inMaxOutputPowerPercent);
