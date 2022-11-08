@@ -29,18 +29,19 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
-import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
+import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
-// Renamed in TeamCode as: OpAutoConeStackZonePark.java
+// Renamed in TeamCode as: OpAutoStartConeZonePark.java
 
 /**
- * <h2>FTC Driver Station Autonomous OpMode/Command: Cone Stack | Zone Park</h2>
+ * <h2>FTC Driver Station Autonomous OpMode/Command: Start Cone | Zone Park</h2>
  * <hr>
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
@@ -48,16 +49,16 @@ import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
  * <p>
  * This Autonomous Command/Mode will perform the following autonomous actions:<br>
  * - Read Custom Zone Marker<br>
- * - Move to Cone Stack<br>
- * - - Pick and Stack x Cones<br>
+ * - Move to High Goal<br>
+ * - Place Start Cone on Goal<br>
  * - Move to correct Zone indicated by marker<br>
  * - Park completely within the zone<br>
  * </p>
  * <hr>
  */
-@Autonomous(name="Cone Stack | Zone Park", group="_auto")
-@Disabled
-public class OpAutoConeStackZonePark extends LinearOpMode {
+@Autonomous(name="Start Cone | Zone Park", group="_auto")
+//@Disabled
+public class OpAutoStartConeZonePark extends LinearOpMode {
 
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system

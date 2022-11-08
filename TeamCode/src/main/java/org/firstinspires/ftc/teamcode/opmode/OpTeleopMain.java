@@ -194,7 +194,6 @@ public class OpTeleopMain extends LinearOpMode {
             // -- -- Axis (left_stick_y): Up/Down (0-1)
             // -- -- Axis (left_stick_x): Left/Right (0-1)
 
-
             // ------------------------------------------------------------
             // Drivetrain
             // ------------------------------------------------------------
@@ -288,6 +287,11 @@ public class OpTeleopMain extends LinearOpMode {
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
             }
 
+            // Apply 'Break' to Linear Slide (when returning from manual override)
+            if(Math.abs(gamepad2.right_stick_y) != 1 && !gamepad2.y && !gamepad2.x && !gamepad2.b && !gamepad2.a) {
+                sysLinearSlide.moveLinearSlideToTarget(sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            }
+
             // ------------------------------------------------------------
             // Claw
             // ------------------------------------------------------------
@@ -379,7 +383,7 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- LinearSlide");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Linear Encoder Point", sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT));
+            telemetry.addData("Linear Encoder Point", sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY));
             telemetry.addData("-", "------------------------------");
             telemetry.addData("Slide left/Right", "%4.2f, %4.2f"
                     , sysLinearSlide.getLinearSlideMotorPower(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_LEFT)

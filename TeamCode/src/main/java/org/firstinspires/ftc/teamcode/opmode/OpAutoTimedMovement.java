@@ -62,7 +62,7 @@ import java.util.List;
  * </p>
  * <hr>
  */
-@Autonomous(name="Auto: Timed Movement", group="_auto")
+@Autonomous(name="Test: Timed Movement", group="test")
 //@Disabled
 public class OpAutoTimedMovement extends LinearOpMode {
     // ------------------------------------------------------------
