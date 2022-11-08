@@ -210,13 +210,26 @@ public class SysLinearSlide {
         double calcLinearSlideMovement = getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) + inMaxOutputPowerPercent;
 
         // Allow motor output within min/max limits
-        if((calcLinearSlideMovement < RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX)
-            && (calcLinearSlideMovement > RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN)) {
-            setLinearSlideMotorPower(inMaxOutputPowerPercent);
+        // Going Up!
+        if(inMaxOutputPowerPercent > 0) {
+            if(calcLinearSlideMovement < RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX) {
+                setLinearSlideMotorPower(inMaxOutputPowerPercent);
+            }
         }
+        // Coming Down!
         else {
-            setLinearSlideMotorPower(0);
+            if(calcLinearSlideMovement > RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN) {
+                setLinearSlideMotorPower(inMaxOutputPowerPercent);
+            }
         }
+
+//        if((calcLinearSlideMovement < RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX)
+//            && (calcLinearSlideMovement > RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN)) {
+//            setLinearSlideMotorPower(inMaxOutputPowerPercent);
+//        }
+//        else {
+//            setLinearSlideMotorPower(0);
+//        }
 
     }
 
