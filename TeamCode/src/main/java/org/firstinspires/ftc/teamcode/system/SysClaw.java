@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.system;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
@@ -110,6 +111,19 @@ public class SysClaw {
         sysOpMode.telemetry.addData(">", " System: The Claw Initialized");
         sysOpMode.telemetry.addData(">", "--------------------------------");
         sysOpMode.telemetry.update();
+    }
+
+    /**
+     *
+     * @param inAppliedPower
+     */
+    public void moveClawSideManually(double inAppliedPower) {
+
+        // Calculate movement
+        double calcClawSideMotion = RobotConstants.Claw.SERVO_MANUAL_CONTROL_CLAW_SIDE * inAppliedPower;
+
+        // Move claw side-to-side - (claw position + motion calculation within range)
+        setClawSidePosition(Range.clip(getClawSidePosition() + calcClawSideMotion, 0, 1));
     }
 
     /**

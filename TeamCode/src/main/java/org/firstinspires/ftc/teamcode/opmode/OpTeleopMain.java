@@ -177,10 +177,10 @@ public class OpTeleopMain extends LinearOpMode {
             // Gamepad1 = Main Driver
             // -- Robot Movement
             // -- -- Axis (left_stick_x, left_stick_y): Drive
-            // -- -- Axis (right_stick_x, left_stick_y): Rotate
+            // -- -- Axis (right_stick_x): Rotate
             // -- -- X: 180 spin
             // -- -- Y: Set Output Speed to Med
-            // -- -- A: Set Output Speed to Snail
+            // -- -- A: Set Output Speed to Low
             //
             // Gamepad2 = Co-Driver
             // -- Linear Slide
@@ -226,7 +226,7 @@ public class OpTeleopMain extends LinearOpMode {
             // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
             // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
             // This way it's also easy to just drive straight, or just turn.
-            inputYaw =  gamepad1.right_stick_x;
+            inputYaw =  -(gamepad1.right_stick_x);
 
             // Drivetrain Type determined by 'Drivetrain Mode' enumeration selection (Default to Field Centric)
             if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC)) {
@@ -243,9 +243,9 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // Button Action - Turn robot 180 degrees (180 deg spin)
-//            if(gamepad1.x) {
-//                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-//            }
+            if(gamepad1.x) {
+                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            }
 
             // ------------------------------------------------------------
             // LinearSlide
@@ -317,6 +317,12 @@ public class OpTeleopMain extends LinearOpMode {
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
             }
 
+            // Manually control side-to-side motion
+
+
+            // Manually control up-down motion
+
+            // Button Action - move to claw left side setpoint
             //if(gamepad1.dpad_left) {
 
                 // Claw side-to-side movement (Left)
@@ -324,12 +330,14 @@ public class OpTeleopMain extends LinearOpMode {
 
             //}
 
+            // Button Action - move to claw right side setpoint
             //if(gamepad1.dpad_right) {
 
                 // Claw side-to-side movement (Right)
 
             //}
 
+            // Button Action - move to claw up setpoint
             //if(gamepad1.dpad_up) {
 
                 // Claw up-down movement (Up)
@@ -337,6 +345,7 @@ public class OpTeleopMain extends LinearOpMode {
 
             //}
 
+            // Button Action - move to claw down setpoint
             //if(gamepad1.dpad_down) {
 
                 // Claw up-down movement (Down)

@@ -340,8 +340,8 @@ public class RobotConstants {
 
         // Encoder Set Points for each Goal (High/Med/Low/Ground)
         public static final int ENCODER_SET_POINT_HIGH_GOAL = 6000;
-        public static final int ENCODER_SET_POINT_MED_GOAL = 2500;
-        public static final int ENCODER_SET_POINT_LOW_GOAL = 1500;
+        public static final int ENCODER_SET_POINT_MED_GOAL = 4200;
+        public static final int ENCODER_SET_POINT_LOW_GOAL = 2800;
         public static final int ENCODER_SET_POINT_GROUND_GOAL = 0;
 
         // Encoder Set Points for cone stack (cone 5 (top), cone 4, 3, 2, cone 1 (bottom))
@@ -376,6 +376,11 @@ public class RobotConstants {
     public static final class Claw {
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_CLAW_SERVO = "Servo";
+
+        // Manual Control
+        public static final double SERVO_MANUAL_CONTROL_CLAW_CLAMP = 0.005;
+        public static final double SERVO_MANUAL_CONTROL_CLAW_SIDE = 0.005;
+        public static final double SERVO_MANUAL_CONTROL_CLAW_UPDOWN = 0.005;
 
         // Servo Position(s) [0.00 - 1.00] = 0 - 180 (degrees)
         // Claw Clamp

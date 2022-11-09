@@ -87,7 +87,7 @@ public class OpAutoTimedMovement extends LinearOpMode {
     SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
-    SysVision sysVision = new SysVision(this);
+    //SysVision sysVision = new SysVision(this);
 
     // Settings for captured image
     Recognition recognitionTargetZone;
@@ -122,8 +122,8 @@ public class OpAutoTimedMovement extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-        sysVision.init();
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+        //sysVision.init();
+        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
@@ -193,20 +193,20 @@ public class OpAutoTimedMovement extends LinearOpMode {
 
             // Drive forward for 2 seconds
             inputAxial = 0;
-            inputLateral = -1;
+            inputLateral = -1; // forward
             inputYaw = 0;
             inputTimeSeconds = 2;
             sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
 
             // Drive left for 2 seconds
-            inputAxial = -1;
+            inputAxial = -1;  // left
             inputLateral = 0;
             inputYaw = 0;
             inputTimeSeconds = 2;
             sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
 
             // Drive right for 2 seconds
-            inputAxial = 1;
+            inputAxial = 1; // right
             inputLateral = 0;
             inputYaw = 0;
             inputTimeSeconds = 2;
@@ -214,10 +214,18 @@ public class OpAutoTimedMovement extends LinearOpMode {
 
             // Drive backwards for 2 seconds
             inputAxial = 0;
-            inputLateral = 1;
+            inputLateral = 1; // backwards
             inputYaw = 0;
             inputTimeSeconds = 2;
             sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
+
+            // Drive rotate for .5 seconds
+            inputAxial = 0;
+            inputLateral = 0; // backwards
+            inputYaw = 1;
+            inputTimeSeconds = .5;
+            sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
+
 
             // Position 2
             sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);
