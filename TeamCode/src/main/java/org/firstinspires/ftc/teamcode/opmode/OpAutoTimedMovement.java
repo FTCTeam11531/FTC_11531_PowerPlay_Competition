@@ -188,33 +188,33 @@ public class OpAutoTimedMovement extends LinearOpMode {
             sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE);
 
             // Current Config
-            // forward =  -1 | backward = 1
-            // left = -1 | right = 1
+            // [y] Axial forward =  1 | backward = -1
+            // [x] lateral left = -1 | right = 1
 
             // Drive forward for 2 seconds
-            inputAxial = 0;
-            inputLateral = -1; // forward
+            inputAxial = 1;
+            inputLateral = 0; // forward
             inputYaw = 0;
             inputTimeSeconds = 2;
             sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
 
             // Drive left for 2 seconds
-            inputAxial = -1;  // left
-            inputLateral = 0;
+            inputAxial = 0;  // left
+            inputLateral = -1;
             inputYaw = 0;
             inputTimeSeconds = 2;
             sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
 
             // Drive right for 2 seconds
-            inputAxial = 1; // right
-            inputLateral = 0;
+            inputAxial = 0; // right
+            inputLateral = 1;
             inputYaw = 0;
             inputTimeSeconds = 2;
             sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
 
             // Drive backwards for 2 seconds
-            inputAxial = 0;
-            inputLateral = 1; // backwards
+            inputAxial = -1;
+            inputLateral = 0; // backwards
             inputYaw = 0;
             inputTimeSeconds = 2;
             sysDrivetrain.driveInputTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);

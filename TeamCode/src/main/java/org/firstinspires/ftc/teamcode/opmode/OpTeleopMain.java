@@ -237,8 +237,8 @@ public class OpTeleopMain extends LinearOpMode {
             }
             else {
                 // Send gamepad input for drivetrain to driveMecanumFieldCentric method in the drivetrain system class
-                inputAxial = (gamepad1.left_stick_x);
-                inputLateral = (gamepad1.left_stick_y);  // Note: pushing stick forward gives negative value
+                inputAxial = -(gamepad1.left_stick_y);
+                inputLateral = (gamepad1.left_stick_x);  // Note: pushing stick forward gives negative value
                 sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
             }
 
