@@ -188,7 +188,7 @@ public class SysDrivetrain {
 
         // Reset Drive Motor Encoder(s)
         setDriveMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setRobotHeadingReset();
+        resetRobotHeading();
 
         // Display telemetry
         sysOpMode.telemetry.addData(">", "------------------------------------");
@@ -279,7 +279,7 @@ public class SysDrivetrain {
         double inputYaw     = (inYaw * inMaxOutputPowerPercent);
 
         // Get heading value from the IMU
-        double botHeading = getIMUHeading() + RobotConstants.CommonSettings.getImuTransitionAdjustment();
+        double botHeading = getRobotHeadingAdj();
 
         // Adjust the lateral and axial movements based on heading
         double adjLateral = inputLateral * Math.cos(botHeading) - inputAxial * Math.sin(botHeading);
@@ -345,9 +345,10 @@ public class SysDrivetrain {
      * <br>
      *
      * @param inTargetHeading
-     * @param inMaxOutputPowerPercent
+     * @param inRotateDirection
+     * @param inOutputPowerPercent
      */
-    public void driveTurnToHeading(double inTargetHeading, double inMaxOutputPowerPercent) {
+    public void driveTurnToHeading(double inTargetHeading, double inRotateDirection, double inOutputPowerPercent) {
         // local variable for turn output power
         double robotTurnSpeed;
 
@@ -355,17 +356,14 @@ public class SysDrivetrain {
         getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_DRIVE_GAIN);
 
         // Loop while not at heading
-        while (sysOpMode.opModeIsActive() && (Math.abs(trackHeadingError) > RobotConstants.Drivetrain.AUTO_HEADING_THRESHOLD)) {
+        while (sysOpMode.opModeIsActive() && (Math.abs(trackHeadingError) > 1)) {
 
-            // Calculate the current error
             robotTurnSpeed = getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_DRIVE_GAIN);
 
-            // Determine steering to keep heading
-            robotTurnSpeed = Range.clip(robotTurnSpeed, -inMaxOutputPowerPercent, inMaxOutputPowerPercent);
+            robotTurnSpeed = Range.clip(robotTurnSpeed, -inOutputPowerPercent, inOutputPowerPercent);
 
             // Move Robot
-            driveMecanumFieldCentric(0, 0, robotTurnSpeed, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
-
+            driveMecanumFieldCentric(0, 0, robotTurnSpeed, inOutputPowerPercent);
         }
 
         // Stop Robot
@@ -401,7 +399,26 @@ public class SysDrivetrain {
     }
 
     /**
-     * <h2>Drivetrain Method: getIMUHeading</h2>
+     * <h2>Drivetrain Method: resetRobotHeading</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Reset the output heading value from the IMU.
+     * </p>
+     */
+    public void resetRobotHeading() {
+
+        // Set the Heading Offset to the IMU raw heading
+        trackHeadingOffset = getRobotHeadingRaw();
+
+        // Reset the Robot Heading to Zero
+        trackHeadingRobot = 0;
+    }
+
+    /**
+     * <h2>Drivetrain Method: getRobotHeadingRaw</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
      * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
@@ -409,35 +426,69 @@ public class SysDrivetrain {
      * <p>
      * Get the output heading value from the IMU.
      * </p>
-     * @return double - Output heading value from the IMU
-     * <br>
+     * @return double - Output heading value from the IMU - raw reading
      */
-    public double getIMUHeading() {
+    public double getRobotHeadingRaw() {
         // Variable for output heading value
-        double outIMUHeadingValue = 0;
+        double outRobotHeadingValue;
 
         // Get heading value from the IMU
         // Read inverse IMU heading, as the IMU heading is CW positive
-        outIMUHeadingValue = -(imuUnit.getAngularOrientation().firstAngle);
+        outRobotHeadingValue = -(imuUnit.getAngularOrientation().firstAngle);
 
         // Should the IMU heading be inversed? Does it matter?
         // Will need to view the heading readout on the driver hub
 
         //imuUnit.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle
 
-        return outIMUHeadingValue;
+        return outRobotHeadingValue;
     }
 
     /**
-     *
+     * <h2>Drivetrain Method: getRobotHeadingAdj</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the output heading value from the IMU (with offset adjustment).
+     * </p>
+     * @return double - Output heading value from the IMU (with offset adjustment)
+     * <br>
+     */
+    public double getRobotHeadingAdj() {
+        // Variable for output heading value
+        double outRobotHeadingValue;
+
+        // Get heading value from the IMU
+        // Read inverse IMU heading, as the IMU heading is CW positive
+        outRobotHeadingValue = getRobotHeadingRaw() + RobotConstants.CommonSettings.getImuTransitionAdjustment();
+
+        // Should the IMU heading be inversed? Does it matter?
+        // Will need to view the heading readout on the driver hub
+
+        //imuUnit.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle
+
+        return outRobotHeadingValue;
+    }
+
+    /**
+     * <h2>Drivetrain Method: getSteeringCorrection</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get steering correction value based on the target heading and P gain from control loop.
+     * </p>
      * @param inTargetHeader
      * @param inProportionalGain
      * @return
      */
     public double getSteeringCorrection(double inTargetHeader, double inProportionalGain) {
 
-        // Determine the robot heading current PID error
-        trackHeadingRobot = getIMUHeading() - trackHeadingOffset;
+        // Get robot header by subtracking the offset from the heading
+        trackHeadingRobot = getRobotHeadingRaw() - RobotConstants.CommonSettings.getImuTransitionAdjustment();
 
         // Determine the heading current error
         trackHeadingError = inTargetHeader - trackHeadingRobot;
@@ -459,13 +510,12 @@ public class SysDrivetrain {
      * Get the output power value for a drivetrain motor.
      * </p>
      * @param inMotorLabel  The Label Name of the motor to get the power value from
-     *
      * @return double - Output power value of the motor
      * <br>
      */
     public double getDrivetrainMotorPower(String inMotorLabel) {
         // Variable for output Power value for drivetrain motor(s)
-        double outPowerValue = 0;
+        double outPowerValue;
 
         // Get value for motor specified in method call
         switch (inMotorLabel) {
@@ -495,13 +545,20 @@ public class SysDrivetrain {
     }
 
     /**
-     *
-     * @param inMotorLabel
-     * @return
+     * <h2>Drivetrain Method: getDrivetrainMotorEncoderPosition</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the value of the current encoder position for a drivetrain motor.
+     * </p>
+     * @param inMotorLabel - String - hardware label for the motor to return value from
+     * @return int - Encoder position for the specified motor
      */
     public int getDrivetrainMotorEncoderPosition(String inMotorLabel) {
         // Variable for output Encoder value for drivetrain motor(s)
-        int outEncoderValue = 0;
+        int outEncoderValue;
 
         // Get value for motor specified in method call
         switch (inMotorLabel) {
@@ -673,18 +730,6 @@ public class SysDrivetrain {
         for (DcMotorEx itemMotor : listMotorsDrivetrain) {
             itemMotor.setZeroPowerBehavior(inZeroPowerBehavior);
         }
-    }
-
-    /**
-     *
-     */
-    public void setRobotHeadingReset() {
-
-        // Set the Heading Offset to the IMU raw heading
-        trackHeadingOffset = getIMUHeading();
-
-        // Reset the Robot Heading to Zero
-        trackHeadingRobot = 0;
     }
 
 }

@@ -87,6 +87,8 @@ public class RobotConstants {
         public static final String LABEL_MOTOR_LINEAR_SLIDE_LEFT = "linear_slide_left";
         public static final String LABEL_MOTOR_LINEAR_SLIDE_RIGHT = "linear_slide_right";
 
+        public static final String LABEL_DIGITALINPUT_LINEAR_SLIDE_GROUND_LIMIT = "linear_slide_ground_limit";
+
         // The Claw
         public static final String LABEL_SERVO_CLAW_ROTATE_SIDE = "claw_rotate_side";
         public static final String LABEL_SERVO_CLAW_ROTATE_UPDOWN = "claw_rotate_updown";
@@ -119,6 +121,7 @@ public class RobotConstants {
 
         // Transition from Autonomous to Teleop - Global Static variables (not constants)
         public static double IMU_TRANSITION_ADJUSTMENT = 0;
+
 
         /**
          * <h2>Drivetrain Method: getImuTransitionAdjustment</h2>
@@ -351,6 +354,9 @@ public class RobotConstants {
         public static final int ENCODER_SET_POINT_CONE_STACK_2 = 200;
         public static final int ENCODER_SET_POINT_CONE_STACK_1 = 100;
 
+        // Linear Slide Safe Position for Claw to Operate
+        public static final int ENCODER_SET_POINT_CLAW_SAFEZONE = 200;
+
         // Motor Output Setting(s)
         public static final double MOTOR_OUTPUT_POWER_MAX = 1;
 
@@ -384,9 +390,9 @@ public class RobotConstants {
 
         // Servo Position(s) [0.00 - 1.00] = 0 - 180 (degrees)
         // Claw Clamp
-        public static final double SERVO_POSITION_CLAW_CLAMP_START = .50;
-        public static final double SERVO_POSITION_CLAW_CLAMP_OPEN = .10;
-        public static final double SERVO_POSITION_CLAW_CLAMP_CLOSE = .80;
+        public static final double SERVO_POSITION_CLAW_CLAMP_START = .10;
+        public static final double SERVO_POSITION_CLAW_CLAMP_OPEN = .80;
+        public static final double SERVO_POSITION_CLAW_CLAMP_CLOSE = .10;
 
         // Claw Rotate Side-to-side
         public static final double SERVO_POSITION_CLAW_ROTATE_SIDE_START = .50;
@@ -462,6 +468,8 @@ public class RobotConstants {
 
         // Default Light Pattern
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.CP2_BREATH_SLOW;
+
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_PREGAME_OPTION_CONFIG = RevBlinkinLedDriver.BlinkinPattern.CP1_STROBE;
 
         // System Initialize Light Patter/state
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LIGHTING = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE;

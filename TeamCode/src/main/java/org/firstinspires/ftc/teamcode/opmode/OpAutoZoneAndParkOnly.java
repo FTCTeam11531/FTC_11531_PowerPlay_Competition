@@ -74,17 +74,14 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
+    // -- Lighting System
+    SysLighting sysLighting = new SysLighting(this);
+
     // -- Drivetrain System
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
     // -- Claw System
     SysClaw sysClaw = new SysClaw(this);
-
-    // -- LinearSlide System
-    SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
-
-    // -- Lighting System
-    SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
     SysVision sysVision = new SysVision(this);
@@ -128,9 +125,6 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
-
-        sysLinearSlide.init();
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Autonomous Mode
@@ -227,7 +221,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                 case 1:
                     telemetry.addData("Zone 1", recognitionTargetZone.getLabel());
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- Before (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- Before (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -247,7 +241,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                     sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
 
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -261,7 +255,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                     sysDrivetrain.driveInputTimed(0, -1, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 1);
 
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -281,7 +275,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                 case 2:
                     telemetry.addData("Zone 2", recognitionTargetZone.getLabel());
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- Before (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- Before (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -301,7 +295,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                     sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
 
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -321,7 +315,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                 case 3:
                     telemetry.addData("Zone 3", recognitionTargetZone.getLabel());
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- Before (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- Before (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -341,7 +335,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                     sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
 
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -355,7 +349,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                     sysDrivetrain.driveInputTimed(0, 1, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 1);
 
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -375,7 +369,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                 default:
                     telemetry.addData("None", recognitionTargetZone.getLabel());
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- Before (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- Before (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -395,7 +389,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                     sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
 
                     telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getIMUHeading());
+                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
                     telemetry.addData("Encoder Front left/Right", "%5f, %5f"
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                             , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
@@ -421,7 +415,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         }
 
         // Update the Transition Adjustment Value for the IMU
-        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getIMUHeading());
+        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
 
         // ------------------------------------------------------------
         // - send telemetry to driver hub

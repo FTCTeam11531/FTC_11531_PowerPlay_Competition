@@ -29,12 +29,20 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
+import android.app.Activity;
+
+import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
+import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
+import org.firstinspires.ftc.teamcode.system.SysLighting;
+import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
@@ -59,21 +67,32 @@ import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 @Autonomous(name="Start Cone | Zone Park", group="_auto")
 //@Disabled
 public class OpAutoStartConeZonePark extends LinearOpMode {
+    // ------------------------------------------------------------
+    // Robot Configuration
+    // ------------------------------------------------------------
+    RobotConfigFileManager robotConfigFileManager;
+    String robotConfigName;
 
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
+    // -- Lighting System
+    SysLighting sysLighting = new SysLighting(this);
+
     // -- Drivetrain System
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
     // -- Claw System
+    SysClaw sysClaw = new SysClaw(this);
 
     // -- LinearSlide System
-
-    // -- Lighting System
+    SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
 
     // -- Vision System
+    //SysVision sysVision = new SysVision(this);
 
+    // Settings for captured image
+    Recognition recognitionTargetZone;
 
     // ------------------------------------------------------------
     // Misc
@@ -83,31 +102,74 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        // ------------------------------------------------------------
+        // Configure Telemetry
+        // ------------------------------------------------------------
+        // Set telemetry mode to append
+        telemetry.setAutoClear(false);
+        telemetry.clearAll();
+
+        // ------------------------------------------------------------
+        // Get Hardware Configuration Profile Name
+        // ------------------------------------------------------------
+        robotConfigFileManager = new RobotConfigFileManager((Activity) hardwareMap.appContext);
+        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
         // Initialize System(s)
         // ------------------------------------------------------------
+        sysLighting.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
+
         sysDrivetrain.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
+
+        //sysVision.init();
+        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+
+        sysClaw.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
+
+        sysLinearSlide.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE);
+
+        // ------------------------------------------------------------
+        // Configure drivetrain for Autonomous Mode
+        // -- Set to run without encoders for timed drive mode
+        // ------------------------------------------------------------
+        sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        // ------------------------------------------------------------
+        // Inputs for: Drivetrain
+        // ------------------------------------------------------------
+        double inputAxial, inputLateral, inputYaw, inputTimeSeconds, inputOutputPower;
 
         // ------------------------------------------------------------
         // Send telemetry message to signify robot completed initialization and waiting to start;
         // ------------------------------------------------------------
+        telemetry.addData(">", "------------------------------------");
         telemetry.addData(">", "All Systems Ready - Waiting to Start");
         telemetry.update();
 
         // ------------------------------------------------------------
         // Wait for the game to start (driver presses PLAY)
         // ------------------------------------------------------------
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
         waitForStart();
+
+        // ------------------------------------------------------------
+        // Configure Telemetry
+        // ------------------------------------------------------------
+        // Set telemetry mode to append
+        telemetry.setAutoClear(false);
+        telemetry.clearAll();
+
         runtime.reset();
 
         // Return if a Stop Action is requested
         if (isStopRequested()) return;
 
-        // ------------------------------------------------------------
-        // Command Loop: run until the end of the autonomous period (or STOP action)
-        // ------------------------------------------------------------
-        while (opModeIsActive()) {
+        if (opModeIsActive()) {
 
             // ------------------------------------------------------------
             // Commands to Run
@@ -128,13 +190,15 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "<No Data Available>");
 
-            // ------------------------------------------------------------
-            // - send telemetry to driver hub
-            // ------------------------------------------------------------
-            telemetry.update();
-
-            // Pace this loop so hands move at a reasonable speed.
-            //sleep(50);
         }
+
+        // Update the Transition Adjustment Value for the IMU
+        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
+
+        // ------------------------------------------------------------
+        // - send telemetry to driver hub
+        // ------------------------------------------------------------
+        telemetry.update();
+
     }
 }

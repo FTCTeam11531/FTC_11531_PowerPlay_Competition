@@ -74,6 +74,9 @@ public class OpAutoTimedMovement extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
+    // -- Lighting System
+    SysLighting sysLighting = new SysLighting(this);
+
     // -- Drivetrain System
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
@@ -82,9 +85,6 @@ public class OpAutoTimedMovement extends LinearOpMode {
 
     // -- LinearSlide System
     SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
-
-    // -- Lighting System
-    SysLighting sysLighting = new SysLighting(this);
 
     // -- Vision System
     //SysVision sysVision = new SysVision(this);
@@ -229,145 +229,16 @@ public class OpAutoTimedMovement extends LinearOpMode {
 
             // Position 2
             sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);
-/*
-        // Drive left (field centric) for 2 seconds
-        inputAxial = 0;
-        inputLateral = 1;
-        inputYaw = 0;
-        inputTimeSeconds = 2;
-        sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
 
-        // Drive right (field centric) for 4 seconds
-        inputAxial = 0;
-        inputLateral = -1;
-        inputYaw = 0;
-        inputTimeSeconds = 4;
-        sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-
-        // Drive left (field centric) for 2 seconds
-        inputAxial = 0;
-        inputLateral = 1;
-        inputYaw = 0;
-        inputTimeSeconds = 2;
-        sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-
-        // Drive backwards (field centric) for 2 seconds
-        inputAxial = -1;
-        inputLateral = 0;
-        inputYaw = 0;
-        inputTimeSeconds = 2;
-        sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-
-        // Position 3
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE);
-
-        // Drive left (field centric) for 2 seconds
-        inputAxial = 0;
-        inputLateral = 1;
-        inputYaw = 0;
-        inputTimeSeconds = 2;
-        sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-
-        // Drive right (field centric) for 4 seconds
-        inputAxial = 0;
-        inputLateral = -1;
-        inputYaw = 0;
-        inputTimeSeconds = 4;
-        sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-
-        // Drive left (field centric) for 2 seconds
-        inputAxial = 0;
-        inputLateral = 1;
-        inputYaw = 0;
-        inputTimeSeconds = 2;
-        sysDrivetrain.driveMecanumFieldCentricTimed(inputAxial, inputLateral, inputYaw, inputOutputPower, inputTimeSeconds);
-*/
-            // Complete!!
-            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
-
-/*
-        // ------------------------------------------------------------
-        // Driver Hub Feedback
-        // ------------------------------------------------------------
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("Hardware Profile: ", robotConfigName);
-
-        // ------------------------------------------------------------
-        // - Telemetry Data
-        // ------------------------------------------------------------
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("-", "-- Autonomous               --");
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("-", "<No Data Available>");
-
-        // ------------------------------------------------------------
-        // - Drivetrain telemetry
-        // ------------------------------------------------------------
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("-", "-- Drivetrain");
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("Drivetrain Mode: ", sysDrivetrain.getLabelDrivetrainMode());
-        telemetry.addData("Drivetrain Power: ", sysDrivetrain.getLabelDrivetrainOutputPower());
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("Front left/Right: ", "%4.2f, %4.2f"
-                , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-        telemetry.addData("Back  left/Right: ", "%4.2f, %4.2f"
-                , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("Robot Heading: ", sysDrivetrain.getIMUHeading());
-
-        // ------------------------------------------------------------
-        // - Lighting telemetry
-        // ------------------------------------------------------------
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("-", "-- Lighting");
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("Pattern", sysLighting.ledLightPattern.toString());
-
-        // ------------------------------------------------------------
-        // - Vision telemetry
-        // ------------------------------------------------------------
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("-", "-- Vision");
-        telemetry.addData("-", "------------------------------");
-        telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
-        telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
-        telemetry.addData("-", "------------------------------");
-
-        // Process results for each Recognition
-        if (listVisionRecognitions != null) {
-            telemetry.addData("Objects Detected: ", listVisionRecognitions.size());
-
-            for (Recognition objRecognition : listVisionRecognitions) {
-                double objColumn = (objRecognition.getLeft() + objRecognition.getRight()) / 2;
-                double objRow = (objRecognition.getTop()  + objRecognition.getBottom()) / 2;
-                double objWidth = Math.abs(objRecognition.getRight() - objRecognition.getLeft());
-                double objHeight = Math.abs(objRecognition.getTop()  - objRecognition.getBottom());
-
-                telemetry.addData("-", "------------------------------");
-                telemetry.addData("Image: ", "%s (%.0f %% Conf.)", objRecognition.getLabel(), objRecognition.getConfidence() * 100 );
-                telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", objRow, objColumn);
-                telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", objWidth, objHeight);
-            }
-
-        }
-        else {
-            telemetry.addData("-", "<No Data Available>");
-        }
-*/
         }
 
         // Update the Transition Adjustment Value for the IMU
-        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getIMUHeading());
+        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
 
         // ------------------------------------------------------------
         // - send telemetry to driver hub
         // ------------------------------------------------------------
         telemetry.update();
 
-        // Pace this loop so hands move at a reasonable speed.
-        //sleep(50);
     }
 }

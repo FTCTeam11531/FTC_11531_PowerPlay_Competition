@@ -29,16 +29,11 @@
 
 package org.firstinspires.ftc.teamcode.system;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
-import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
-import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
-
 import java.util.Arrays;
 import java.util.List;
 
@@ -68,6 +63,9 @@ public class SysLinearSlide {
     // Define hardware objects  (Make them private so they can't be accessed externally)
     private DcMotorEx leftLinearSlideMotor, rightLinearSlideMotor, singleLinearSlideMotor;
     private List<DcMotorEx> listMotorsLinearSlide;
+
+    // Linear Slide Limit Switch
+    private RevTouchSensor groundLinearSlideLimit;
 
     /**
      * <h2>Linear Slide System Constructor</h2>
@@ -117,12 +115,8 @@ public class SysLinearSlide {
             listMotorsLinearSlide = Arrays.asList(leftLinearSlideMotor, rightLinearSlideMotor);
         }
 
-        // Clone Configuration and apply to all Motors in the list (set max RPM to 100%)
-        //for (DcMotorEx itemMotor : listMotorsLinearSlide) {
-        //    MotorConfigurationType motorConfigurationType = itemMotor.getMotorType().clone();
-        //    motorConfigurationType.setAchieveableMaxRPMFraction(1.0);
-        //    itemMotor.setMotorType(motorConfigurationType);
-        //}
+        // Define the Linear Slide Limit Switch(es)
+        groundLinearSlideLimit = sysOpMode.hardwareMap.get(RevTouchSensor.class, RobotConstants.Configuration.LABEL_DIGITALINPUT_LINEAR_SLIDE_GROUND_LIMIT);
 
         if(RobotConstants.LinearSlide.IS_USING_SINGLE_MOTOR) {
             // Linear Slide Motor Direction
@@ -137,8 +131,8 @@ public class SysLinearSlide {
         // Set Zero Setting to Brake Mode
         setLinearSlideMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        // Reset Linear Slide Motor Encoder(s)
-        setLinearSlideMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        // Reset Linear Slide Encoder(s) (and position if required)
+        resetLinearSlide();
 
         // Display telemetry
         sysOpMode.telemetry.addData(">", "--------------------------------");
@@ -159,7 +153,6 @@ public class SysLinearSlide {
      * @param inTargetSetPoint int - Target set point to move to
      * @param inMaxOutputPowerPercent double - Output power percentage for motor
      *
-     * @return void
      * <br>
      */
     public void moveLinearSlideToTarget(int inTargetSetPoint, double inMaxOutputPowerPercent) {
@@ -170,6 +163,7 @@ public class SysLinearSlide {
 
         // Move linear slide within min/max limits
         moveLinearSlideWithinLimits(inMaxOutputPowerPercent);
+
     }
 
     /**
@@ -182,8 +176,8 @@ public class SysLinearSlide {
      * Set the Linear Slide using manual input
      * </p>
      *
-     * @param inAppliedPower
-     * @param inMaxOutputPowerPercent
+     * @param inAppliedPower - double - power applied from input
+     * @param inMaxOutputPowerPercent - double - max output power percentage to send to motor(s)
      */
     public void moveLinearSlideManually(double inAppliedPower, double inMaxOutputPowerPercent) {
 
@@ -216,22 +210,44 @@ public class SysLinearSlide {
                 setLinearSlideMotorPower(inMaxOutputPowerPercent);
             }
         }
+
         // Coming Down!
         else {
-            if(calcLinearSlideMovement > RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN) {
+
+            if (getLinearSlideLimitSwitchSetting()) {
+
+                // Ground Limit switch tripped (reset)
+                resetLinearSlide();
+            }
+            else {
                 setLinearSlideMotorPower(inMaxOutputPowerPercent);
             }
         }
 
-// Original logic to limit movement between min/max setpoints. Reworked to allow movement in opposite direction.
-//        if((calcLinearSlideMovement < RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX)
-//            && (calcLinearSlideMovement > RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN)) {
-//            setLinearSlideMotorPower(inMaxOutputPowerPercent);
-//        }
-//        else {
-//            setLinearSlideMotorPower(0);
-//        }
+    }
 
+    /**
+     * <h2>Linear Slide Method: resetLinearSlide</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Reset Linear Slide Position - move to home/ground position and reset encoder(s)
+     * </p>
+     */
+    public void resetLinearSlide() {
+
+        // Loop - lower slide until limit switch is tripped (if needed)
+        while(!getLinearSlideLimitSwitchSetting()) {
+
+            // Move slide down
+            setLinearSlideMotorPower(-(RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED));
+        }
+
+        // Ground Limit switch enabled, reset encoder
+        setLinearSlideMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        setLinearSlideMotorPower(0);
     }
 
     /**
@@ -250,7 +266,7 @@ public class SysLinearSlide {
      */
     public int getLinearSlideCurrentPosition(String inMotorLabel) {
         // Variable for output Power value for drivetrain motor(s)
-        int outEncoderPosition = 0;
+        int outEncoderPosition;
 
         if(RobotConstants.LinearSlide.IS_USING_SINGLE_MOTOR) {
 
@@ -294,7 +310,7 @@ public class SysLinearSlide {
      */
     public double getLinearSlideMotorPower(String inMotorLabel) {
         // Variable for output Power value for drivetrain motor(s)
-        double outPowerValue = 0;
+        double outPowerValue;
 
         if(RobotConstants.LinearSlide.IS_USING_SINGLE_MOTOR) {
 
@@ -323,6 +339,22 @@ public class SysLinearSlide {
     }
 
     /**
+     * <h2>Linear Slide Method: getLinearSlideLimitSwitchSetting</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the state of the linear slide lower limit switch sensor.
+     * </p>
+     *
+     * @return boolean - State of limit switch (pressed or not)
+     */
+    public boolean getLinearSlideLimitSwitchSetting() {
+        return groundLinearSlideLimit.isPressed();
+    }
+
+    /**
      * <h2>Linear Slide Method: setLinearSlideTargetPosition</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
@@ -332,7 +364,7 @@ public class SysLinearSlide {
      * Set the target position for each motor.
      * </p>
      *
-     * @param inTargetPosition
+     * @param inTargetPosition - int - setpoint for target position
      */
     public void setLinearSlideTargetPosition(int inTargetPosition) {
         for (DcMotorEx itemMotor: listMotorsLinearSlide) {
@@ -350,9 +382,8 @@ public class SysLinearSlide {
      * Set the run mode for each motor.
      * </p>
      *
-     * @param inRunMode
+     * @param inRunMode - DcMotor.RunMode - Run Mode setting to apply to motor(s)
      *
-     * @return void (Nothing)
      */
     public void setLinearSlideMotorRunMode(DcMotor.RunMode inRunMode) {
         for (DcMotorEx itemMotor: listMotorsLinearSlide) {
@@ -370,9 +401,8 @@ public class SysLinearSlide {
      * Set the 'Zero Behavior' for each motor. Brake/Coast/Etc
      * </p>
      *
-     * @param inZeroPowerBehavior
+     * @param inZeroPowerBehavior - DcMotor.ZeroPowerBehavior - Zero Power Behavior setting to apply to motor(s)
      *
-     * @return void (Nothing)
      */
     public void setLinearSlideMotorZeroPowerBehavior(DcMotor.ZeroPowerBehavior inZeroPowerBehavior) {
         for (DcMotorEx itemMotor : listMotorsLinearSlide) {
@@ -390,14 +420,14 @@ public class SysLinearSlide {
      * Set the output power for each motor.
      * </p>
      *
-     * @param inOutputPower
+     * @param inOutputPower - double - Output Power to apply to motor(s)
      *
-     * @return void (Nothing)
      */
     public void setLinearSlideMotorPower(double inOutputPower) {
         for (DcMotorEx itemMotor : listMotorsLinearSlide) {
-            itemMotor.setPower(inOutputPower);
+                itemMotor.setPower(inOutputPower);
         }
+
     }
 
 }

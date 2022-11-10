@@ -149,6 +149,65 @@ public class OpTeleopMain extends LinearOpMode {
         telemetry.update();
 
         // ------------------------------------------------------------
+        // Allow for Start Option Selection
+        // ------------------------------------------------------------
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
+
+        telemetry.addData(">", "------------------------------------");
+        telemetry.addData(">", "Option Setting Selection Mode Available for 5 Seconds");
+        telemetry.addData(">", "------------------------------------");
+        telemetry.update();
+
+        // Reset runtime clock
+        runtime.reset();
+
+        // Init Loop to allow for Start Option Selection(s)
+        while (opModeInInit() && runtime.seconds() < 5) {
+
+            // Set image model to use custom model
+            if(gamepad1.y) {
+                telemetry.addData(">", "------------------------------------");
+                telemetry.addData(">", "Optional Setting Entered:");
+                telemetry.addData(">", "Now using Green Team Custom model");
+                telemetry.addData(">", "------------------------------------");
+                telemetry.update();
+            }
+
+            // Set image model to use FIRST robotics default model
+            if(gamepad1.a) {
+                telemetry.addData(">", "------------------------------------");
+                telemetry.addData(">", "Optional Setting Entered:");
+                telemetry.addData(">", "Now using FIRST default model");
+                telemetry.addData(">", "------------------------------------");
+                telemetry.update();
+            }
+
+            // Set Autonomous Direction - Left
+            if(gamepad1.y) {
+                telemetry.addData(">", "------------------------------------");
+                telemetry.addData(">", "Optional Setting Entered:");
+                telemetry.addData(">", "LEFT - Autonomous Mode Configured!");
+                telemetry.addData(">", "------------------------------------");
+                telemetry.update();
+            }
+
+            // Set Autonomous Direction - Right
+            if(gamepad1.a) {
+                telemetry.addData(">", "------------------------------------");
+                telemetry.addData(">", "Optional Setting Entered:");
+                telemetry.addData(">", "RIGHT - Autonomous Mode Configured!");
+                telemetry.addData(">", "------------------------------------");
+                telemetry.update();
+            }
+
+        }
+
+        telemetry.addData(">", "------------------------------------");
+        telemetry.addData(">", "Option Setting Selection Mode Completed");
+        telemetry.addData(">", "------------------------------------");
+        telemetry.update();
+
+        // ------------------------------------------------------------
         // Wait for the game to start (driver presses PLAY)
         // ------------------------------------------------------------
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
@@ -161,6 +220,7 @@ public class OpTeleopMain extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.clearAll();
 
+        // Reset runtime clock
         runtime.reset();
 
         // Return if a Stop Action is requested
@@ -175,14 +235,16 @@ public class OpTeleopMain extends LinearOpMode {
             // Controls
             // ------------------------------------------------------------
             // Gamepad1 = Main Driver
+            // ------------------------------------------------------------
             // -- Robot Movement
             // -- -- Axis (left_stick_x, left_stick_y): Drive
             // -- -- Axis (right_stick_x): Rotate
             // -- -- X: 180 spin
             // -- -- Y: Set Output Speed to Med
             // -- -- A: Set Output Speed to Low
-            //
+            // ------------------------------------------------------------
             // Gamepad2 = Co-Driver
+            // ------------------------------------------------------------
             // -- Linear Slide
             // -- -- Y: High Limit
             // -- -- X: Middle Limit
@@ -190,10 +252,16 @@ public class OpTeleopMain extends LinearOpMode {
             // -- -- A: Ground Limit
             // -- -- Axis (right_stick_y): Move up/down (restrict movement beyond High/Ground)
             // -- Claw
-            // -- -- Left Bumper: Open
-            // -- -- Right Bumper: Close
-            // -- -- Axis (left_stick_y): Up/Down (0-1)
-            // -- -- Axis (left_stick_x): Left/Right (0-1)
+            // -- -- Left Bumper: Open Claw
+            // -- -- Right Bumper: Close Claw
+            // -- -- D-Pad Up: Reset up/down and left/right to center (.5, .5)
+            // -- -- D-Pad left: Left Max Setpoint
+            // -- -- D-Pad right: Right Max Setpoint
+            // -- -- D-Pad down: Down Max Setpoint
+            // -- -- Axis (left_stick_y): Up/Down (0-1) Movement
+            // -- -- Axis (left_stick_x): Left/Right (0-1) Movement
+            // -- -- Left Trigger: Left Movement
+            // -- -- Right Trigger: Right Movement
 
             // ------------------------------------------------------------
             // Drivetrain
@@ -244,7 +312,7 @@ public class OpTeleopMain extends LinearOpMode {
 
             // Button Action - Turn robot 180 degrees (180 deg spin)
             if(gamepad1.x) {
-                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+                sysDrivetrain.driveTurnToHeading(180, 1, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
             }
 
             // ------------------------------------------------------------
@@ -288,6 +356,10 @@ public class OpTeleopMain extends LinearOpMode {
             if(gamepad2.a) {
                 isManualSlideMode = false;
 
+                // Move the Claw to Center (Ground could damage claw if left out)
+                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_START);
+                sysClaw.moveClawUpDownToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_UPDOWN_START);
+
                 // Move Linear Slide to Ground Goal
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
@@ -318,40 +390,56 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // Manually control side-to-side motion
+            if(Math.abs(gamepad2.left_stick_x) == 1) {
+                sysClaw.moveClawSideManually(gamepad2.left_stick_x);
+            }
 
+            if(Math.abs(gamepad2.left_trigger) == 1) {
+                sysClaw.moveClawSideManually(gamepad2.left_trigger);
+            }
+
+            if(Math.abs(gamepad2.right_trigger) == 1) {
+                sysClaw.moveClawSideManually(-(gamepad2.right_trigger));
+            }
 
             // Manually control up-down motion
-
-            // Button Action - move to claw left side setpoint
-            //if(gamepad1.dpad_left) {
-
-                // Claw side-to-side movement (Left)
-
-
-            //}
-
-            // Button Action - move to claw right side setpoint
-            //if(gamepad1.dpad_right) {
-
-                // Claw side-to-side movement (Right)
-
-            //}
+            if(Math.abs(gamepad2.left_stick_y) == 1) {
+                sysClaw.moveClawUpDownManually(gamepad2.left_stick_y);
+            }
 
             // Button Action - move to claw up setpoint
-            //if(gamepad1.dpad_up) {
+            if(gamepad1.dpad_up) {
 
-                // Claw up-down movement (Up)
-            //    sysLighting.setLightPattern(sysLighting.getLightPatternNext());
+                // Claw Reset up-down and lef-right to center
+                // reset to start position
+                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_START);
+                sysClaw.moveClawUpDownToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_UPDOWN_START);
+            }
 
-            //}
+
+            // Button Action - move to claw left side setpoint
+            if(gamepad1.dpad_left) {
+
+                // Claw side-to-side movement (Left)
+                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_LEFT);
+
+            }
+
+            // Button Action - move to claw right side setpoint
+            if(gamepad1.dpad_right) {
+
+                // Claw side-to-side movement (Right)
+                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_RIGHT);
+
+            }
 
             // Button Action - move to claw down setpoint
-            //if(gamepad1.dpad_down) {
+            if(gamepad1.dpad_down) {
 
                 // Claw up-down movement (Down)
-            //    sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
+                sysClaw.moveClawUpDownToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_UPDOWN_DOWN);
 
-            //}
+            }
 
             // ------------------------------------------------------------
             // Driver Hub Feedback
@@ -390,7 +478,9 @@ public class OpTeleopMain extends LinearOpMode {
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Robot Heading", sysDrivetrain.getIMUHeading());
+            telemetry.addData("Robot Heading Raw", sysDrivetrain.getRobotHeadingRaw());
+            telemetry.addData("Heading Adjustment", RobotConstants.CommonSettings.getImuTransitionAdjustment());
+            telemetry.addData("Robot Heading (Adjusted)", sysDrivetrain.getRobotHeadingAdj());
 
             // ------------------------------------------------------------
             // - LinearSlide telemetry
@@ -440,7 +530,7 @@ public class OpTeleopMain extends LinearOpMode {
         // Closing Teleop
         // ------------------------------------------------------------
         // Update the Transition Adjustment Value for the IMU
-        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getIMUHeading());
+        RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
 
     }
 }

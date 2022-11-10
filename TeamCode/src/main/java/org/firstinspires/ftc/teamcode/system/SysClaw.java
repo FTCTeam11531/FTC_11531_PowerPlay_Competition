@@ -123,7 +123,26 @@ public class SysClaw {
         double calcClawSideMotion = RobotConstants.Claw.SERVO_MANUAL_CONTROL_CLAW_SIDE * inAppliedPower;
 
         // Move claw side-to-side - (claw position + motion calculation within range)
-        setClawSidePosition(Range.clip(getClawSidePosition() + calcClawSideMotion, 0, 1));
+        moveClawSideToTarget(Range.clip(getClawSidePosition() + calcClawSideMotion, 0, 1));
+    }
+
+    public void moveClawUpDownManually(double inAppliedPower) {
+
+        // Calculate movement
+        double calcClawUpDownMotion = RobotConstants.Claw.SERVO_MANUAL_CONTROL_CLAW_SIDE * inAppliedPower;
+
+        // Move claw side-to-side - (claw position + motion calculation within range)
+        moveClawUpDownToTarget(Range.clip(getClawSidePosition() + calcClawUpDownMotion, 0, 1));
+    }
+
+    public void moveClawSideToTarget(double inTargetSetPoint) {
+
+        setClawSidePosition(inTargetSetPoint);
+    }
+
+    public void moveClawUpDownToTarget(double inTargetSetPoint) {
+
+        setClawUpDownPosition(inTargetSetPoint);
     }
 
     /**
