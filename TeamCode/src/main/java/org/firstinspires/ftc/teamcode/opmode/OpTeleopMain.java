@@ -30,20 +30,17 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import android.app.Activity;
-
 import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import java.util.List;
-import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
-import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
+import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
 import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
 import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
 
@@ -66,14 +63,14 @@ import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
 //@Disabled
 public class OpTeleopMain extends LinearOpMode {
     // ------------------------------------------------------------
-    // Robot Configuration
-    // ------------------------------------------------------------
-    RobotConfigFileManager robotConfigFileManager;
-    String robotConfigName;
-
-    // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
+    // -- Robot Initializtion
+    RobotInitialization utilRobotInit = new RobotInitialization(this);
+
+    // -- Lighting System
+    SysLighting sysLighting = new SysLighting(this);
+
     // -- Drivetrain System
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
@@ -82,14 +79,6 @@ public class OpTeleopMain extends LinearOpMode {
 
     // -- Claw System
     SysClaw sysClaw = new SysClaw(this);
-
-    // -- Lighting System
-    SysLighting sysLighting = new SysLighting(this);
-
-    // -- Vision System
-    //SysVision sysVision = new SysVision(this);
-    //List<Recognition> listVisionRecognitions;
-    //Recognition recognitionTargetZone;
 
     // ------------------------------------------------------------
     // Misc
@@ -107,14 +96,10 @@ public class OpTeleopMain extends LinearOpMode {
         telemetry.clearAll();
 
         // ------------------------------------------------------------
-        // Get Hardware Configuration Profile Name
-        // ------------------------------------------------------------
-        robotConfigFileManager = new RobotConfigFileManager((Activity) hardwareMap.appContext);
-        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
-
-        // ------------------------------------------------------------
         // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
+        utilRobotInit.init();
+
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
 
@@ -126,9 +111,6 @@ public class OpTeleopMain extends LinearOpMode {
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
-
-        //sysVision.init();
-        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Teleop Mode
@@ -156,25 +138,10 @@ public class OpTeleopMain extends LinearOpMode {
         // Reset runtime clock
         runtime.reset();
 
-        // Init Loop to allow for Start Option Selection(s)
-//        while (opModeInInit()) {
-//            telemetry.setAutoClear(false);
-//            telemetry.clearAll();
-//
-//            telemetry.addData(">", "------------------------------------");
-//            telemetry.addData(">", "Setting Selection Mode Available");
-//            telemetry.addData(">", "------------------------------------");
-//            telemetry.addData(">", " Use Main Driver Gamepad");
-//            telemetry.addData(">", "------------------------------------");
-//            telemetry.addData(">>>", "No Options Available");
-//            telemetry.addData(">", "------------------------------------");
-//            telemetry.update();
+        // Robot Initialization Settings - Autonomous
+        utilRobotInit.displayInitializationSettingsAutonomous(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
-//            // Pace this loop so commands move at a reasonable speed.
-//            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
-//        }
-
-        waitForStart();
+//        waitForStart();
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -254,22 +221,22 @@ public class OpTeleopMain extends LinearOpMode {
                 sysDrivetrain.stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.Low;
             }
 
-            // Run wheels in POV mode (note: The joystick goes negative when pushed forward, so negate it)
-            // In this mode the Left stick moves the robot fwd and back, the Right stick turns left and right.
-            // This way it's also easy to just drive straight, or just turn.
+            // Assign gamepad control to motion in relation to:
+            // -- gamepad input, direction
+            // -- robot orientation to field
+            // -- installed direction of control hub
+            // -- orientation of drivetrain/motors
             inputYaw =  -(gamepad1.right_stick_x);
+            inputAxial = -(gamepad1.left_stick_y);
+            inputLateral = gamepad1.left_stick_x;
 
             // Drivetrain Type determined by 'Drivetrain Mode' enumeration selection (Default to Field Centric)
             if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC)) {
                 // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
-                inputAxial = -(gamepad1.left_stick_y);
-                inputLateral = gamepad1.left_stick_x;  // Note: pushing stick forward gives negative value
                 sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
             }
             else {
                 // Send gamepad input for drivetrain to driveMecanumFieldCentric method in the drivetrain system class
-                inputAxial = -(gamepad1.left_stick_y);
-                inputLateral = (gamepad1.left_stick_x);  // Note: pushing stick forward gives negative value
                 sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
             }
 
@@ -284,13 +251,16 @@ public class OpTeleopMain extends LinearOpMode {
 
             // Manually control Linear Slide
             if(Math.abs(gamepad2.right_stick_y) == 1) {
+                isManualSlideMode = true;
 
-                // Check Lower Limit Switch at command level
+                // Check Lower Limit Switch at command/input level
                 if(sysLinearSlide.getLinearSlideLimitSwitchSetting()) {
                     if(gamepad2.right_stick_y < 0) {
                         sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
-                        isManualSlideMode = true;
                     }
+                }
+                else {
+                    sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
                 }
 
             }
@@ -415,7 +385,7 @@ public class OpTeleopMain extends LinearOpMode {
             // Driver Hub Feedback
             // ------------------------------------------------------------
             telemetry.addData("Run Time", runtime.toString());
-            telemetry.addData("Hardware Profile", robotConfigName);
+            telemetry.addData("Hardware Profile", RobotConstants.CommonSettings.getRobotConfigurationFileManagerNameActive());
 
             // ------------------------------------------------------------
             // - Gamepad telemetry

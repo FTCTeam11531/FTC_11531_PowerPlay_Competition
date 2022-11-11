@@ -9,9 +9,8 @@ public class RobotInitialization {
     /* Declare OpMode members. */
     private LinearOpMode sysOpMode;   // gain access to methods in the calling OpMode.
 
-    // Robot hardware configuration (used to determine Tensor Flow Model)
+    // Robot hardware configuration
     private RobotConfigFileManager robotConfigFileManager;
-    private String robotConfigName;
 
     /**
      * <h2>Robot Initialization Constructor</h2>
@@ -30,17 +29,19 @@ public class RobotInitialization {
     public void init() {
 
         // The robot config name is passed into the initialization of this system
-        // The robot config name is used to determine which TensorFlow model to use
         robotConfigFileManager = new RobotConfigFileManager((Activity) sysOpMode.hardwareMap.appContext);
-        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
+        RobotConstants.CommonSettings.setRobotConfigurationFileManagerNameActive(robotConfigFileManager.getActiveConfig().getName());
 
     }
 
-    public void displayInitializationSettingsAutonomous() {
+    public void displayInitializationSettingsAutonomous(String inDisplayMode) {
 
         // ------------------------------------------------------------
         // Allow for Start Option Selection
         // ------------------------------------------------------------
+        // Display Mode Key:
+        // - 'autonomous' = Autonomous Op
+        // - 'teleop' = Teleop
 
         // Init Loop to allow for Start Option Selection(s)
         while (sysOpMode.opModeInInit()) {
@@ -53,32 +54,41 @@ public class RobotInitialization {
             sysOpMode.telemetry.addData(">", " Use Main Driver Gamepad");
             sysOpMode.telemetry.addData(">", "------------------------------------");
 
-            switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousMode()) {
-                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_RIGHT):
-                    sysOpMode.telemetry.addData(">>>", "Press (X) - Left Autonomous Mode");
-                    sysOpMode.telemetry.addData(">>>", "Press (B) - Right Autonomous Mode (ACTIVE)");
-                    break;
-                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_LEFT):
-                    sysOpMode.telemetry.addData(">>>", "Press (X) - Left Autonomous Mode (ACTIVE)");
-                    sysOpMode.telemetry.addData(">>>", "Press (B) - Right Autonomous Mode");
-                    break;
-                default:
-                    sysOpMode.telemetry.addData(">>>", "Press (X) - Left Autonomous Mode");
-                    sysOpMode.telemetry.addData(">>>", "Press (B) - Right Autonomous Mode");
-            }
+            switch (inDisplayMode) {
+                case RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS:
+                    switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousMode()) {
+                        case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_RIGHT):
+                            sysOpMode.telemetry.addData(">>>", "Press (X) - Left Autonomous Mode");
+                            sysOpMode.telemetry.addData(">>>", "Press (B) - Right Autonomous Mode (ACTIVE)");
+                            break;
+                        case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_LEFT):
+                            sysOpMode.telemetry.addData(">>>", "Press (X) - Left Autonomous Mode (ACTIVE)");
+                            sysOpMode.telemetry.addData(">>>", "Press (B) - Right Autonomous Mode");
+                            break;
+                        default:
+                            sysOpMode.telemetry.addData(">>>", "Press (X) - Left Autonomous Mode");
+                            sysOpMode.telemetry.addData(">>>", "Press (B) - Right Autonomous Mode");
+                    }
 
-            switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousImageSource()) {
-                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM):
-                    sysOpMode.telemetry.addData(">>>", "Press (Y) - Custom Images (ACTIVE)");
-                    sysOpMode.telemetry.addData(">>>", "Press (A) - Stock Images");
+                    switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousImageSource()) {
+                        case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_GREEN):
+                            sysOpMode.telemetry.addData(">>>", "Press (Y) - Custom Images (ACTIVE)");
+                            sysOpMode.telemetry.addData(">>>", "Press (A) - Stock Images");
+                            break;
+                        case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_STOCK):
+                            sysOpMode.telemetry.addData(">>>", "Press (Y) - Custom Images");
+                            sysOpMode.telemetry.addData(">>>", "Press (A) - Stock Images (ACTIVE)");
+                            break;
+                        default:
+                            sysOpMode.telemetry.addData(">>>", "Press (Y) - Custom Images");
+                            sysOpMode.telemetry.addData(">>>", "Press (A) - Stock Images");
+                    }
                     break;
-                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_STOCK):
-                    sysOpMode.telemetry.addData(">>>", "Press (Y) - Custom Images");
-                    sysOpMode.telemetry.addData(">>>", "Press (A) - Stock Images (ACTIVE)");
+                case RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_TELEOP:
+                    sysOpMode.telemetry.addData(">>>", "No Options Available");
                     break;
                 default:
-                    sysOpMode.telemetry.addData(">>>", "Press (Y) - Custom Images");
-                    sysOpMode.telemetry.addData(">>>", "Press (A) - Stock Images");
+                    sysOpMode.telemetry.addData(">>>", "Unavailable");
             }
 
             sysOpMode.telemetry.addData(">", "------------------------------------");
@@ -96,7 +106,7 @@ public class RobotInitialization {
 
             // Set image model to use custom model
             if(sysOpMode.gamepad1.y) {
-                RobotConstants.CommonSettings.setInitializationSettingAutonomousImageSource(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM);
+                RobotConstants.CommonSettings.setInitializationSettingAutonomousImageSource(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_GREEN);
             }
 
             // Set image model to use custom model

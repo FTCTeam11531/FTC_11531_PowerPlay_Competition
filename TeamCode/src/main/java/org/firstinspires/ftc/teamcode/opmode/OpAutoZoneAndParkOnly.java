@@ -68,12 +68,6 @@ import java.util.List;
 //@Disabled
 public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // ------------------------------------------------------------
-    // Robot Configuration
-    // ------------------------------------------------------------
-    RobotConfigFileManager robotConfigFileManager;
-    String robotConfigName;
-
-    // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
     // -- Robot Initializtion
@@ -109,12 +103,6 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         // Set telemetry mode to append
         telemetry.setAutoClear(false);
         telemetry.clearAll();
-
-        // ------------------------------------------------------------
-        // Get Hardware Configuration Profile Name
-        // ------------------------------------------------------------
-        robotConfigFileManager = new RobotConfigFileManager((Activity) hardwareMap.appContext);
-        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
         // Initialize System(s) - set different light mode between each system init
@@ -155,7 +143,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         runtime.reset();
 
         // Robot Initialization Settings - Autonomous
-        utilRobotInit.displayInitializationSettingsAutonomous();
+        utilRobotInit.displayInitializationSettingsAutonomous(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -176,7 +164,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             // ------------------------------------------------------------
             // Driver Hub Feedback
             // ------------------------------------------------------------
-            telemetry.addData("Hardware Profile: ", robotConfigName);
+            telemetry.addData("Hardware Profile: ", RobotConstants.CommonSettings.getRobotConfigurationFileManagerNameActive());
             telemetry.update();
 
             // ------------------------------------------------------------

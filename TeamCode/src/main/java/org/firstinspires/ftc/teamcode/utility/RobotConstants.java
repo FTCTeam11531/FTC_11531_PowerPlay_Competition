@@ -119,75 +119,51 @@ public class RobotConstants {
     public static final class CommonSettings {
         public static final int SLEEP_TIMER_MILLISECONDS_DEFAULT = 100;
 
+        // Initialization Display
+        public static final String INIT_SETTING_DISPLAY_MODE_AUTONOMOUS = "autonomous";
+        public static final String INIT_SETTING_DISPLAY_MODE_TELEOP = "teleop";
+
         // Initialization Setting Constants
         public static final String INIT_SETTING_AUTONOMOUS_MODE_RIGHT = "right";
         public static final String INIT_SETTING_AUTONOMOUS_MODE_LEFT = "left";
-        public static final String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM = "custom";
+        public static final String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_GREEN = "custom-green";
+        public static final String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_BLUE = "custom-blue";
         public static final String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_STOCK = "stock";
 
-        // Initialization Settings
         public static String INIT_SETTING_AUTONOMOUS_MODE = INIT_SETTING_AUTONOMOUS_MODE_RIGHT;
-        public static String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE = INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM;
+        public static String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE = INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_GREEN;
 
+        // Robot Configuration Information
+        public static String ROBOT_CONFIGURATION_FILE_MANAGER_NAME_ACTIVE = "";
 
         // Transition from Autonomous to Teleop - Global Static variables (not constants)
         public static double IMU_TRANSITION_ADJUSTMENT = 0;
 
+        // Get Properties
         public static String getInitializationSettingAutonomousMode() {
-            return INIT_SETTING_AUTONOMOUS_MODE;
-        }
+            return INIT_SETTING_AUTONOMOUS_MODE; }
 
         public static String getInitializationSettingAutonomousImageSource() {
-            return INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE;
-        }
+            return INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE; }
 
-        /**
-         * <h2>Drivetrain Method: getImuTransitionAdjustment</h2>
-         * <hr>
-         * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-         * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-         * <hr>
-         * <p>
-         * Get the IMU Heading from an OpMode transition
-         * </p>
-         *
-         * @return double - return the IMU adjustment from OpMode transition
-         */
+        public static String getRobotConfigurationFileManagerNameActive() {
+            return ROBOT_CONFIGURATION_FILE_MANAGER_NAME_ACTIVE; }
+
         public static double getImuTransitionAdjustment() {
-            return IMU_TRANSITION_ADJUSTMENT;
-        }
+            return IMU_TRANSITION_ADJUSTMENT; }
 
-        /**
-         *
-         * @param inAutonomousMode
-         */
+        // Set Properties
         public static void setInitializationSettingAutonomousMode(String inAutonomousMode) {
-            INIT_SETTING_AUTONOMOUS_MODE = inAutonomousMode;
-        }
+            INIT_SETTING_AUTONOMOUS_MODE = inAutonomousMode; }
 
-        /**
-         *
-         * @param inImageSource
-         */
         public static void setInitializationSettingAutonomousImageSource(String inImageSource) {
-            INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE = inImageSource;
-        }
+            INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE = inImageSource; }
 
-        /**
-         * <h2>Drivetrain Method: setImuTransitionAdjustment</h2>
-         * <hr>
-         * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-         * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-         * <hr>
-         * <p>
-         * Set the IMU Heading from an OpMode transition
-         * </p>
-         *
-         * @param inHeading - Input Heading from OpMode transition
-         */
+        public static void setRobotConfigurationFileManagerNameActive(String inConfigName) {
+            ROBOT_CONFIGURATION_FILE_MANAGER_NAME_ACTIVE = inConfigName; }
+
         public static void setImuTransitionAdjustment(double inHeading) {
-            IMU_TRANSITION_ADJUSTMENT = inHeading;
-        }
+            IMU_TRANSITION_ADJUSTMENT = inHeading; }
     }
 
     /**

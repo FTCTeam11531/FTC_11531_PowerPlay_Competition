@@ -43,7 +43,9 @@ import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
+import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
+import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
 // Renamed in TeamCode as: OpAutoStartConeZonePark.java
@@ -68,28 +70,25 @@ import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 //@Disabled
 public class OpAutoStartConeZonePark extends LinearOpMode {
     // ------------------------------------------------------------
-    // Robot Configuration
-    // ------------------------------------------------------------
-    RobotConfigFileManager robotConfigFileManager;
-    String robotConfigName;
-
-    // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
+    // -- Robot Initializtion
+    RobotInitialization utilRobotInit = new RobotInitialization(this);
+
     // -- Lighting System
     SysLighting sysLighting = new SysLighting(this);
 
     // -- Drivetrain System
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
-    // -- Claw System
-    SysClaw sysClaw = new SysClaw(this);
+    // -- Vision System
+    SysVision sysVision = new SysVision(this);
 
     // -- LinearSlide System
     SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
 
-    // -- Vision System
-    //SysVision sysVision = new SysVision(this);
+    // -- Claw System
+    SysClaw sysClaw = new SysClaw(this);
 
     // Settings for captured image
     Recognition recognitionTargetZone;
@@ -110,28 +109,24 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         telemetry.clearAll();
 
         // ------------------------------------------------------------
-        // Get Hardware Configuration Profile Name
-        // ------------------------------------------------------------
-        robotConfigFileManager = new RobotConfigFileManager((Activity) hardwareMap.appContext);
-        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
-
-        // ------------------------------------------------------------
         // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
+        utilRobotInit.init();
+
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
 
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-        //sysVision.init();
-        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
-
-        sysClaw.init();
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
+        sysVision.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         sysLinearSlide.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE);
+
+        sysClaw.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Autonomous Mode
@@ -159,71 +154,8 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         // Reset runtime clock
         runtime.reset();
 
-        // Init Loop to allow for Start Option Selection(s)
-        while (opModeInInit()) {
-            telemetry.setAutoClear(false);
-            telemetry.clearAll();
-
-            telemetry.addData(">", "------------------------------------");
-            telemetry.addData(">", "Setting Selection Mode Available");
-            telemetry.addData(">", "------------------------------------");
-            telemetry.addData(">", " Use Main Driver Gamepad");
-            telemetry.addData(">", "------------------------------------");
-
-            switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousMode()) {
-                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_RIGHT):
-                    telemetry.addData(">>>", "Press (X) - Left Autonomous Mode");
-                    telemetry.addData(">>>", "Press (B) - Right Autonomous Mode (ACTIVE)");
-                    break;
-                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_LEFT):
-                    telemetry.addData(">>>", "Press (X) - Left Autonomous Mode (ACTIVE)");
-                    telemetry.addData(">>>", "Press (B) - Right Autonomous Mode");
-                    break;
-                default:
-                    telemetry.addData(">>>", "Press (X) - Left Autonomous Mode");
-                    telemetry.addData(">>>", "Press (B) - Right Autonomous Mode");
-            }
-
-            switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousImageSource()) {
-                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM):
-                    telemetry.addData(">>>", "Press (Y) - Custom Images (ACTIVE)");
-                    telemetry.addData(">>>", "Press (A) - Stock Images");
-                    break;
-                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_STOCK):
-                    telemetry.addData(">>>", "Press (Y) - Custom Images");
-                    telemetry.addData(">>>", "Press (A) - Stock Images (ACTIVE)");
-                    break;
-                default:
-                    telemetry.addData(">>>", "Press (Y) - Custom Images");
-                    telemetry.addData(">>>", "Press (A) - Stock Images");
-            }
-
-            telemetry.addData(">", "------------------------------------");
-            telemetry.update();
-
-            // Set Autonomous Mode to Left Side
-            if(gamepad1.x) {
-                RobotConstants.CommonSettings.setInitializationSettingAutonomousMode(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_LEFT);
-            }
-
-            // Set Autonomous Mode to Right Side
-            if(gamepad1.b) {
-                RobotConstants.CommonSettings.setInitializationSettingAutonomousMode(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_RIGHT);
-            }
-
-            // Set image model to use custom model
-            if(gamepad1.y) {
-                RobotConstants.CommonSettings.setInitializationSettingAutonomousImageSource(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM);
-            }
-
-            // Set image model to use custom model
-            if(gamepad1.a) {
-                RobotConstants.CommonSettings.setInitializationSettingAutonomousImageSource(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_STOCK);
-            }
-
-            // Pace this loop so commands move at a reasonable speed.
-            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
-        }
+        // Robot Initialization Settings - Autonomous
+        utilRobotInit.displayInitializationSettingsAutonomous(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
         // ------------------------------------------------------------
         // Configure Telemetry

@@ -68,10 +68,6 @@ public class SysVision {
     private VuforiaLocalizer vuforiaLocalizer;
     private TFObjectDetector tensorFlowObjectDetector;
 
-    // Robot hardware configuration (used to determine Tensor Flow Model)
-    private RobotConfigFileManager robotConfigFileManager;
-    private String robotConfigName;
-
     // Tensor Flow Model used
     private String modelSelectionFileName;
     private String modelSelectionFilePath;
@@ -110,11 +106,6 @@ public class SysVision {
         // Define and Initialize Motors (note: need to use reference to actual OpMode).
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
-
-        // The robot config name is passed into the initialization of this system
-        // The robot config name is used to determine which TensorFlow model to use
-        robotConfigFileManager = new RobotConfigFileManager((Activity) sysOpMode.hardwareMap.appContext);
-        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // Initialize Vuforia and Tensor Flow
         initializeVuforia();
@@ -187,9 +178,9 @@ public class SysVision {
 
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
-        switch(robotConfigName) {
-            case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_GREEN):
-                // TensorFlow Model for Green Team
+        switch(RobotConstants.CommonSettings.getInitializationSettingAutonomousImageSource()) {
+            case (RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_GREEN):
+                // Custom TensorFlow Model
                 tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH
                         , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN);
 
@@ -199,7 +190,7 @@ public class SysVision {
 
                 break;
 
-            case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_BLUE):
+            case (RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_BLUE):
                 // TensorFlow Model for Blue Team
                 tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH
                         , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_BLUE);
@@ -415,8 +406,8 @@ public class SysVision {
         // NOTE: Should be able to clean this logic up a bit. Not completely sold on the double switch.
         // - Cannot do a simple single switch on zone because green and blue values are the same
         // - Maybe do a single switch/case based on model_id combined with zone label (will need to think about it)
-        switch(robotConfigName) {
-            case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_GREEN):
+        switch(RobotConstants.CommonSettings.getInitializationSettingAutonomousImageSource()) {
+            case (RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_GREEN):
                 switch(inVisionTargetLabel) {
                     case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1):
                         outTargetZone = 1;
@@ -432,7 +423,7 @@ public class SysVision {
                 }
                 break;
 
-            case (RobotConstants.Vision.TENSORFLOW_MODEL_ID_POWERPLAY_BLUE):
+            case (RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_BLUE):
                 switch(inVisionTargetLabel) {
                     case (RobotConstants.Vision.TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1):
                         outTargetZone = 1;

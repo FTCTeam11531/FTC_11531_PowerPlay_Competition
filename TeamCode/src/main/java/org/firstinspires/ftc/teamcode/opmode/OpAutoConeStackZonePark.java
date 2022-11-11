@@ -70,12 +70,6 @@ import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
 @Disabled
 public class OpAutoConeStackZonePark extends LinearOpMode {
     // ------------------------------------------------------------
-    // Robot Configuration
-    // ------------------------------------------------------------
-    RobotConfigFileManager robotConfigFileManager;
-    String robotConfigName;
-
-    // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
     // -- Robot Initializtion
@@ -113,12 +107,6 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         // Set telemetry mode to append
         telemetry.setAutoClear(false);
         telemetry.clearAll();
-
-        // ------------------------------------------------------------
-        // Get Hardware Configuration Profile Name
-        // ------------------------------------------------------------
-        robotConfigFileManager = new RobotConfigFileManager((Activity) hardwareMap.appContext);
-        robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
         // Initialize System(s) - set different light mode between each system init
@@ -167,7 +155,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         runtime.reset();
 
         // Robot Initialization Settings - Autonomous
-        utilRobotInit.displayInitializationSettingsAutonomous();
+        utilRobotInit.displayInitializationSettingsAutonomous(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
         // ------------------------------------------------------------
         // Configure Telemetry
