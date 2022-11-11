@@ -43,6 +43,8 @@ import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
+import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
+
 import java.util.List;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
@@ -74,6 +76,9 @@ public class OpAutoTimedMovement extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
+    // -- Robot Initializtion
+    RobotInitialization utilRobotInit = new RobotInitialization(this);
+
     // -- Lighting System
     SysLighting sysLighting = new SysLighting(this);
 
@@ -114,8 +119,10 @@ public class OpAutoTimedMovement extends LinearOpMode {
         robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
-        // Initialize System(s)
+        // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
+        utilRobotInit.init();
+
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
 
@@ -150,10 +157,15 @@ public class OpAutoTimedMovement extends LinearOpMode {
         telemetry.update();
 
         // ------------------------------------------------------------
-        // Wait for the game to start (driver presses PLAY)
+        // Allow for Start Option Selection
         // ------------------------------------------------------------
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
-        waitForStart();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+
+        // Reset runtime clock
+        runtime.reset();
+
+        // Robot Initialization Settings - Autonomous
+        utilRobotInit.displayInitializationSettingsAutonomous();
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -162,6 +174,8 @@ public class OpAutoTimedMovement extends LinearOpMode {
         telemetry.setAutoClear(false);
         telemetry.clearAll();
 
+        // Reset runtime/lighting to Default
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
         runtime.reset();
 
         // Return if a Stop Action is requested

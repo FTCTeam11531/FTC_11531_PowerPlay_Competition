@@ -117,11 +117,29 @@ public class RobotConstants {
      * <br>
      */
     public static final class CommonSettings {
-        public static final int SLEEP_TIMER_MILLISECONDS_DEFAULT = 50;
+        public static final int SLEEP_TIMER_MILLISECONDS_DEFAULT = 100;
+
+        // Initialization Setting Constants
+        public static final String INIT_SETTING_AUTONOMOUS_MODE_RIGHT = "right";
+        public static final String INIT_SETTING_AUTONOMOUS_MODE_LEFT = "left";
+        public static final String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM = "custom";
+        public static final String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_STOCK = "stock";
+
+        // Initialization Settings
+        public static String INIT_SETTING_AUTONOMOUS_MODE = INIT_SETTING_AUTONOMOUS_MODE_RIGHT;
+        public static String INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE = INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM;
+
 
         // Transition from Autonomous to Teleop - Global Static variables (not constants)
         public static double IMU_TRANSITION_ADJUSTMENT = 0;
 
+        public static String getInitializationSettingAutonomousMode() {
+            return INIT_SETTING_AUTONOMOUS_MODE;
+        }
+
+        public static String getInitializationSettingAutonomousImageSource() {
+            return INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE;
+        }
 
         /**
          * <h2>Drivetrain Method: getImuTransitionAdjustment</h2>
@@ -137,6 +155,22 @@ public class RobotConstants {
          */
         public static double getImuTransitionAdjustment() {
             return IMU_TRANSITION_ADJUSTMENT;
+        }
+
+        /**
+         *
+         * @param inAutonomousMode
+         */
+        public static void setInitializationSettingAutonomousMode(String inAutonomousMode) {
+            INIT_SETTING_AUTONOMOUS_MODE = inAutonomousMode;
+        }
+
+        /**
+         *
+         * @param inImageSource
+         */
+        public static void setInitializationSettingAutonomousImageSource(String inImageSource) {
+            INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE = inImageSource;
         }
 
         /**
@@ -338,8 +372,8 @@ public class RobotConstants {
         public static final double ENCODER_TICKS_PER_REV = 537.7; // Set from Vendor Specs
 
         // Limit Set Points
-        public static final int ENCODER_SET_POINT_LIMIT_MAX = 6500;
-        public static final int ENCODER_SET_POINT_LIMIT_MIN = -15;
+        public static final int ENCODER_SET_POINT_LIMIT_MAX = 6200;
+        public static final int ENCODER_SET_POINT_LIMIT_MIN = 0;
 
         // Encoder Set Points for each Goal (High/Med/Low/Ground)
         public static final int ENCODER_SET_POINT_HIGH_GOAL = 6000;
@@ -467,7 +501,7 @@ public class RobotConstants {
         public static final String LIGHT_PATTERN_AVOID_KEYWORD_TWINKLES = "Twinkles";
 
         // Default Light Pattern
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.CP2_BREATH_SLOW;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_SLOW;
 
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_PREGAME_OPTION_CONFIG = RevBlinkinLedDriver.BlinkinPattern.CP1_STROBE;
 

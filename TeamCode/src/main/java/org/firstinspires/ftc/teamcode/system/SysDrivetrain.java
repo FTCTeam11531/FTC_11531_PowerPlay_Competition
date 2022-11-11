@@ -373,23 +373,92 @@ public class SysDrivetrain {
     /**
      *
      * @param inAxialInches
-     * @param inLateralInches
      * @param inMaxOutputPowerPercent
      */
-    public void driveDistance(double inAxialInches, double inLateralInches, double inMaxOutputPowerPercent) {
+    public void driveDistanceAxial(double inAxialInches, double inMaxOutputPowerPercent) {
 
-        // ---------------------
-        // WORK IN PROGRESS!!
-        // ---------------------
+        int moveTargetPosition, moveTargetPositionLeftFront, moveTargetPositionLeftBack, moveTargetPositionRightFront, moveTargetPositionRightBack;
+
+        // Determine Encoder cycle value needed to move incoming distance
+        moveTargetPosition = (int)(inAxialInches * RobotConstants.Drivetrain.ENCODER_TICKS_PER_INCH);
+
+        // Determine Target Position for each wheel
+        moveTargetPositionLeftFront = leftFrontDrive.getCurrentPosition() + moveTargetPosition;
+        moveTargetPositionLeftBack = leftBackDrive.getCurrentPosition() + moveTargetPosition;
+        moveTargetPositionRightFront = rightFrontDrive.getCurrentPosition() + moveTargetPosition;
+        moveTargetPositionRightBack = rightBackDrive.getCurrentPosition() + moveTargetPosition;
 
         // Set target position
-        leftFrontDrive.setTargetPosition(100);
-        leftBackDrive.setTargetPosition(-100);
-        rightFrontDrive.setTargetPosition(100);
-        rightBackDrive.setTargetPosition(-100);
+        leftFrontDrive.setTargetPosition(moveTargetPositionLeftFront);
+        leftBackDrive.setTargetPosition(moveTargetPositionLeftBack);
+        rightFrontDrive.setTargetPosition(moveTargetPositionRightFront);
+        rightBackDrive.setTargetPosition(moveTargetPositionRightBack);
 
         // Turn on RUN_TO_POSITION (moved encoders to that position)
         setDriveMotorRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Execute the movement
+        setDriveMotorPower(inMaxOutputPowerPercent, inMaxOutputPowerPercent, inMaxOutputPowerPercent, inMaxOutputPowerPercent);
+
+        while (sysOpMode.opModeIsActive() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
+
+            // Display movement
+            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
+                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
+                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
+            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
+                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
+                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+            sysOpMode.telemetry.update();
+
+            //sysOpMode.idle();
+        }
+
+        // Make sure all motors are stopped after completed path
+        setDriveMotorPower(0, 0, 0, 0);
+
+        // Turn off RUN_TO_POSITION
+        setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void driveDistanceLateral(double inLateralInches, double inMaxOutputPowerPercent) {
+
+        int moveTargetPosition, moveTargetPositionLeftFront, moveTargetPositionLeftBack, moveTargetPositionRightFront, moveTargetPositionRightBack;
+
+        // Determine Encoder cycle value needed to move incoming distance
+        moveTargetPosition = (int)(inLateralInches * RobotConstants.Drivetrain.ENCODER_TICKS_PER_INCH);
+
+        // Determine Target Position for each wheel
+        moveTargetPositionLeftFront = leftFrontDrive.getCurrentPosition() + moveTargetPosition;
+        moveTargetPositionLeftBack = -(leftBackDrive.getCurrentPosition() + moveTargetPosition);
+        moveTargetPositionRightFront = -(rightFrontDrive.getCurrentPosition() + moveTargetPosition);
+        moveTargetPositionRightBack = rightBackDrive.getCurrentPosition() + moveTargetPosition;
+
+        // Set target position
+        leftFrontDrive.setTargetPosition(moveTargetPositionLeftFront);
+        leftBackDrive.setTargetPosition(moveTargetPositionLeftBack);
+        rightFrontDrive.setTargetPosition(moveTargetPositionRightFront);
+        rightBackDrive.setTargetPosition(moveTargetPositionRightBack);
+
+        // Turn on RUN_TO_POSITION (moved encoders to that position)
+        setDriveMotorRunMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // Execute the movement
+        setDriveMotorPower(inMaxOutputPowerPercent, inMaxOutputPowerPercent, inMaxOutputPowerPercent, inMaxOutputPowerPercent);
+
+        while (sysOpMode.opModeIsActive() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
+
+            // Display movement
+            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
+                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
+                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
+            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
+                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
+                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+            sysOpMode.telemetry.update();
+
+            //sysOpMode.idle();
+        }
 
         // Make sure all motors are stopped after completed path
         setDriveMotorPower(0, 0, 0, 0);

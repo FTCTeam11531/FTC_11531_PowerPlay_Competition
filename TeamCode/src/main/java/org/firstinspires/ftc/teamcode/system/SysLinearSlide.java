@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.system;
 
+import com.qualcomm.robotcore.util.Range;
 import com.qualcomm.hardware.rev.RevTouchSensor;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -36,6 +37,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import java.util.Arrays;
 import java.util.List;
+
 
 // Program Copied from FTC example: RobotHardware.java
 // Renamed in TeamCode as: SysLinearSlide.java
@@ -202,27 +204,32 @@ public class SysLinearSlide {
     public void moveLinearSlideWithinLimits(double inMaxOutputPowerPercent) {
 
         double calcLinearSlideMovement = getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) + inMaxOutputPowerPercent;
+        //calcLinearSlideMovement = Range.clip(calcLinearSlideMovement, RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN, RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX);
+
+        //setLinearSlideMotorPower(calcLinearSlideMovement);
 
         // Allow motor output within min/max limits
         // Going Up!
-        if(inMaxOutputPowerPercent > 0) {
-            if(calcLinearSlideMovement < RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX) {
-                setLinearSlideMotorPower(inMaxOutputPowerPercent);
-            }
-        }
-
-        // Coming Down!
-        else {
-
-            if (getLinearSlideLimitSwitchSetting()) {
-
-                // Ground Limit switch tripped (reset)
-                resetLinearSlide();
+        if(inMaxOutputPowerPercent > 0.5) {
+            if(getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) >= RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX) {
+                setLinearSlideMotorPower(0);
             }
             else {
                 setLinearSlideMotorPower(inMaxOutputPowerPercent);
             }
         }
+        // Coming Down!
+        else {
+            if((getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) <= RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MIN)
+                    || getLinearSlideLimitSwitchSetting()) {
+                setLinearSlideMotorPower(0);
+            }
+            else {
+                setLinearSlideMotorPower(inMaxOutputPowerPercent);
+            }
+        }
+
+
 
     }
 
@@ -239,11 +246,11 @@ public class SysLinearSlide {
     public void resetLinearSlide() {
 
         // Loop - lower slide until limit switch is tripped (if needed)
-        while(!getLinearSlideLimitSwitchSetting()) {
+        //while(!getLinearSlideLimitSwitchSetting()) {
 
             // Move slide down
-            setLinearSlideMotorPower(-(RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED));
-        }
+        //    setLinearSlideMotorPower(-(RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED));
+       // }
 
         // Ground Limit switch enabled, reset encoder
         setLinearSlideMotorRunMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

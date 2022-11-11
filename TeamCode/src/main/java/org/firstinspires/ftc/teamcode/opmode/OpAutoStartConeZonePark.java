@@ -116,7 +116,7 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
-        // Initialize System(s)
+        // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
@@ -137,10 +137,10 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         // Configure drivetrain for Autonomous Mode
         // -- Set to run without encoders for timed drive mode
         // ------------------------------------------------------------
-        sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // ------------------------------------------------------------
-        // Inputs for: Drivetrain
+        // Inputs for OpMode
         // ------------------------------------------------------------
         double inputAxial, inputLateral, inputYaw, inputTimeSeconds, inputOutputPower;
 
@@ -152,10 +152,78 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         telemetry.update();
 
         // ------------------------------------------------------------
-        // Wait for the game to start (driver presses PLAY)
+        // Allow for Start Option Selection
         // ------------------------------------------------------------
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
-        waitForStart();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+
+        // Reset runtime clock
+        runtime.reset();
+
+        // Init Loop to allow for Start Option Selection(s)
+        while (opModeInInit()) {
+            telemetry.setAutoClear(false);
+            telemetry.clearAll();
+
+            telemetry.addData(">", "------------------------------------");
+            telemetry.addData(">", "Setting Selection Mode Available");
+            telemetry.addData(">", "------------------------------------");
+            telemetry.addData(">", " Use Main Driver Gamepad");
+            telemetry.addData(">", "------------------------------------");
+
+            switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousMode()) {
+                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_RIGHT):
+                    telemetry.addData(">>>", "Press (X) - Left Autonomous Mode");
+                    telemetry.addData(">>>", "Press (B) - Right Autonomous Mode (ACTIVE)");
+                    break;
+                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_LEFT):
+                    telemetry.addData(">>>", "Press (X) - Left Autonomous Mode (ACTIVE)");
+                    telemetry.addData(">>>", "Press (B) - Right Autonomous Mode");
+                    break;
+                default:
+                    telemetry.addData(">>>", "Press (X) - Left Autonomous Mode");
+                    telemetry.addData(">>>", "Press (B) - Right Autonomous Mode");
+            }
+
+            switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousImageSource()) {
+                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM):
+                    telemetry.addData(">>>", "Press (Y) - Custom Images (ACTIVE)");
+                    telemetry.addData(">>>", "Press (A) - Stock Images");
+                    break;
+                case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_STOCK):
+                    telemetry.addData(">>>", "Press (Y) - Custom Images");
+                    telemetry.addData(">>>", "Press (A) - Stock Images (ACTIVE)");
+                    break;
+                default:
+                    telemetry.addData(">>>", "Press (Y) - Custom Images");
+                    telemetry.addData(">>>", "Press (A) - Stock Images");
+            }
+
+            telemetry.addData(">", "------------------------------------");
+            telemetry.update();
+
+            // Set Autonomous Mode to Left Side
+            if(gamepad1.x) {
+                RobotConstants.CommonSettings.setInitializationSettingAutonomousMode(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_LEFT);
+            }
+
+            // Set Autonomous Mode to Right Side
+            if(gamepad1.b) {
+                RobotConstants.CommonSettings.setInitializationSettingAutonomousMode(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_RIGHT);
+            }
+
+            // Set image model to use custom model
+            if(gamepad1.y) {
+                RobotConstants.CommonSettings.setInitializationSettingAutonomousImageSource(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM);
+            }
+
+            // Set image model to use custom model
+            if(gamepad1.a) {
+                RobotConstants.CommonSettings.setInitializationSettingAutonomousImageSource(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_STOCK);
+            }
+
+            // Pace this loop so commands move at a reasonable speed.
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+        }
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -174,6 +242,15 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
             // ------------------------------------------------------------
             // Commands to Run
             // ------------------------------------------------------------
+            // Close Clamp at start
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+
+
+            // Test drive 24 inches forward
+            sysDrivetrain.driveDistanceAxial(24, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Test drive 24 inches right
+            sysDrivetrain.driveDistanceLateral(24, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
 
 

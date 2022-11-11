@@ -45,6 +45,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
+import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
 // Renamed in TeamCode as: OpAutoConeStackZonePark.java
@@ -77,6 +78,9 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
+    // -- Robot Initializtion
+    RobotInitialization utilRobotInit = new RobotInitialization(this);
+
     // -- Lighting System
     SysLighting sysLighting = new SysLighting(this);
 
@@ -117,8 +121,10 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
-        // Initialize System(s)
+        // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
+        utilRobotInit.init();
+
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
 
@@ -138,7 +144,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         // Configure drivetrain for Autonomous Mode
         // -- Set to run without encoders for timed drive mode
         // ------------------------------------------------------------
-        sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         // ------------------------------------------------------------
         // Inputs for: Drivetrain
@@ -153,10 +159,15 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         telemetry.update();
 
         // ------------------------------------------------------------
-        // Wait for the game to start (driver presses PLAY)
+        // Allow for Start Option Selection
         // ------------------------------------------------------------
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
-        waitForStart();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+
+        // Reset runtime clock
+        runtime.reset();
+
+        // Robot Initialization Settings - Autonomous
+        utilRobotInit.displayInitializationSettingsAutonomous();
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -165,6 +176,8 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         telemetry.setAutoClear(false);
         telemetry.clearAll();
 
+        // Reset runtime/lighting to Default
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
         runtime.reset();
 
         // Return if a Stop Action is requested

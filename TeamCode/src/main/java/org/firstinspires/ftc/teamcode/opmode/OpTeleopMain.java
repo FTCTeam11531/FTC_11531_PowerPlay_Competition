@@ -113,7 +113,7 @@ public class OpTeleopMain extends LinearOpMode {
         robotConfigName = robotConfigFileManager.getActiveConfig().getName();
 
         // ------------------------------------------------------------
-        // Initialize System(s) - set difference lightmode between each system init
+        // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
@@ -151,66 +151,29 @@ public class OpTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         // Allow for Start Option Selection
         // ------------------------------------------------------------
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
-
-        telemetry.addData(">", "------------------------------------");
-        telemetry.addData(">", "Option Setting Selection Mode Available for 5 Seconds");
-        telemetry.addData(">", "------------------------------------");
-        telemetry.update();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
 
         // Reset runtime clock
         runtime.reset();
 
         // Init Loop to allow for Start Option Selection(s)
-        while (opModeInInit() && runtime.seconds() < 5) {
+//        while (opModeInInit()) {
+//            telemetry.setAutoClear(false);
+//            telemetry.clearAll();
+//
+//            telemetry.addData(">", "------------------------------------");
+//            telemetry.addData(">", "Setting Selection Mode Available");
+//            telemetry.addData(">", "------------------------------------");
+//            telemetry.addData(">", " Use Main Driver Gamepad");
+//            telemetry.addData(">", "------------------------------------");
+//            telemetry.addData(">>>", "No Options Available");
+//            telemetry.addData(">", "------------------------------------");
+//            telemetry.update();
 
-            // Set image model to use custom model
-            if(gamepad1.y) {
-                telemetry.addData(">", "------------------------------------");
-                telemetry.addData(">", "Optional Setting Entered:");
-                telemetry.addData(">", "Now using Green Team Custom model");
-                telemetry.addData(">", "------------------------------------");
-                telemetry.update();
-            }
+//            // Pace this loop so commands move at a reasonable speed.
+//            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+//        }
 
-            // Set image model to use FIRST robotics default model
-            if(gamepad1.a) {
-                telemetry.addData(">", "------------------------------------");
-                telemetry.addData(">", "Optional Setting Entered:");
-                telemetry.addData(">", "Now using FIRST default model");
-                telemetry.addData(">", "------------------------------------");
-                telemetry.update();
-            }
-
-            // Set Autonomous Direction - Left
-            if(gamepad1.y) {
-                telemetry.addData(">", "------------------------------------");
-                telemetry.addData(">", "Optional Setting Entered:");
-                telemetry.addData(">", "LEFT - Autonomous Mode Configured!");
-                telemetry.addData(">", "------------------------------------");
-                telemetry.update();
-            }
-
-            // Set Autonomous Direction - Right
-            if(gamepad1.a) {
-                telemetry.addData(">", "------------------------------------");
-                telemetry.addData(">", "Optional Setting Entered:");
-                telemetry.addData(">", "RIGHT - Autonomous Mode Configured!");
-                telemetry.addData(">", "------------------------------------");
-                telemetry.update();
-            }
-
-        }
-
-        telemetry.addData(">", "------------------------------------");
-        telemetry.addData(">", "Option Setting Selection Mode Completed");
-        telemetry.addData(">", "------------------------------------");
-        telemetry.update();
-
-        // ------------------------------------------------------------
-        // Wait for the game to start (driver presses PLAY)
-        // ------------------------------------------------------------
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
         waitForStart();
 
         // ------------------------------------------------------------
@@ -321,8 +284,15 @@ public class OpTeleopMain extends LinearOpMode {
 
             // Manually control Linear Slide
             if(Math.abs(gamepad2.right_stick_y) == 1) {
-                sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
-                isManualSlideMode = true;
+
+                // Check Lower Limit Switch at command level
+                if(sysLinearSlide.getLinearSlideLimitSwitchSetting()) {
+                    if(gamepad2.right_stick_y < 0) {
+                        sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
+                        isManualSlideMode = true;
+                    }
+                }
+
             }
 
             // Button Action - Set Linear Slide to High Goal
@@ -471,12 +441,19 @@ public class OpTeleopMain extends LinearOpMode {
             telemetry.addData("Drivetrain Mode", sysDrivetrain.getLabelDrivetrainMode());
             telemetry.addData("Drivetrain Power", sysDrivetrain.getLabelDrivetrainOutputPower());
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Front left/Right", "%4.2f, %4.2f"
+            telemetry.addData("Power Front left/Right", "%4.2f, %4.2f"
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-            telemetry.addData("Back  left/Right", "%4.2f, %4.2f"
+            telemetry.addData("Power Back  left/Right", "%4.2f, %4.2f"
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
                     , sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Encoder Front left/Right", "%7d, %7d"
+                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+            telemetry.addData("Encoder Back  left/Right", "%7d, %7d"
+                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
             telemetry.addData("-", "------------------------------");
             telemetry.addData("Robot Heading Raw", sysDrivetrain.getRobotHeadingRaw());
             telemetry.addData("Heading Adjustment", RobotConstants.CommonSettings.getImuTransitionAdjustment());
@@ -522,7 +499,7 @@ public class OpTeleopMain extends LinearOpMode {
                 telemetry.update();
             }
 
-            // Pace this loop so hands move at a reasonable speed.
+            // Pace this loop so commands move at a reasonable speed.
             //sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
         }
 
