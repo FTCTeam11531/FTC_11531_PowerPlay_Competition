@@ -345,10 +345,9 @@ public class SysDrivetrain {
      * <br>
      *
      * @param inTargetHeading
-     * @param inRotateDirection
      * @param inOutputPowerPercent
      */
-    public void driveTurnToHeading(double inTargetHeading, double inRotateDirection, double inOutputPowerPercent) {
+    public void driveTurnToHeading(double inTargetHeading, double inOutputPowerPercent) {
         // local variable for turn output power
         double robotTurnSpeed;
 
@@ -356,11 +355,14 @@ public class SysDrivetrain {
         getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_DRIVE_GAIN);
 
         // Loop while not at heading
-        while (sysOpMode.opModeIsActive() && (Math.abs(trackHeadingError) > 1)) {
+        while (sysOpMode.opModeIsActive() && (Math.abs(trackHeadingError) > 1.0)) {
 
-            robotTurnSpeed = getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_DRIVE_GAIN);
+            robotTurnSpeed = getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_TURN_GAIN);
 
             robotTurnSpeed = Range.clip(robotTurnSpeed, -inOutputPowerPercent, inOutputPowerPercent);
+
+            sysOpMode.telemetry.addData("TrackHeadingError", "%4.2f", trackHeadingError);
+            sysOpMode.telemetry.update();
 
             // Move Robot
             driveMecanumFieldCentric(0, 0, robotTurnSpeed, inOutputPowerPercent);
@@ -403,13 +405,13 @@ public class SysDrivetrain {
         while (sysOpMode.opModeIsActive() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
 
             // Display movement
-            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
-                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
-                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
-            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
-                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
-                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-            sysOpMode.telemetry.update();
+//            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
+//                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
+//                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
+//            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
+//                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
+//                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+//            sysOpMode.telemetry.update();
 
             //sysOpMode.idle();
         }
@@ -430,8 +432,8 @@ public class SysDrivetrain {
 
         // Determine Target Position for each wheel
         moveTargetPositionLeftFront = leftFrontDrive.getCurrentPosition() + moveTargetPosition;
-        moveTargetPositionLeftBack = -(leftBackDrive.getCurrentPosition() + moveTargetPosition);
-        moveTargetPositionRightFront = -(rightFrontDrive.getCurrentPosition() + moveTargetPosition);
+        moveTargetPositionLeftBack = -leftBackDrive.getCurrentPosition() + moveTargetPosition;
+        moveTargetPositionRightFront = -rightFrontDrive.getCurrentPosition() + moveTargetPosition;
         moveTargetPositionRightBack = rightBackDrive.getCurrentPosition() + moveTargetPosition;
 
         // Set target position
@@ -449,13 +451,13 @@ public class SysDrivetrain {
         while (sysOpMode.opModeIsActive() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
 
             // Display movement
-            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
-                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
-                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
-            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
-                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
-                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-            sysOpMode.telemetry.update();
+//            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
+//                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
+//                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
+//            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
+//                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
+//                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+//            sysOpMode.telemetry.update();
 
             //sysOpMode.idle();
         }
@@ -504,6 +506,7 @@ public class SysDrivetrain {
         // Get heading value from the IMU
         // Read inverse IMU heading, as the IMU heading is CW positive
         outRobotHeadingValue = -(imuUnit.getAngularOrientation().firstAngle);
+//        outRobotHeadingValue = imuUnit.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         // Should the IMU heading be inversed? Does it matter?
         // Will need to view the heading readout on the driver hub
@@ -557,14 +560,14 @@ public class SysDrivetrain {
     public double getSteeringCorrection(double inTargetHeader, double inProportionalGain) {
 
         // Get robot header by subtracking the offset from the heading
-        trackHeadingRobot = getRobotHeadingRaw() - RobotConstants.CommonSettings.getImuTransitionAdjustment();
+        trackHeadingRobot = imuUnit.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         // Determine the heading current error
         trackHeadingError = inTargetHeader - trackHeadingRobot;
 
         // Normalize the error to be within +/- 180 degrees
-        while (trackHeadingError > 180) trackHeadingError -= 360;
-        while (trackHeadingError <= -180) trackHeadingError += 360;
+//        while (trackHeadingError > 180) trackHeadingError -= 360;
+//        while (trackHeadingError <= -180) trackHeadingError += 360;
 
         return Range.clip(trackHeadingError * inProportionalGain, -1, 1);
     }

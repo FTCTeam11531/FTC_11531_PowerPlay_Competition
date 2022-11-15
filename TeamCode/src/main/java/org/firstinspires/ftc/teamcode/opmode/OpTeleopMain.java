@@ -242,7 +242,7 @@ public class OpTeleopMain extends LinearOpMode {
 
             // Button Action - Turn robot 180 degrees (180 deg spin)
             if(gamepad1.x) {
-                sysDrivetrain.driveTurnToHeading(180, 1, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
             }
 
             // ------------------------------------------------------------

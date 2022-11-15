@@ -33,6 +33,11 @@ public class RobotConstants {
     // - - Multiply Inches by Conversion to get mm
     public static final double CONVERSION_FACTOR_MM_INCH = 25.4;
 
+    // Conversion Radians and Degrees
+    // - - Divide Degrees by Conversion to get Radians
+    // - - Multiply Radians by Conversion to get Degrees
+    public static final double CONVERSION_FACTOR_RADIAN_DEGREE = 57.2957795;
+
     // Device Storage (External Storage)
     public static final String DEVICE_EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getPath();
     public static final String TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY = "FIRST/tflitemodels/";
@@ -352,17 +357,17 @@ public class RobotConstants {
         public static final int ENCODER_SET_POINT_LIMIT_MIN = 0;
 
         // Encoder Set Points for each Goal (High/Med/Low/Ground)
-        public static final int ENCODER_SET_POINT_HIGH_GOAL = 6000;
-        public static final int ENCODER_SET_POINT_MED_GOAL = 4200;
-        public static final int ENCODER_SET_POINT_LOW_GOAL = 2800;
+        public static final int ENCODER_SET_POINT_HIGH_GOAL = 5800;
+        public static final int ENCODER_SET_POINT_MED_GOAL = 4100;
+        public static final int ENCODER_SET_POINT_LOW_GOAL = 2400;
         public static final int ENCODER_SET_POINT_GROUND_GOAL = 0;
 
         // Encoder Set Points for cone stack (cone 5 (top), cone 4, 3, 2, cone 1 (bottom))
-        public static final int ENCODER_SET_POINT_CONE_STACK_5 = 500;
-        public static final int ENCODER_SET_POINT_CONE_STACK_4 = 400;
-        public static final int ENCODER_SET_POINT_CONE_STACK_3 = 300;
-        public static final int ENCODER_SET_POINT_CONE_STACK_2 = 200;
-        public static final int ENCODER_SET_POINT_CONE_STACK_1 = 100;
+        public static final int ENCODER_SET_POINT_CONE_STACK_5 = 850;
+        public static final int ENCODER_SET_POINT_CONE_STACK_4 = 650;
+        public static final int ENCODER_SET_POINT_CONE_STACK_3 = 450;
+        public static final int ENCODER_SET_POINT_CONE_STACK_2 = 250;
+        public static final int ENCODER_SET_POINT_CONE_STACK_1 = 0;
 
         // Linear Slide Safe Position for Claw to Operate
         public static final int ENCODER_SET_POINT_CLAW_SAFEZONE = 200;
@@ -642,5 +647,13 @@ public class RobotConstants {
      */
     public static double convertInchesToMillimeters(double inValueInInches) {
         return inValueInInches * CONVERSION_FACTOR_MM_INCH;
+    }
+
+    public static double convertRadiansToDegrees(double inValueInRadians) {
+        return inValueInRadians * CONVERSION_FACTOR_RADIAN_DEGREE;
+    }
+
+    public static double convertDegreesToRadians(double inValueInDegrees) {
+        return inValueInDegrees / CONVERSION_FACTOR_RADIAN_DEGREE;
     }
 }

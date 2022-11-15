@@ -82,7 +82,7 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
     // -- Vision System
-    SysVision sysVision = new SysVision(this);
+    //SysVision sysVision = new SysVision(this);
 
     // -- LinearSlide System
     SysLinearSlide sysLinearSlide = new SysLinearSlide(this);
@@ -119,7 +119,7 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-        sysVision.init();
+        //sysVision.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         sysLinearSlide.init();
@@ -177,13 +177,49 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
             // Close Clamp at start
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
 
+            // Move Linear Slide to High Goal
+            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
 
             // Test drive 24 inches forward
-            sysDrivetrain.driveDistanceAxial(24, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(48, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Test drive turn to heading 180
+            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Test drive 24 inches forward (went backward)
+            sysDrivetrain.driveDistanceAxial(12, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Test drive 12 inches left
+//            sysDrivetrain.driveDistanceLateral(-12, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Move Linear Slide to High Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+            }
+
+            // Open the Claw
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
+
+            // Test drive 12 inches right //??
+            sysDrivetrain.driveDistanceLateral(12, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Test drive turn to heading 90
+            //sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Test drive 12 inches left
+            //sysDrivetrain.driveDistanceLateral(-12, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Test drive 24 inches right
-            sysDrivetrain.driveDistanceLateral(24, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            //sysDrivetrain.driveDistanceLateral(24, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
+            // Test drive 24 inches backward
+            //sysDrivetrain.driveDistanceAxial(-24, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Test drive 24 inches left
+            //sysDrivetrain.driveDistanceLateral(-24, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
 
             // ------------------------------------------------------------

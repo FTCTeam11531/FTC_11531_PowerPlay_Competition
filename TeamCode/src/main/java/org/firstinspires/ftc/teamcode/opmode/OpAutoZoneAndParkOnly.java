@@ -83,7 +83,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     SysClaw sysClaw = new SysClaw(this);
 
     // -- Vision System
-    SysVision sysVision = new SysVision(this);
+    //SysVision sysVision = new SysVision(this);
 
     // Settings for captured image
     Recognition recognitionTargetZone;
@@ -115,8 +115,8 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-        sysVision.init();
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+        //sysVision.init();
+        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
@@ -171,15 +171,15 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             // Get Cone Sleeve Image
             // ------------------------------------------------------------
             boolean isImageFound = false;
-            while (opModeIsActive() && !isImageFound) {
-
-                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
-
-                if(recognitionTargetZone != null) {
-                    isImageFound = true;
-                }
-
-            }
+//            while (opModeIsActive() && !isImageFound) {
+//
+//                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
+//
+//                if(recognitionTargetZone != null) {
+//                    isImageFound = true;
+//                }
+//
+//            }
 
             // ------------------------------------------------------------
             // - Vision telemetry
@@ -187,12 +187,12 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Vision");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
-            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
+//            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
+//            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
             telemetry.addData("-", "------------------------------");
             telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
-            telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
-            telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
+//            telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
+//            telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
             telemetry.update();
 
             // ------------------------------------------------------------
@@ -213,7 +213,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             telemetry.update();
 
             // Get the target zone from recongnition
-            targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+//            targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
 
             switch (targetZone) {
 
