@@ -29,9 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.system;
 
-import android.app.Activity;
-
-import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -180,20 +177,13 @@ public class SysVision {
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         switch(RobotConstants.CommonSettings.getInitializationSettingAutonomousImageSource()) {
             case (RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_IMAGE_SOURCE_CUSTOM_GREEN):
-                tensorFlowObjectDetector.loadModelFromAsset(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST
-                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST);
+                // Custom TensorFlow Model
+                tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH
+                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN);
 
                 // Store the value(s) for the model to be referenced
-                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
-                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
-
-//                // Custom TensorFlow Model
-//                tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH
-//                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN);
-//
-//                // Store the value(s) for the model to be referenced
-//                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILE;
-//                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH;
+                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILE;
+                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH;
 
                 break;
 
@@ -210,19 +200,12 @@ public class SysVision {
 
             default:
                 // TensorFlow Model for Default First Images
-//                tensorFlowObjectDetector.loadModelFromAsset(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST
-//                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST);
-//
-//                // Store the value(s) for the model to be referenced
-//                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
-//                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
-                // Custom TensorFlow Model
-                tensorFlowObjectDetector.loadModelFromFile(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH
-                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN);
+                tensorFlowObjectDetector.loadModelFromAsset(RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST
+                        , RobotConstants.Vision.TENSORFLOW_MODEL_LABELS_POWERPLAY_FIRST);
 
                 // Store the value(s) for the model to be referenced
-                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILE;
-                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_GREEN_FILEPATH;
+                modelSelectionFileName = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
+                modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
 
         }
 

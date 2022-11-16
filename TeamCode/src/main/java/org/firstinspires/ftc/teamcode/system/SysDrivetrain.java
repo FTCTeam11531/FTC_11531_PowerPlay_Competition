@@ -405,15 +405,15 @@ public class SysDrivetrain {
         while (sysOpMode.opModeIsActive() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
 
             // Display movement
-//            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
-//                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
-//                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
-//            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
-//                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
-//                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-//            sysOpMode.telemetry.update();
+            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
+                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
+                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
+            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
+                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
+                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+            sysOpMode.telemetry.update();
 
-            //sysOpMode.idle();
+            sysOpMode.idle();
         }
 
         // Make sure all motors are stopped after completed path
@@ -432,8 +432,8 @@ public class SysDrivetrain {
 
         // Determine Target Position for each wheel
         moveTargetPositionLeftFront = leftFrontDrive.getCurrentPosition() + moveTargetPosition;
-        moveTargetPositionLeftBack = -leftBackDrive.getCurrentPosition() + moveTargetPosition;
-        moveTargetPositionRightFront = -rightFrontDrive.getCurrentPosition() + moveTargetPosition;
+        moveTargetPositionLeftBack = leftBackDrive.getCurrentPosition() - moveTargetPosition;
+        moveTargetPositionRightFront = rightFrontDrive.getCurrentPosition() - moveTargetPosition;
         moveTargetPositionRightBack = rightBackDrive.getCurrentPosition() + moveTargetPosition;
 
         // Set target position
@@ -451,15 +451,15 @@ public class SysDrivetrain {
         while (sysOpMode.opModeIsActive() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
 
             // Display movement
-//            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
-//                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
-//                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
-//            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
-//                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
-//                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-//            sysOpMode.telemetry.update();
+            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
+                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
+                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
+            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
+                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
+                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+            sysOpMode.telemetry.update();
 
-            //sysOpMode.idle();
+            sysOpMode.idle();
         }
 
         // Make sure all motors are stopped after completed path

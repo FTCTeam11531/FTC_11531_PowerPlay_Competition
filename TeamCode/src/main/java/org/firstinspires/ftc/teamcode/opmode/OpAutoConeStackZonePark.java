@@ -29,16 +29,12 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
-import android.app.Activity;
-
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
-
-import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -67,7 +63,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
  * <hr>
  */
 @Autonomous(name="Cone Stack | Zone Park", group="_auto")
-@Disabled
+//@Disabled
 public class OpAutoConeStackZonePark extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -102,6 +98,12 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
     @Override
     public void runOpMode() {
         // ------------------------------------------------------------
+        // Local Variables
+        // ------------------------------------------------------------
+        boolean isImageFound = false;
+        int targetZone;
+
+        // ------------------------------------------------------------
         // Configure Telemetry
         // ------------------------------------------------------------
         // Set telemetry mode to append
@@ -119,8 +121,8 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-        //sysVision.init();
-        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+        sysVision.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
@@ -133,11 +135,6 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         // -- Set to run without encoders for timed drive mode
         // ------------------------------------------------------------
         sysDrivetrain.setDriveMotorRunMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // ------------------------------------------------------------
-        // Inputs for: Drivetrain
-        // ------------------------------------------------------------
-        double inputAxial, inputLateral, inputYaw, inputTimeSeconds, inputOutputPower;
 
         // ------------------------------------------------------------
         // Send telemetry message to signify robot completed initialization and waiting to start;
@@ -155,7 +152,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         runtime.reset();
 
         // Robot Initialization Settings - Autonomous
-        utilRobotInit.displayInitializationSettingsAutonomous(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
+        utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -176,21 +173,310 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
             // ------------------------------------------------------------
             // Commands to Run
             // ------------------------------------------------------------
-
-
-
-            // ------------------------------------------------------------
-            // Driver Hub Feedback
-            // ------------------------------------------------------------
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
+            // Claw - Close the Claw
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
 
             // ------------------------------------------------------------
-            // - Telemetry Data
+            // Get Cone Sleeve Image
+            // ------------------------------------------------------------
+            while (opModeIsActive() && !isImageFound && runtime.seconds() < RobotConstants.Vision.RECOGNITION_TIME_TO_WAIT_SECONDS) {
+
+                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
+
+                if(recognitionTargetZone != null) {
+                    isImageFound = true;
+                }
+
+            }
+
+            // ------------------------------------------------------------
+            // - Vision telemetry
             // ------------------------------------------------------------
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Autonomous               --");
+            telemetry.addData("-", "-- Vision");
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "<No Data Available>");
+            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
+            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
+            telemetry.addData("-", "------------------------------");
+            if (isImageFound) {
+
+                telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
+                telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
+                telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
+            }
+            else {
+                telemetry.addData("!!!", "No Image was detected!");
+            }
+            telemetry.update();
+
+            // ------------------------------------------------------------
+            // Start Cone - Drive To High Goal
+            // ------------------------------------------------------------
+
+            // Drive - 50 inches forward
+            // -- 2 inches past goal to push signal out of the way
+            sysDrivetrain.driveDistanceAxial(50, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Drive - 2 inches backward
+            sysDrivetrain.driveDistanceAxial(-2, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Drive - turn to heading 90 degrees
+            sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Drive - turn to heading 180 degrees
+            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Move Linear Slide to High Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+            }
+
+            // Drive - 14 inches left
+            sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+            // ------------------------------------------------------------
+            // Start Cone - Place Cone
+            // ------------------------------------------------------------
+
+            // Linear Slide - Move to High Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+            }
+
+            // Drive - 6 inches forward (onto goal)
+            sysDrivetrain.driveDistanceAxial(-6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // slight pause to stabilize
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+
+            // Claw - Open the Claw
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
+
+            // Drive - 6 inches backward (away from goal)
+            sysDrivetrain.driveDistanceAxial(6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // ------------------------------------------------------------
+            // Cone Stack - Drive To Stack
+            // ------------------------------------------------------------
+
+            // Drive - turn to heading 90 degrees
+            sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Linear Slide - Move to Cone Stack 5
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+            }
+
+            // Drive - 32 inches right (forward)
+            sysDrivetrain.driveDistanceAxial(-32, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Drive - 5 inches right (forward) (slower speed)
+            sysDrivetrain.driveDistanceAxial(-5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+            // ------------------------------------------------------------
+            // Cone Stack - Get Cone
+            // ------------------------------------------------------------
+
+            // Claw - Close the Claw
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
+
+            // Linear Slide - Move to Low Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+            }
+
+            // ------------------------------------------------------------
+            // Cone Stack - Drive To High Goal
+            // ------------------------------------------------------------
+            // Drive - 32 inches right (backward)
+            sysDrivetrain.driveDistanceAxial(32, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Drive 5 inches right (backward)
+            sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+            // Linear Slide - Move to High Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+            }
+
+            // Drive - turn to heading 180 degrees
+            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // ------------------------------------------------------------
+            // Cone Stack - Place Cone
+            // ------------------------------------------------------------
+
+            // Linear Slide - Move to High Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
+            }
+
+            // Drive - 6 inches forward (onto goal)
+            sysDrivetrain.driveDistanceAxial(-6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // slight pause to stabilize
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+
+            // Claw - Open the Claw
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
+
+            // Drive - 6 inches backward (away from goal)
+            sysDrivetrain.driveDistanceAxial(6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Linear Slide - Move to Ground Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
+            }
+
+            // ------------------------------------------------------------
+            // Find Zone and Park!!!!
+            // ------------------------------------------------------------
+
+            if (isImageFound) {
+
+                // Get the target zone from recongnition
+                targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+
+                switch (targetZone) {
+
+                    case 1:
+                        // ---------------------------
+                        // Drive to Zone 1
+                        // ---------------------------
+                        // Linear Slide - Move to Ground Goal
+                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
+                        }
+
+                        // Drive - 14 inches left
+                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                        // Zone Parking Complete
+                        // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE);
+
+                        telemetry.addData("Zone 1", recognitionTargetZone.getLabel());
+                        telemetry.addData("-", "------------------------------");
+                        telemetry.addData("-", "Parking Complete");
+                        telemetry.update();
+
+                        break;
+
+                    case 2:
+                        // ---------------------------
+                        // Drive to Zone 2
+                        // ---------------------------
+                        // Linear Slide - Move to Ground Goal
+                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
+                        }
+
+                        // Drive - 14 inches right
+                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                        // Zone Parking Complete
+                        // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);
+
+                        telemetry.addData("Zone 2", recognitionTargetZone.getLabel());
+                        telemetry.addData("-", "------------------------------");
+                        telemetry.addData("-", "Parking Complete");
+                        telemetry.update();
+
+                        break;
+
+                    case 3:
+                        // ---------------------------
+                        // Drive to Zone 3
+                        // ---------------------------
+                        // Linear Slide - Move to Ground Goal
+                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
+                        }
+
+                        // Drive - 32 inches right
+                        sysDrivetrain.driveDistanceLateral(-32, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                        // Zone Parking Complete
+                        // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE);
+
+                        telemetry.addData("Zone 3", recognitionTargetZone.getLabel());
+                        telemetry.addData("-", "------------------------------");
+                        telemetry.addData("-", "Parking Complete");
+                        telemetry.update();
+
+                        break;
+
+                    default:
+                        // ------------------------------------------------
+                        // Action to perform when Zone was not determined!
+                        // ------------------------------------------------
+
+                        // ---------------------------
+                        // Drive to closest Zone! 1 in 3 chance! (Zone 2)
+                        // ---------------------------
+                        // Linear Slide - Move to Ground Goal
+                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
+                        }
+
+                        // Drive - 14 inches left
+                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                        // Zone Parking Invalid :(
+                        // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+
+                        telemetry.addData("Zone Invalid", "Parking in closest zone");
+                        telemetry.addData("-", "------------------------------");
+                        telemetry.addData("-", "Parking Complete");
+                        telemetry.update();
+                }
+
+            }
+            else
+            {
+                // ------------------------------------------------
+                // Action to perform when Zone was not determined!
+                // ------------------------------------------------
+
+                // ---------------------------
+                // Drive to closest Zone! 1 in 3 chance! (Zone 2)
+                // ---------------------------
+                // Linear Slide - Move to Ground Goal
+                while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+                    sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
+                }
+
+                // Drive - 14 inches left
+                sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                // Zone Parking Invalid :(
+                // ---------------------------
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+
+                telemetry.addData("Zone Invalid", "Parking in closest zone");
+                telemetry.addData("-", "------------------------------");
+                telemetry.addData("-", "Parking Complete");
+                telemetry.update();
+            }
 
         }
 
@@ -200,7 +486,13 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         // ------------------------------------------------------------
         // - send telemetry to driver hub
         // ------------------------------------------------------------
+        telemetry.addData("-", "------------------------------");
+        telemetry.addData("-", "-- Autonomous Routine Complete");
+        telemetry.addData("-", "------------------------------");
         telemetry.update();
+
+        // Set telemetry mode back to auto-clear
+        telemetry.setAutoClear(true);
 
     }
 }

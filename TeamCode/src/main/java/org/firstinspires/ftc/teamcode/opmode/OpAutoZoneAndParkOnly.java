@@ -83,7 +83,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     SysClaw sysClaw = new SysClaw(this);
 
     // -- Vision System
-    //SysVision sysVision = new SysVision(this);
+    SysVision sysVision = new SysVision(this);
 
     // Settings for captured image
     Recognition recognitionTargetZone;
@@ -93,10 +93,15 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // ------------------------------------------------------------
     // -- Command Runtime
     private ElapsedTime runtime = new ElapsedTime();
-    private int targetZone = 0;
 
     @Override
     public void runOpMode() {
+        // ------------------------------------------------------------
+        // Local Variables
+        // ------------------------------------------------------------
+        boolean isImageFound = false;
+        int targetZone;
+
         // ------------------------------------------------------------
         // Configure Telemetry
         // ------------------------------------------------------------
@@ -115,8 +120,8 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-        //sysVision.init();
-        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
+        sysVision.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
@@ -143,7 +148,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         runtime.reset();
 
         // Robot Initialization Settings - Autonomous
-        utilRobotInit.displayInitializationSettingsAutonomous(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
+        utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -162,24 +167,24 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         if (opModeIsActive()) {
 
             // ------------------------------------------------------------
-            // Driver Hub Feedback
+            // Commands to Run
             // ------------------------------------------------------------
-            telemetry.addData("Hardware Profile: ", RobotConstants.CommonSettings.getRobotConfigurationFileManagerNameActive());
-            telemetry.update();
+            // Claw - Close the Claw
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
 
             // ------------------------------------------------------------
             // Get Cone Sleeve Image
             // ------------------------------------------------------------
-            boolean isImageFound = false;
-//            while (opModeIsActive() && !isImageFound) {
-//
-//                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
-//
-//                if(recognitionTargetZone != null) {
-//                    isImageFound = true;
-//                }
-//
-//            }
+            while (opModeIsActive() && !isImageFound && runtime.seconds() < RobotConstants.Vision.RECOGNITION_TIME_TO_WAIT_SECONDS) {
+
+                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
+
+                if(recognitionTargetZone != null) {
+                    isImageFound = true;
+                }
+
+            }
 
             // ------------------------------------------------------------
             // - Vision telemetry
@@ -187,232 +192,144 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Vision");
             telemetry.addData("-", "------------------------------");
-//            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
-//            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
+            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
+            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
             telemetry.addData("-", "------------------------------");
-            telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
-//            telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
-//            telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
+            if (isImageFound) {
+
+                telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
+                telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
+                telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
+            }
+            else {
+                telemetry.addData("!!!", "No Image was detected!");
+            }
             telemetry.update();
 
             // ------------------------------------------------------------
-            // Claw - Clamp starting cone
+            // Zone Park - Drive To Zone Lane
             // ------------------------------------------------------------
-            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
-            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
+
+            // Drive - 26 inches forward
+            // -- 2 inches past goal to push signal out of the way
+            sysDrivetrain.driveDistanceAxial(26, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Drive - 2 inches backward
+            sysDrivetrain.driveDistanceAxial(-2, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // ------------------------------------------------------------
-            // Drive and Park in Correct Zone!
+            // Find Zone and Park!!!!
             // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Drivetrain");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Drivetrain Mode", sysDrivetrain.getLabelDrivetrainMode());
-            telemetry.addData("Drivetrain Power", sysDrivetrain.getLabelDrivetrainOutputPower());
-            telemetry.addData("-", "------------------------------");
-            telemetry.update();
 
-            // Get the target zone from recongnition
-//            targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+            if (isImageFound) {
 
-            switch (targetZone) {
+                // Get the target zone from recongnition
+                targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
 
-                // ---------------------------
-                // Drive to Zone 1
-                // ---------------------------
-                case 1:
-                    telemetry.addData("Zone 1", recognitionTargetZone.getLabel());
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- Before (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                switch (targetZone) {
 
-                    // Drive to Zone 1
-                    // ---------------------------
-                    // [Y] - Axial - Driving forward and backward
-                    // [X] - Lateral - Strafing right and left
-                    // [R] - Yaw - Rotating Clockwise and counter clockwise
+                    case 1:
+                        // ---------------------------
+                        // Drive to Zone 1
+                        // ---------------------------
 
-                    // Drive Forward - Two Seconds
-                    // ---------------------------
-                    sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
+                        // Drive - 28 inches left
+                        sysDrivetrain.driveDistanceLateral(28, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                        // Zone Parking Complete
+                        // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE);
 
-                    // Drive Left - One Second
-                    // ---------------------------
-                    sysDrivetrain.driveInputTimed(0, -1, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 1);
+                        telemetry.addData("Zone 1", recognitionTargetZone.getLabel());
+                        telemetry.addData("-", "------------------------------");
+                        telemetry.addData("-", "Parking Complete");
+                        telemetry.update();
 
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                        break;
 
-                    // Zone Parking Complete
-                    // ---------------------------
-                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE);
-                    break;
+                    case 2:
+                        // ---------------------------
+                        // Drive to Zone 2
+                        // ---------------------------
 
-                // ---------------------------
-                // Drive to Zone 2
-                // ---------------------------
-                case 2:
-                    telemetry.addData("Zone 2", recognitionTargetZone.getLabel());
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- Before (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                        // Drive - 0 inches left
+                        //sysDrivetrain.driveDistanceLateral(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
-                    // Drive to Zone 2
-                    // ---------------------------
-                    // [Y] - Axial - Driving forward and backward
-                    // [X] - Lateral - Strafing right and left
-                    // [R] - Yaw - Rotating Clockwise and counter clockwise
+                        // Zone Parking Complete
+                        // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);
 
-                    // Drive Forward - Two Seconds
-                    // ---------------------------
-                    sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
+                        telemetry.addData("Zone 2", recognitionTargetZone.getLabel());
+                        telemetry.addData("-", "------------------------------");
+                        telemetry.addData("-", "Parking Complete");
+                        telemetry.update();
 
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                        break;
 
-                    // Zone Parking Complete
-                    // ---------------------------
-                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO);
-                    break;
+                    case 3:
+                        // ---------------------------
+                        // Drive to Zone 3
+                        // ---------------------------
 
-                // ---------------------------
-                // Drive to Zone 3
-                // ---------------------------
-                case 3:
-                    telemetry.addData("Zone 3", recognitionTargetZone.getLabel());
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- Before (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                        // Drive - 18 inches right
+                        sysDrivetrain.driveDistanceLateral(-18, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
-                    // Drive to Zone 3
-                    // ---------------------------
-                    // [Y] - Axial - Driving forward and backward
-                    // [X] - Lateral - Strafing right and left
-                    // [R] - Yaw - Rotating Clockwise and counter clockwise
+                        // Zone Parking Complete
+                        // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE);
 
-                    // Drive Forward - Two Seconds
-                    // ---------------------------
-                    sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
+                        telemetry.addData("Zone 3", recognitionTargetZone.getLabel());
+                        telemetry.addData("-", "------------------------------");
+                        telemetry.addData("-", "Parking Complete");
+                        telemetry.update();
 
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                        break;
 
-                    // Drive Right - One Second
-                    // ---------------------------
-                    sysDrivetrain.driveInputTimed(0, 1, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 1);
+                    default:
+                        // ------------------------------------------------
+                        // Action to perform when Zone was not determined!
+                        // ------------------------------------------------
 
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                        // ---------------------------
+                        // Drive to closest Zone! 1 in 3 chance! (Zone 2)
+                        // ---------------------------
 
-                    // Zone Parking Complete
-                    // ---------------------------
-                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE);
-                    break;
+                        // Drive - 18 inches right
+                        sysDrivetrain.driveDistanceLateral(-18, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
+                        // Zone Parking Invalid :(
+                        // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+
+                        telemetry.addData("Zone Invalid", "Parking in closest zone");
+                        telemetry.addData("-", "------------------------------");
+                        telemetry.addData("-", "Parking Complete");
+                        telemetry.update();
+                }
+
+            }
+            else
+            {
                 // ------------------------------------------------
                 // Action to perform when Zone was not determined!
                 // ------------------------------------------------
-                default:
-                    telemetry.addData("None", recognitionTargetZone.getLabel());
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- Before (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
 
-                    // Default
-                    // ---------------------------
-                    // [Y] - Axial - Driving forward and backward
-                    // [X] - Lateral - Strafing right and left
-                    // [R] - Yaw - Rotating Clockwise and counter clockwise
+                // ---------------------------
+                // Drive to closest Zone! 1 in 3 chance! (Zone 2)
+                // ---------------------------
 
-                    // Drive Forward - Two Seconds
-                    // ---------------------------
-                    sysDrivetrain.driveInputTimed(1, 0, 0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED, 2);
+                // Drive - 14 inches left
+                sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
-                    telemetry.addData("-", "------------------------------");
-                    telemetry.addData("- After (Heading)", sysDrivetrain.getRobotHeadingAdj());
-                    telemetry.addData("Encoder Front left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-                    telemetry.addData("Encoder Back  left/Right", "%5f, %5f"
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                            , sysDrivetrain.getDrivetrainMotorEncoderPosition(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-                    telemetry.update();
+                // Zone Parking Invalid :(
+                // ---------------------------
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
 
-                    // Zone Parking Invalid :(
-                    // ---------------------------
-                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+                telemetry.addData("Zone Invalid", "Parking in closest zone");
+                telemetry.addData("-", "------------------------------");
+                telemetry.addData("-", "Parking Complete");
+                telemetry.update();
             }
-
-            // ------------------------------------------------------------
-            // - Lighting telemetry
-            // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Lighting");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Pattern", sysLighting.ledLightPattern.toString());
-            telemetry.update();
 
         }
 
@@ -430,7 +347,5 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         // Set telemetry mode back to auto-clear
         telemetry.setAutoClear(true);
 
-        // Pace this loop so hands move at a reasonable speed.
-        //sleep(50);
     }
 }

@@ -65,7 +65,7 @@ import java.util.List;
  * <hr>
  */
 @Autonomous(name="Test: Timed Movement", group="test")
-//@Disabled
+@Disabled
 public class OpAutoTimedMovement extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -153,7 +153,7 @@ public class OpAutoTimedMovement extends LinearOpMode {
         runtime.reset();
 
         // Robot Initialization Settings - Autonomous
-        utilRobotInit.displayInitializationSettingsAutonomous(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
+        utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
         // ------------------------------------------------------------
         // Configure Telemetry

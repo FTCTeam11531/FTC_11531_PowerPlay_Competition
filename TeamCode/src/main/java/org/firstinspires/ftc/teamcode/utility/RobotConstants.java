@@ -4,7 +4,6 @@ package org.firstinspires.ftc.teamcode.utility;
 // Named in TeamCode as: RobotConstants.java
 
 import android.os.Environment;
-
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -40,7 +39,7 @@ public class RobotConstants {
 
     // Device Storage (External Storage)
     public static final String DEVICE_EXTERNAL_STORAGE_PATH = Environment.getExternalStorageDirectory().getPath();
-    public static final String TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY = "FIRST/tflitemodels/";
+    public static final String TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY = "/FIRST/tflitemodels/";
     public static final String TENSORFLOW_MODEL_EXTERNAL_STORAGE_PATH = DEVICE_EXTERNAL_STORAGE_PATH + TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY;
 
     /**
@@ -532,6 +531,7 @@ public class RobotConstants {
 
         // Image Detection Criteria
         public static final double RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN = .90;
+        public static final int RECOGNITION_TIME_TO_WAIT_SECONDS = 5;
 
         /*
          * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which
@@ -561,9 +561,9 @@ public class RobotConstants {
                                                                                 / TENSORFLOW_IMAGE_PROCESSING_IMAGE_HEIGHT;
 
         // Tensor Flow Parameter(s)
-        public static final float TENSORFLOW_PARAMETER_MIN_RESULT_CONFIDENCE = 0.75f;
+        public static final float TENSORFLOW_PARAMETER_MIN_RESULT_CONFIDENCE = 0.20f;
         public static final boolean TENSORFLOW_PARAMETER_IS_MODEL_TENSORFLOW2 = true;
-        public static final int TENSORFLOW_PARAMETER_INPUT_SIZE = 300;
+        public static final int TENSORFLOW_PARAMETER_INPUT_SIZE = 320;
 
         // TensorFlow Model
         public static final String TENSORFLOW_MODEL_ID_POWERPLAY_FIRST = "config_first_comp";
@@ -577,8 +577,8 @@ public class RobotConstants {
 
         public static final String TENSORFLOW_MODEL_ID_POWERPLAY_BLUE = "config_blue_comp";
         public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILE = "tf_ftc18092_powerplay.tflite";
-        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH = TENSORFLOW_MODEL_EXTERNAL_STORAGE_PATH;
-        //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH = "/sdcard/" + TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY;
+        //public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH = TENSORFLOW_MODEL_EXTERNAL_STORAGE_PATH;
+        public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH = "/sdcard/" + TENSORFLOW_MODEL_EXTERNAL_STORAGE_DIRECTORY;
         public static final String TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILEPATH = TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_PATH + TENSORFLOW_MODEL_ASSET_POWERPLAY_BLUE_FILE;
 
         public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_FIRST_ZONE1 = "1 Bolt";
