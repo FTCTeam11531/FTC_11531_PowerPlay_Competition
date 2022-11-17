@@ -219,7 +219,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
             sysDrivetrain.driveDistanceAxial(52, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Drive - 2 inches backward
-            sysDrivetrain.driveDistanceAxial(-4, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(-6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Drive - turn to heading 90 degrees
             //sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
@@ -247,7 +247,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
             }
 
             // Drive - 6 inches forward (onto goal)
-            sysDrivetrain.driveDistanceAxial(-6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(-4, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // slight pause to stabilize
             sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
