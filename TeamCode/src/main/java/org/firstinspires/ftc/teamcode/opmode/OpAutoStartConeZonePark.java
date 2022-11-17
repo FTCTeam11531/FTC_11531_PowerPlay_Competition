@@ -146,13 +146,16 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         // ------------------------------------------------------------
         // Allow for Start Option Selection
         // ------------------------------------------------------------
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
 
         // Reset runtime clock
         runtime.reset();
 
         // Robot Initialization Settings - Autonomous
-        utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
+        //utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
+
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
+        waitForStart();
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -186,6 +189,28 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
 
                 if(recognitionTargetZone != null) {
                     isImageFound = true;
+
+                    // Get the target zone from recongnition
+                    targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+
+                    switch (targetZone) {
+
+                        case 1:
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
+                            break;
+
+                        case 2:
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
+                            break;
+
+                        case 3:
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
+                            break;
+
+                        default:
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+                    }
+
                 }
 
             }

@@ -14,7 +14,7 @@ public class RobotInitialization {
     private RobotConfigFileManager robotConfigFileManager;
 
     // Lighting System
-    SysLighting sysLighting;
+    //SysLighting sysLighting;
 
     /**
      * <h2>Robot Initialization Constructor</h2>
@@ -37,8 +37,8 @@ public class RobotInitialization {
         RobotConstants.CommonSettings.setRobotConfigurationFileManagerNameActive(robotConfigFileManager.getActiveConfig().getName());
 
         // -- Lighting System
-        sysLighting = new SysLighting(sysOpMode);
-        sysLighting.init();
+        //sysLighting = new SysLighting(sysOpMode);
+        //sysLighting.init();
 
     }
 
@@ -121,7 +121,7 @@ public class RobotInitialization {
             }
 
             sysOpMode.telemetry.addData(">", "------------------------------------");
-            sysOpMode.telemetry.addData("LED Pattern", sysLighting.ledLightPattern.toString());
+            //sysOpMode.telemetry.addData("LED Pattern", sysLighting.ledLightPattern.toString());
             sysOpMode.telemetry.addData(">", "------------------------------------");
             sysOpMode.telemetry.update();
 

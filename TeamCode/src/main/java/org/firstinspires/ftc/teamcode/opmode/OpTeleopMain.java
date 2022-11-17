@@ -31,6 +31,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import android.app.Activity;
 import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -133,15 +134,16 @@ public class OpTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         // Allow for Start Option Selection
         // ------------------------------------------------------------
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
 
         // Reset runtime clock
         runtime.reset();
 
         // Robot Initialization Settings - Autonomous
-        utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_TELEOP);
+        //utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_TELEOP);
 
-//        waitForStart();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
+        waitForStart();
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -244,9 +246,9 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // Button Action - Turn robot 180 degrees (180 deg spin)
-            if(gamepad1.x) {
-                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-            }
+//            if(gamepad1.x) {
+//                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+//            }
 
             // ------------------------------------------------------------
             // LinearSlide
