@@ -166,7 +166,7 @@ public class OpAutoStartConeZoneParkRH extends LinearOpMode {
         telemetry.clearAll();
 
         // Reset runtime/lighting to Default
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_AUTONOMOUS);
         runtime.reset();
 
         // Return if a Stop Action is requested
@@ -374,7 +374,7 @@ public class OpAutoStartConeZoneParkRH extends LinearOpMode {
                         // ------------------------------------------------
 
                         // ---------------------------
-                        // Drive to closest Zone! 1 in 3 chance! (Zone 2)
+                        // Drive to closest Zone! 1 in 3 chance! (Zone 1)
                         // ---------------------------
                         // Linear Slide - Move to Ground Goal
                         while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
@@ -383,7 +383,7 @@ public class OpAutoStartConeZoneParkRH extends LinearOpMode {
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Invalid :(
                         // ---------------------------
@@ -403,7 +403,7 @@ public class OpAutoStartConeZoneParkRH extends LinearOpMode {
                 // ------------------------------------------------
 
                 // ---------------------------
-                // Drive to closest Zone! 1 in 3 chance! (Zone 2)
+                // Drive to closest Zone! 1 in 3 chance! (Zone 1)
                 // ---------------------------
                 // Linear Slide - Move to Ground Goal
                 while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
@@ -412,7 +412,7 @@ public class OpAutoStartConeZoneParkRH extends LinearOpMode {
                 }
 
                 // Drive - 14 inches left
-                sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                 // Zone Parking Invalid :(
                 // ---------------------------

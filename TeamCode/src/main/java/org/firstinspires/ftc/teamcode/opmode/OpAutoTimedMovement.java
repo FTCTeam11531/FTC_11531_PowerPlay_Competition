@@ -163,7 +163,7 @@ public class OpAutoTimedMovement extends LinearOpMode {
         telemetry.clearAll();
 
         // Reset runtime/lighting to Default
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_AUTONOMOUS);
         runtime.reset();
 
         // Return if a Stop Action is requested

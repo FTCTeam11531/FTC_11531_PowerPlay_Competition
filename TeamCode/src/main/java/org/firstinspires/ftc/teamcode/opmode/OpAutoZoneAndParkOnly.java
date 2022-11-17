@@ -161,7 +161,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         telemetry.clearAll();
 
         // Reset runtime/lighting to Default
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_AUTONOMOUS);
         runtime.reset();
 
         // Return if a Stop Action is requested
@@ -315,11 +315,11 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                         // ------------------------------------------------
 
                         // ---------------------------
-                        // Drive to closest Zone! 1 in 3 chance! (Zone 2)
+                        // Drive to closest Zone! 1 in 3 chance! (Zone 1)
                         // ---------------------------
 
                         // Drive - 18 inches right
-                        sysDrivetrain.driveDistanceLateral(-18, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(28, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Invalid :(
                         // ---------------------------
@@ -339,11 +339,11 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                 // ------------------------------------------------
 
                 // ---------------------------
-                // Drive to closest Zone! 1 in 3 chance! (Zone 2)
+                // Drive to closest Zone! 1 in 3 chance! (Zone 1)
                 // ---------------------------
 
                 // Drive - 14 inches left
-                sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                sysDrivetrain.driveDistanceLateral(28, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                 // Zone Parking Invalid :(
                 // ---------------------------
