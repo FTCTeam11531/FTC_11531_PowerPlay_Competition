@@ -481,9 +481,9 @@ public class RobotConstants {
         public static final String LIGHT_PATTERN_AVOID_KEYWORD_TWINKLES = "Twinkles";
 
         // Default Light Pattern
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.CP1_BREATH_SLOW;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.CP1_2_BEATS_PER_MINUTE;
 
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_PREGAME_OPTION_CONFIG = RevBlinkinLedDriver.BlinkinPattern.CP1_STROBE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_PREGAME_OPTION_CONFIG = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE;
 
         // System Initialize Light Patter/state
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LIGHTING = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE;
@@ -530,7 +530,7 @@ public class RobotConstants {
         public static final String COMMENT_VISION_CAMERA = "<enter camera maker/model>";
 
         // Image Detection Criteria
-        public static final double RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN = .90;
+        public static final double RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN = .60;
         public static final int RECOGNITION_TIME_TO_WAIT_SECONDS = 5;
 
         /*
@@ -561,7 +561,7 @@ public class RobotConstants {
                                                                                 / TENSORFLOW_IMAGE_PROCESSING_IMAGE_HEIGHT;
 
         // Tensor Flow Parameter(s)
-        public static final float TENSORFLOW_PARAMETER_MIN_RESULT_CONFIDENCE = 0.20f;
+        public static final float TENSORFLOW_PARAMETER_MIN_RESULT_CONFIDENCE = 0.60f;
         public static final boolean TENSORFLOW_PARAMETER_IS_MODEL_TENSORFLOW2 = true;
         public static final int TENSORFLOW_PARAMETER_INPUT_SIZE = 320;
 
@@ -595,9 +595,9 @@ public class RobotConstants {
         public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3 = "CardDeck";
 
         public static final String[] TENSORFLOW_MODEL_LABELS_POWERPLAY_GREEN = {
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1,
-                TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2,
-                TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE3};
+                TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2};
 
         public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE1;
         public static final String TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2 = TENSORFLOW_MODEL_LABEL_POWERPLAY_GREEN_ZONE2;

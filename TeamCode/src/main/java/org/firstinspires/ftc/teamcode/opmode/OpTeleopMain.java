@@ -150,6 +150,9 @@ public class OpTeleopMain extends LinearOpMode {
         telemetry.setAutoClear(true);
         telemetry.clearAll();
 
+        // Starting LED mode
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT);
+
         // Reset runtime clock
         runtime.reset();
 

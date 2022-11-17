@@ -79,8 +79,8 @@ public class RobotInitialization {
             // ----------------------------------
             switch (inDisplayMode) {
                 case RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS:
-                    sysOpMode.telemetry.addData(">>>", "Press (Left Bumper) - LED previous mode");
-                    sysOpMode.telemetry.addData(">>>", "Press (Right Bumper) - LED next mode");
+//                    sysOpMode.telemetry.addData(">>>", "Press (Left Bumper) - LED previous mode");
+//                    sysOpMode.telemetry.addData(">>>", "Press (Right Bumper) - LED next mode");
 
                     switch (RobotConstants.CommonSettings.getInitializationSettingAutonomousMode()) {
                         case(RobotConstants.CommonSettings.INIT_SETTING_AUTONOMOUS_MODE_RIGHT):
@@ -112,8 +112,8 @@ public class RobotInitialization {
 
                     break;
                 case RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_TELEOP:
-                    sysOpMode.telemetry.addData(">>>", "Press (Left Bumper) - LED previous mode");
-                    sysOpMode.telemetry.addData(">>>", "Press (Right Bumper) - LED next mode");
+//                    sysOpMode.telemetry.addData(">>>", "Press (Left Bumper) - LED previous mode");
+//                    sysOpMode.telemetry.addData(">>>", "Press (Right Bumper) - LED next mode");
 
                     break;
                 default:
@@ -130,15 +130,15 @@ public class RobotInitialization {
             // ----------------------------------
             switch (inDisplayMode) {
                 case RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS:
-                    // Set LED Light Pattern - Previous
-                    if(sysOpMode.gamepad1.left_bumper) {
-                        sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
-                    }
-
-                    // Set LED Light Pattern - Next
-                    if(sysOpMode.gamepad1.right_bumper) {
-                        sysLighting.setLightPattern(sysLighting.getLightPatternNext());
-                    }
+//                    // Set LED Light Pattern - Previous
+//                    if(sysOpMode.gamepad1.left_bumper) {
+//                        sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
+//                    }
+//
+//                    // Set LED Light Pattern - Next
+//                    if(sysOpMode.gamepad1.right_bumper) {
+//                        sysLighting.setLightPattern(sysLighting.getLightPatternNext());
+//                    }
 
                     // Set Autonomous Mode to Left Side
                     if(sysOpMode.gamepad1.x) {
@@ -162,15 +162,15 @@ public class RobotInitialization {
 
                     break;
                 case RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_TELEOP:
-                    // Set LED Light Pattern - Previous
-                    if(sysOpMode.gamepad1.left_bumper) {
-                        sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
-                    }
-
-                    // Set LED Light Pattern - Next
-                    if(sysOpMode.gamepad1.right_bumper) {
-                        sysLighting.setLightPattern(sysLighting.getLightPatternNext());
-                    }
+//                    // Set LED Light Pattern - Previous
+//                    if(sysOpMode.gamepad1.left_bumper) {
+//                        sysLighting.setLightPattern(sysLighting.getLightPatternPrevious());
+//                    }
+//
+//                    // Set LED Light Pattern - Next
+//                    if(sysOpMode.gamepad1.right_bumper) {
+//                        sysLighting.setLightPattern(sysLighting.getLightPatternNext());
+//                    }
 
                     break;
                 default:

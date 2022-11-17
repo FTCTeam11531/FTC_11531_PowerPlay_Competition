@@ -130,7 +130,7 @@ public class SysLighting {
         RevBlinkinLedDriver.BlinkinPattern outLightPattern = ledLightPattern.next();
 
         // Avoid Patterns that currently appear to cause the pattern to stop cycling
-        while(checkValidLightPattern(outLightPattern)) {
+        while((sysOpMode.opModeIsActive() || sysOpMode.opModeInInit()) && checkValidLightPattern(outLightPattern)) {
             outLightPattern = ledLightPattern.next();
         }
 
@@ -155,7 +155,7 @@ public class SysLighting {
         RevBlinkinLedDriver.BlinkinPattern outLightPattern = ledLightPattern.previous();
 
         // Avoid Patterns that currently appear to cause the pattern to stop cycling
-        while(checkValidLightPattern(outLightPattern)) {
+        while((sysOpMode.opModeIsActive() || sysOpMode.opModeInInit()) && checkValidLightPattern(outLightPattern)) {
             outLightPattern = ledLightPattern.previous();
         }
 

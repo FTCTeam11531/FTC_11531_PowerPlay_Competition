@@ -62,7 +62,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
  * </p>
  * <hr>
  */
-@Autonomous(name="Cone Stack | Zone Park", group="_auto")
+@Autonomous(name="Cone Stack | Zone Park", group="_auto3")
 //@Disabled
 public class OpAutoConeStackZonePark extends LinearOpMode {
     // ------------------------------------------------------------
@@ -216,16 +216,16 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
 
             // Drive - 50 inches forward
             // -- 2 inches past goal to push signal out of the way
-            sysDrivetrain.driveDistanceAxial(50, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(52, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Drive - 2 inches backward
-            sysDrivetrain.driveDistanceAxial(-2, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(-4, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Drive - turn to heading 90 degrees
-            sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            //sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Drive - turn to heading 180 degrees
-            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Move Linear Slide to High Goal
             while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
@@ -264,7 +264,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
             // ------------------------------------------------------------
 
             // Drive - turn to heading 90 degrees
-            sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Linear Slide - Move to Cone Stack 5
             while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5) {
@@ -345,7 +345,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
 
             if (isImageFound) {
 
-                // Get the target zone from recongnition
+                // Get the target zone from recognition
                 targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
 
                 switch (targetZone) {
@@ -409,7 +409,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
                         }
 
                         // Drive - 32 inches right
-                        sysDrivetrain.driveDistanceLateral(-32, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(-40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------

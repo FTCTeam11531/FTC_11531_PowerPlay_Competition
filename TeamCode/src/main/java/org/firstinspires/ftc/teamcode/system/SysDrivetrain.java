@@ -355,7 +355,7 @@ public class SysDrivetrain {
         getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_DRIVE_GAIN);
 
         // Loop while not at heading
-        while (sysOpMode.opModeIsActive() && (Math.abs(trackHeadingError) > 1.0)) {
+        while (sysOpMode.opModeIsActive() && (Math.abs(trackHeadingError) >= 1.0)) {
 
             robotTurnSpeed = getSteeringCorrection(inTargetHeading, RobotConstants.Drivetrain.HEADING_P_TURN_GAIN);
 
@@ -405,13 +405,13 @@ public class SysDrivetrain {
         while (sysOpMode.opModeIsActive() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
 
             // Display movement
-            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
-                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
-                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
-            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
-                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
-                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-            sysOpMode.telemetry.update();
+//            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
+//                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
+//                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
+//            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
+//                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
+//                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+//            sysOpMode.telemetry.update();
 
             sysOpMode.idle();
         }
@@ -451,13 +451,13 @@ public class SysDrivetrain {
         while (sysOpMode.opModeIsActive() && leftFrontDrive.isBusy() && rightFrontDrive.isBusy()) {
 
             // Display movement
-            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
-                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
-                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
-            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
-                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
-                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
-            sysOpMode.telemetry.update();
+//            sysOpMode.telemetry.addData("Running to",  " %7d, %7d, %7d, %7d"
+//                    , moveTargetPositionLeftFront,  moveTargetPositionLeftBack
+//                    , moveTargetPositionRightFront, moveTargetPositionRightBack);
+//            sysOpMode.telemetry.addData("Currently at",  " at %7d, %7d, %7d, %7d"
+//                    , leftFrontDrive.getCurrentPosition(), leftBackDrive.getCurrentPosition()
+//                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
+//            sysOpMode.telemetry.update();
 
             sysOpMode.idle();
         }
