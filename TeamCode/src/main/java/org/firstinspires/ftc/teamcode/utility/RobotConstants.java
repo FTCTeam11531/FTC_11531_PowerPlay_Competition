@@ -354,6 +354,7 @@ public class RobotConstants {
         // Limit Set Points
         public static final int ENCODER_SET_POINT_LIMIT_MAX = 6200;
         public static final int ENCODER_SET_POINT_LIMIT_MIN = 0;
+        public static final int ENCODER_SET_POINT_INTERVAL_DOWN = 300;
 
         // Encoder Set Points for each Goal (High/Med/Low/Ground)
         public static final int ENCODER_SET_POINT_HIGH_GOAL = 5800;
@@ -488,21 +489,22 @@ public class RobotConstants {
 
 
         // System Initialize Light Patter/state
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LIGHTING = RevBlinkinLedDriver.BlinkinPattern.CP1_STROBE;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN = RevBlinkinLedDriver.BlinkinPattern.STROBE_WHITE;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE = RevBlinkinLedDriver.BlinkinPattern.STROBE_GOLD;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_CLAW = RevBlinkinLedDriver.BlinkinPattern.STROBE_RED;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_VISION = RevBlinkinLedDriver.BlinkinPattern.CP2_STROBE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LIGHTING = RevBlinkinLedDriver.BlinkinPattern.CP1_HEARTBEAT_FAST; // CP1_STROBE
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN = RevBlinkinLedDriver.BlinkinPattern.CP2_HEARTBEAT_FAST; // STROBE_WHITE
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_WHITE; // STROBE_GOLD
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_CLAW = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED; // STROBE_RED
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_VISION = RevBlinkinLedDriver.BlinkinPattern.CP1_HEARTBEAT_SLOW; // CP2_STROBE
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_COMPLETE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_FOREST_PALETTE;
 
         // Light Pattern(s) for Autonomous
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE = RevBlinkinLedDriver.BlinkinPattern.GOLD;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO = RevBlinkinLedDriver.BlinkinPattern.AQUA;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE = RevBlinkinLedDriver.BlinkinPattern.GREEN;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID = RevBlinkinLedDriver.BlinkinPattern.FIRE_LARGE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE = RevBlinkinLedDriver.BlinkinPattern.GOLD;    // Peach
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO = RevBlinkinLedDriver.BlinkinPattern.AQUA;    // Trojan
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE = RevBlinkinLedDriver.BlinkinPattern.GREEN; // Cards
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID = RevBlinkinLedDriver.BlinkinPattern.RED;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER; // RAINBOW_WITH_GLITTER
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE; // RAINBOW_PARTY_PALETTE
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE; // RAINBOW_RAINBOW_PALETTE
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID = LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID;
 
         // Light Patterns for Robot State(s) - Linear Slide
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE;
@@ -512,8 +514,8 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_DRIFT = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
 
         // Light Patterns for Robot State(s) - Claw
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_OPEN = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_CLOSED = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_BLUE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_OPEN = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE; // LIGHT_CHASE_RED
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_CLOSED = RevBlinkinLedDriver.BlinkinPattern.SINELON_OCEAN_PALETTE; // LIGHT_CHASE_BLUE
 
     }
 

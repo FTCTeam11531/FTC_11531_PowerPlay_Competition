@@ -290,13 +290,15 @@ public class SysVision {
                 if(outRecognition != null) {
                     if (objRecognition.getConfidence() >= RobotConstants.Vision.RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN &&
                         objRecognition.getConfidence() > outRecognition.getConfidence()) {
-                        // Found an image with high confidence
+
+                        // Found an image with high(er) confidence
                         outRecognition = objRecognition;
                     }
                 }
-                // Set recognition=
+                // Set recognition
                 else {
                     if (objRecognition.getConfidence() >= RobotConstants.Vision.RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN) {
+
                         // Found an image with high confidence
                         outRecognition = objRecognition;
                     }

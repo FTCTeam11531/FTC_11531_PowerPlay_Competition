@@ -175,9 +175,12 @@ public class OpTeleopMain extends LinearOpMode {
             // -- Robot Movement
             // -- -- Axis (left_stick_x, left_stick_y): Drive
             // -- -- Axis (right_stick_x): Rotate
-            // -- -- X: 180 spin
             // -- -- Y: Set Output Speed to Med
             // -- -- A: Set Output Speed to Low
+            //
+            // -- Robot Movement - Function(s) not in place!
+            // -- -- X: 180 spin
+            //
             // ------------------------------------------------------------
             // Gamepad2 = Co-Driver
             // ------------------------------------------------------------
@@ -187,13 +190,16 @@ public class OpTeleopMain extends LinearOpMode {
             // -- -- B: Low Limit
             // -- -- A: Ground Limit
             // -- -- Axis (right_stick_y): Move up/down (restrict movement beyond High/Ground)
+            // -- -- D-Pad down: Linear Drift (down x encoder cycles from current position)
+            // -- -- D-Pad Up: Troubleshoot Linear Slide - move to max linear slide limit
+            //
             // -- Claw
             // -- -- Left Bumper: Open Claw
             // -- -- Right Bumper: Close Claw
-            // -- -- D-Pad Up: Reset up/down and left/right to center (.5, .5)
+            //
+            // -- Claw - Hardware not in place!
             // -- -- D-Pad left: Left Max Setpoint
             // -- -- D-Pad right: Right Max Setpoint
-            // -- -- D-Pad down: Down Max Setpoint
             // -- -- Axis (left_stick_y): Up/Down (0-1) Movement
             // -- -- Axis (left_stick_x): Left/Right (0-1) Movement
             // -- -- Left Trigger: Left Movement
@@ -258,16 +264,6 @@ public class OpTeleopMain extends LinearOpMode {
             if(Math.abs(gamepad2.right_stick_y) == 1) {
                 isManualSlideMode = true;
 
-//                // Check Lower Limit Switch at command/input level
-//                if (sysLinearSlide.getLinearSlideLimitSwitchSetting()) {
-//                    if (gamepad2.right_stick_y < 0) {
-//                        sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
-//                    } else {
-//                        sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
-//                    }
-//
-//                }
-
                 // Check Lower Limit Switch at command/input level
                 if(sysLinearSlide.getLinearSlideLimitSwitchSetting()) {
                     if(gamepad2.right_stick_y < 0) {
@@ -325,12 +321,13 @@ public class OpTeleopMain extends LinearOpMode {
                 sysLinearSlide.moveLinearSlideToTarget(sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
-            // Button Action - lift drift mode (release brake)
+            // Button Action - lift drift mode (interval movement down)
             if(gamepad2.dpad_down) {
 
-                // lift drift (release brake)
-                // Linear Slide - Move to High Goal
-                intervalLinearSlideDown = sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) - 100;
+                // lift drift (interval movement down)
+                // Linear Slide - interval movement down
+                intervalLinearSlideDown = sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) - RobotConstants.LinearSlide.ENCODER_SET_POINT_INTERVAL_DOWN;
+
                 while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != intervalLinearSlideDown) {
                     sysLinearSlide.moveLinearSlideToTarget(intervalLinearSlideDown, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
                     sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_DRIFT);

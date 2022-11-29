@@ -65,7 +65,7 @@ import java.util.List;
  * <hr>
  */
 @Autonomous(name="Zone and Park", group="_auto2")
-//@Disabled
+@Disabled
 public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -184,7 +184,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                         break;
 
                     default:
-                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
                 }
             }
             else {
@@ -205,9 +205,6 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                 telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
                 telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
                 telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
-            }
-            else {
-//                telemetry.addData("!!!", "No Image was detected!");
             }
 
             telemetry.update();
@@ -268,7 +265,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                             break;
 
                         default:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
                     }
                 }
 
@@ -289,9 +286,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                 telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
                 telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
             }
-            else {
-                telemetry.addData("!!!", "No Image was detected!");
-            }
+
             telemetry.update();
 
             // ------------------------------------------------------------
@@ -320,6 +315,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                         // ---------------------------
                         // Drive to Zone 1
                         // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
 
                         // Drive - 28 inches left
                         sysDrivetrain.driveDistanceLateral(28, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
@@ -339,6 +335,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                         // ---------------------------
                         // Drive to Zone 2
                         // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
 
                         // Drive - 0 inches left
                         //sysDrivetrain.driveDistanceLateral(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
@@ -358,6 +355,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                         // ---------------------------
                         // Drive to Zone 3
                         // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
 
                         // Drive - 18 inches right
                         sysDrivetrain.driveDistanceLateral(-18, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
@@ -381,6 +379,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                         // ---------------------------
                         // Drive to closest Zone! 1 in 3 chance! (Zone 1)
                         // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
 
                         // Drive - 18 inches right
                         sysDrivetrain.driveDistanceLateral(28, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
@@ -405,6 +404,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
                 // ---------------------------
                 // Drive to closest Zone! 1 in 3 chance! (Zone 1)
                 // ---------------------------
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
 
                 // Drive - 14 inches left
                 sysDrivetrain.driveDistanceLateral(28, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);

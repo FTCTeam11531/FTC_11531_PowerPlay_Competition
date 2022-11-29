@@ -155,7 +155,68 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         //utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
-        waitForStart();
+
+        // ------------------------------------------------------------
+        // Get Cone Sleeve Image
+        // ------------------------------------------------------------
+        // Set telemetry mode to clear on update
+        telemetry.setAutoClear(true);
+        telemetry.clearAll();
+
+        while (opModeInInit()) {
+
+            recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
+
+            if(recognitionTargetZone != null) {
+                isImageFound = true;
+
+                // Get the target zone from recognition
+                targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+
+                switch (targetZone) {
+
+                    case 1:
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
+                        break;
+
+                    case 2:
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
+                        break;
+
+                    case 3:
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
+                        break;
+
+                    default:
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
+                }
+            }
+            else {
+                isImageFound = false;
+            }
+
+            // ------------------------------------------------------------
+            // - Vision telemetry
+            // ------------------------------------------------------------
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "-- Vision (Initialization Mode)");
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
+            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
+            telemetry.addData("-", "------------------------------");
+            if (isImageFound) {
+
+                telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
+                telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
+                telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
+            }
+
+            telemetry.update();
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+        }
+
+        // Disable waitForStart() due to adding loop during init()
+        //waitForStart();
 
         // ------------------------------------------------------------
         // Configure Telemetry
@@ -208,7 +269,7 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                             break;
 
                         default:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
                     }
 
                 }
@@ -230,9 +291,7 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                 telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
                 telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
             }
-            else {
-                telemetry.addData("!!!", "No Image was detected!");
-            }
+
             telemetry.update();
 
             // ------------------------------------------------------------

@@ -361,12 +361,13 @@ public class SysDrivetrain {
 
             robotTurnSpeed = Range.clip(robotTurnSpeed, -inOutputPowerPercent, inOutputPowerPercent);
 
-            sysOpMode.telemetry.addData("TrackHeadingError", "%4.2f", trackHeadingError);
-            sysOpMode.telemetry.update();
+//            sysOpMode.telemetry.addData("TrackHeadingError", "%4.2f", trackHeadingError);
+//            sysOpMode.telemetry.update();
 
             // Move Robot
             driveMecanumFieldCentric(0, 0, robotTurnSpeed, inOutputPowerPercent);
 
+            sysOpMode.idle();
         }
 
         // Stop Robot

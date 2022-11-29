@@ -153,7 +153,6 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         runtime.reset();
 
         // Robot Initialization Settings - Autonomous
-
         //utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
 
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
@@ -190,7 +189,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
                         break;
 
                     default:
-                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID);
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
                 }
             }
             else {
@@ -232,7 +231,13 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
         runtime.reset();
 
         // Return if a Stop Action is requested
-        if (isStopRequested()) return;
+        if (isStopRequested()) {
+
+            // Update the Transition Adjustment Value for the IMU
+            RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
+
+            return;
+        }
 
         if (opModeIsActive()) {
 
@@ -252,6 +257,27 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
 
                 if(recognitionTargetZone != null) {
                     isImageFound = true;
+
+                    // Get the target zone from recongnition
+                    targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+
+                    switch (targetZone) {
+
+                        case 1:
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
+                            break;
+
+                        case 2:
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
+                            break;
+
+                        case 3:
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
+                            break;
+
+                        default:
+                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
+                    }
                 }
 
             }
@@ -271,9 +297,7 @@ public class OpAutoConeStackZonePark extends LinearOpMode {
                 telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
                 telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
             }
-            else {
-                telemetry.addData("!!!", "No Image was detected!");
-            }
+
             telemetry.update();
 
             // ------------------------------------------------------------
