@@ -64,7 +64,7 @@ import java.util.List;
  * </p>
  * <hr>
  */
-@Autonomous(name="Zone and Park", group="_auto2")
+@Autonomous(name="Zone and Park", group="_auto99")
 @Disabled
 public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // ------------------------------------------------------------

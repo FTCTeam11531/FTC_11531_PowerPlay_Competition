@@ -63,7 +63,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
  * </p>
  * <hr>
  */
-@Autonomous(name="(RH) Start Cone | Zone Park", group="_auto1")
+@Autonomous(name="(RH) Outside Lane", group="_auto1")
 //@Disabled
 public class OpAutoStartConeZoneParkRH extends LinearOpMode {
     // ------------------------------------------------------------
