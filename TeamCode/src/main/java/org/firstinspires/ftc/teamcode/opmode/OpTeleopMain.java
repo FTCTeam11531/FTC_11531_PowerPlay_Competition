@@ -123,6 +123,7 @@ public class OpTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         double inputAxial, inputLateral, inputYaw;
         boolean isManualSlideMode = false;
+        int intervalLinearSlideDown;
 
         // ------------------------------------------------------------
         // Send telemetry message to signify robot completed initialization and waiting to start;
@@ -201,6 +202,24 @@ public class OpTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Drivetrain
             // ------------------------------------------------------------
+            // Assign gamepad control to motion in relation to:
+            // -- gamepad input, direction
+            // -- robot orientation to field
+            // -- installed direction of control hub
+            // -- orientation of drivetrain/motors
+            inputYaw =  -(gamepad1.right_stick_x);
+            inputAxial = -(gamepad1.left_stick_y);
+            inputLateral = gamepad1.left_stick_x;
+
+            // Drivetrain Type determined by 'Drivetrain Mode' enumeration selection (Default to Field Centric)
+            if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC)) {
+                // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
+                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
+            }
+            else {
+                // Send gamepad input for drivetrain to driveMecanumFieldCentric method in the drivetrain system class
+                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
+            }
 
             // Button Action - Cycle Drive mode
             if(gamepad1.back) {
@@ -226,25 +245,6 @@ public class OpTeleopMain extends LinearOpMode {
                 sysDrivetrain.stateMaxDriveOutputPower = StateDriveMotorMaxOutputPower.Low;
             }
 
-            // Assign gamepad control to motion in relation to:
-            // -- gamepad input, direction
-            // -- robot orientation to field
-            // -- installed direction of control hub
-            // -- orientation of drivetrain/motors
-            inputYaw =  -(gamepad1.right_stick_x);
-            inputAxial = -(gamepad1.left_stick_y);
-            inputLateral = gamepad1.left_stick_x;
-
-            // Drivetrain Type determined by 'Drivetrain Mode' enumeration selection (Default to Field Centric)
-            if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC)) {
-                // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
-                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
-            }
-            else {
-                // Send gamepad input for drivetrain to driveMecanumFieldCentric method in the drivetrain system class
-                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
-            }
-
             // Button Action - Turn robot 180 degrees (180 deg spin)
 //            if(gamepad1.x) {
 //                sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
@@ -257,6 +257,16 @@ public class OpTeleopMain extends LinearOpMode {
             // Manually control Linear Slide
             if(Math.abs(gamepad2.right_stick_y) == 1) {
                 isManualSlideMode = true;
+
+//                // Check Lower Limit Switch at command/input level
+//                if (sysLinearSlide.getLinearSlideLimitSwitchSetting()) {
+//                    if (gamepad2.right_stick_y < 0) {
+//                        sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
+//                    } else {
+//                        sysLinearSlide.moveLinearSlideManually(-(gamepad2.right_stick_y), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
+//                    }
+//
+//                }
 
                 // Check Lower Limit Switch at command/input level
                 if(sysLinearSlide.getLinearSlideLimitSwitchSetting()) {
@@ -315,6 +325,27 @@ public class OpTeleopMain extends LinearOpMode {
                 sysLinearSlide.moveLinearSlideToTarget(sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY), RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
+            // Button Action - lift drift mode (release brake)
+            if(gamepad2.dpad_down) {
+
+                // lift drift (release brake)
+                // Linear Slide - Move to High Goal
+                intervalLinearSlideDown = sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) - 100;
+                while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != intervalLinearSlideDown) {
+                    sysLinearSlide.moveLinearSlideToTarget(intervalLinearSlideDown, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_DRIFT);
+                }
+
+            }
+
+            // Button Action - Set Linear Slide to Max Limit (for troubleshooting)
+            if(gamepad2.dpad_up) {
+
+                // lift drift (release brake)
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
+            }
+
             // ------------------------------------------------------------
             // Claw
             // ------------------------------------------------------------
@@ -335,56 +366,56 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // Manually control side-to-side motion
-            if(Math.abs(gamepad2.left_stick_x) == 1) {
-                sysClaw.moveClawSideManually(gamepad2.left_stick_x);
-            }
+//            if(Math.abs(gamepad2.left_stick_x) == 1) {
+//                sysClaw.moveClawSideManually(gamepad2.left_stick_x);
+//            }
 
-            if(Math.abs(gamepad2.left_trigger) == 1) {
-                sysClaw.moveClawSideManually(gamepad2.left_trigger);
-            }
-
-            if(Math.abs(gamepad2.right_trigger) == 1) {
-                sysClaw.moveClawSideManually(-(gamepad2.right_trigger));
-            }
+//            if(Math.abs(gamepad2.left_trigger) == 1) {
+//                sysClaw.moveClawSideManually(gamepad2.left_trigger);
+//            }
+//
+//            if(Math.abs(gamepad2.right_trigger) == 1) {
+//                sysClaw.moveClawSideManually(-(gamepad2.right_trigger));
+//            }
 
             // Manually control up-down motion
-            if(Math.abs(gamepad2.left_stick_y) == 1) {
-                sysClaw.moveClawUpDownManually(gamepad2.left_stick_y);
-            }
+//            if(Math.abs(gamepad2.left_stick_y) == 1) {
+//                sysClaw.moveClawUpDownManually(gamepad2.left_stick_y);
+//            }
 
             // Button Action - move to claw up setpoint
-            if(gamepad1.dpad_up) {
-
-                // Claw Reset up-down and lef-right to center
-                // reset to start position
-                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_START);
-                sysClaw.moveClawUpDownToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_UPDOWN_START);
-            }
+//            if(gamepad2.dpad_up) {
+//
+//                // Claw Reset up-down and lef-right to center
+//                // reset to start position
+//                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_START);
+//                sysClaw.moveClawUpDownToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_UPDOWN_START);
+//            }
 
 
             // Button Action - move to claw left side setpoint
-            if(gamepad1.dpad_left) {
-
-                // Claw side-to-side movement (Left)
-                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_LEFT);
-
-            }
+//            if(gamepad2.dpad_left) {
+//
+//                // Claw side-to-side movement (Left)
+//                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_LEFT);
+//
+//            }
 
             // Button Action - move to claw right side setpoint
-            if(gamepad1.dpad_right) {
+//            if(gamepad2.dpad_right) {
+//
+//                // Claw side-to-side movement (Right)
+//                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_RIGHT);
+//
+//            }
 
-                // Claw side-to-side movement (Right)
-                sysClaw.moveClawSideToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_SIDE_RIGHT);
-
-            }
-
-            // Button Action - move to claw down setpoint
-            if(gamepad1.dpad_down) {
-
-                // Claw up-down movement (Down)
-                sysClaw.moveClawUpDownToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_UPDOWN_DOWN);
-
-            }
+//            // Button Action - move to claw down setpoint
+//            if(gamepad2.dpad_down) {
+//
+//                // Claw up-down movement (Down)
+//                sysClaw.moveClawUpDownToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_UPDOWN_DOWN);
+//
+//            }
 
             // ------------------------------------------------------------
             // Driver Hub Feedback

@@ -496,9 +496,9 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_COMPLETE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_FOREST_PALETTE;
 
         // Light Pattern(s) for Autonomous
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE = RevBlinkinLedDriver.BlinkinPattern.ORANGE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE = RevBlinkinLedDriver.BlinkinPattern.GOLD;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO = RevBlinkinLedDriver.BlinkinPattern.AQUA;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE = RevBlinkinLedDriver.BlinkinPattern.GOLD;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE = RevBlinkinLedDriver.BlinkinPattern.GREEN;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_ONE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_WITH_GLITTER;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_TWO = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_PARTY_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE;
@@ -509,6 +509,7 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_OCEAN_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_DRIFT = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
 
         // Light Patterns for Robot State(s) - Claw
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_OPEN = RevBlinkinLedDriver.BlinkinPattern.LIGHT_CHASE_RED;

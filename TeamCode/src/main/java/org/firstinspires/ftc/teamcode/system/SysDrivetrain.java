@@ -366,10 +366,11 @@ public class SysDrivetrain {
 
             // Move Robot
             driveMecanumFieldCentric(0, 0, robotTurnSpeed, inOutputPowerPercent);
+
         }
 
         // Stop Robot
-        driveMecanumFieldCentric(0, 0, 0, 0);
+        setDriveMotorPower(0, 0, 0, 0);
     }
 
     /**

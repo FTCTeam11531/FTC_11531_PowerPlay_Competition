@@ -286,10 +286,22 @@ public class SysVision {
         if(inListRecognition != null) {
             for (Recognition objRecognition : inListRecognition) {
 
-                if (objRecognition.getConfidence() >= RobotConstants.Vision.RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN) {
-                    // Found an image with high confidence
-                    outRecognition = objRecognition;
+                // Check next recognition against the previous
+                if(outRecognition != null) {
+                    if (objRecognition.getConfidence() >= RobotConstants.Vision.RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN &&
+                        objRecognition.getConfidence() > outRecognition.getConfidence()) {
+                        // Found an image with high confidence
+                        outRecognition = objRecognition;
+                    }
                 }
+                // Set recognition=
+                else {
+                    if (objRecognition.getConfidence() >= RobotConstants.Vision.RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN) {
+                        // Found an image with high confidence
+                        outRecognition = objRecognition;
+                    }
+                }
+
             }
         }
 
