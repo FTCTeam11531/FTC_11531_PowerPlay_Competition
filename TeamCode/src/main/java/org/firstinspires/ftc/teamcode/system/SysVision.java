@@ -208,7 +208,6 @@ public class SysVision {
                 modelSelectionFilePath = RobotConstants.Vision.TENSORFLOW_MODEL_ASSET_POWERPLAY_FIRST;
 
         }
-
     }
 
     /**

@@ -338,8 +338,8 @@ public class OpTeleopMain extends LinearOpMode {
             // Button Action - Set Linear Slide to Max Limit (for troubleshooting)
             if(gamepad2.dpad_up) {
 
-                // lift drift (release brake)
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+                // Move Linear Slide to Max Limit - for troubleshooting only!
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
             }
 

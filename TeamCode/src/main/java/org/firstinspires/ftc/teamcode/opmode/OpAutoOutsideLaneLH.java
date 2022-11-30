@@ -30,7 +30,6 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -41,35 +40,25 @@ import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
-import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
-// Renamed in TeamCode as: OpAutoStartConeZonePark.java
+// Renamed in TeamCode as: OpAutoOutsideLaneLH.java
 
 /**
- * <h2>FTC Driver Station Autonomous OpMode/Command: Start Cone | Zone Park</h2>
+ * <h2>FTC Driver Station Autonomous OpMode/Command: (LH) Outside Lane</h2>
  * <hr>
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
- * <p>
- * This Autonomous Command/Mode will perform the following autonomous actions:<br>
- * - Read Custom Zone Marker<br>
- * - Move to High Goal<br>
- * - Place Start Cone on Goal<br>
- * - Move to correct Zone indicated by marker<br>
- * - Park completely within the zone<br>
- * </p>
- * <hr>
  */
-@Autonomous(name="Start Cone | Zone Park", group="_auto1")
-@Disabled
-public class OpAutoStartConeZonePark extends LinearOpMode {
+@Autonomous(name="(LH) Outside Lane", group="_auto1")
+//@Disabled
+public class OpAutoOutsideLaneLH extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
-    // -- Robot Initializtion
-    RobotInitialization utilRobotInit = new RobotInitialization(this);
+    // -- Robot Initialization
+    //RobotInitialization utilRobotInit = new RobotInitialization(this);
 
     // -- Lighting System
     SysLighting sysLighting = new SysLighting(this);
@@ -113,7 +102,7 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         // ------------------------------------------------------------
         // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
-        utilRobotInit.init();
+        //utilRobotInit.init();
 
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
@@ -124,11 +113,11 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         sysVision.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
-        sysClaw.init();
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
-
         sysLinearSlide.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE);
+
+        sysClaw.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Autonomous Mode
@@ -143,18 +132,19 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
         telemetry.addData(">", "All Systems Ready - Waiting to Start");
         telemetry.update();
 
-        // ------------------------------------------------------------
-        // Allow for Start Option Selection
-        // ------------------------------------------------------------
-        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+        // System Initialization Complete
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
 
         // Reset runtime clock
         runtime.reset();
 
+        // ------------------------------------------------------------
+        // Allow for Start Option Selection - (disabled)
+        // ------------------------------------------------------------
+        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+
         // Robot Initialization Settings - Autonomous
         //utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
-
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
 
         // ------------------------------------------------------------
         // Get Cone Sleeve Image
@@ -239,7 +229,6 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
             // ------------------------------------------------------------
             // Claw - Close the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
-            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
 
             // ------------------------------------------------------------
             // Get Cone Sleeve Image
@@ -251,7 +240,7 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                 if(recognitionTargetZone != null) {
                     isImageFound = true;
 
-                    // Get the target zone from recongnition
+                    // Get the target zone from recognition
                     targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
 
                     switch (targetZone) {
@@ -295,18 +284,20 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
             telemetry.update();
 
             // ------------------------------------------------------------
-            // Start Cone - Drive To High Goal
+            // Outside Lane - Left Hand Autonomous
+            // -- Command(s) / Action(s)
             // ------------------------------------------------------------
 
-            // Drive - 50 inches forward
-            // -- 2 inches past goal to push signal out of the way
+            // ------------------------------------------------------------
+            // With Start Cone - Drive To High Goal
+            // ------------------------------------------------------------
+
+            // Drive - 52 inches forward
+            // -- 6 inches past goal to push signal out of the way
             sysDrivetrain.driveDistanceAxial(52, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
-            // Drive - 2 inches backward
+            // Drive - 6 inches backward
             sysDrivetrain.driveDistanceAxial(-6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-
-            // Drive - turn to heading 90 degrees
-            //sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Drive - turn to heading 180 degrees
             sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
@@ -314,23 +305,21 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
             // Move Linear Slide to High Goal
             while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
             }
 
-            // Drive - 14 inches left
-            sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            // Drive - 14 inches right
+            sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // ------------------------------------------------------------
-            // Start Cone - Place Cone
+            // With Start Cone - Place Cone
             // ------------------------------------------------------------
 
             // Linear Slide - Move to High Goal
             while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH);
             }
 
-            // Drive - 6 inches forward (onto goal)
+            // Drive - 4 inches forward (onto goal)
             sysDrivetrain.driveDistanceAxial(-4, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // slight pause to stabilize
@@ -338,11 +327,9 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
 
             // Claw - Open the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
-            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_OPEN);
 
             // Drive - 6 inches backward (away from goal)
             sysDrivetrain.driveDistanceAxial(6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-
 
             // ------------------------------------------------------------
             // Find Zone and Park!!!!
@@ -350,7 +337,7 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
 
             if (isImageFound) {
 
-                // Get the target zone from recongnition
+                // Get the target zone from recognition
                 targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
 
                 switch (targetZone) {
@@ -359,14 +346,15 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                         // ---------------------------
                         // Drive to Zone 1
                         // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
+
                         // Linear Slide - Move to Ground Goal
                         while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
                             sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -383,14 +371,15 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                         // ---------------------------
                         // Drive to Zone 2
                         // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
+
                         // Linear Slide - Move to Ground Goal
                         while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
                             sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -407,14 +396,15 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                         // ---------------------------
                         // Drive to Zone 3
                         // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
+
                         // Linear Slide - Move to Ground Goal
                         while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
                             sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(-40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -435,14 +425,15 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                         // ---------------------------
                         // Drive to closest Zone! 1 in 3 chance! (Zone 1)
                         // ---------------------------
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
+
                         // Linear Slide - Move to Ground Goal
                         while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
                             sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Invalid :(
                         // ---------------------------
@@ -464,14 +455,15 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                 // ---------------------------
                 // Drive to closest Zone! 1 in 3 chance! (Zone 1)
                 // ---------------------------
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
+
                 // Linear Slide - Move to Ground Goal
                 while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
                     sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND);
                 }
 
                 // Drive - 14 inches left
-                sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                 // Zone Parking Invalid :(
                 // ---------------------------
@@ -482,6 +474,9 @@ public class OpAutoStartConeZonePark extends LinearOpMode {
                 telemetry.addData("-", "Parking Complete");
                 telemetry.update();
             }
+
+            // Drive - turn to heading 0 degrees
+            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
         }
 

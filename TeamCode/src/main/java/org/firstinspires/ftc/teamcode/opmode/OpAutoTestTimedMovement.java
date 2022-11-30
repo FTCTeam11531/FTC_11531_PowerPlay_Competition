@@ -29,8 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
-import android.app.Activity;
-import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -41,17 +39,14 @@ import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
-import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
 
-import java.util.List;
-
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
-// Renamed in TeamCode as: OpAutoTimedMovement.java
+// Renamed in TeamCode as: OpAutoTestTimedMovement.java
 
 /**
- * <h2>FTC Driver Station Autonomous OpMode/Command: Zone and Park</h2>
+ * <h2>FTC Driver Station Autonomous OpMode/Command: Test Timed Movement</h2>
  * <hr>
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
@@ -64,9 +59,9 @@ import java.util.List;
  * </p>
  * <hr>
  */
-@Autonomous(name="Test: Timed Movement", group="test")
+@Autonomous(name="Test: Timed Movement", group="z_test")
 @Disabled
-public class OpAutoTimedMovement extends LinearOpMode {
+public class OpAutoTestTimedMovement extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------

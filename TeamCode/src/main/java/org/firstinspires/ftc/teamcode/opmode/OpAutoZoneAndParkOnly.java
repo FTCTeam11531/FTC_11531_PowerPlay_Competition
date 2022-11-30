@@ -56,13 +56,6 @@ import java.util.List;
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
- * <p>
- * This Autonomous Command/Mode will perform the following autonomous actions:<br>
- * - Read Custom Zone Marker<br>
- * - Move to correct Zone indicated by marker<br>
- * - Park completely within the zone<br>
- * </p>
- * <hr>
  */
 @Autonomous(name="Zone and Park", group="_auto99")
 @Disabled
@@ -70,8 +63,8 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
-    // -- Robot Initializtion
-    RobotInitialization utilRobotInit = new RobotInitialization(this);
+    // -- Robot Initialization
+    //RobotInitialization utilRobotInit = new RobotInitialization(this);
 
     // -- Lighting System
     SysLighting sysLighting = new SysLighting(this);
@@ -79,11 +72,11 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
     // -- Drivetrain System
     SysDrivetrain sysDrivetrain = new SysDrivetrain(this);
 
-    // -- Claw System
-    SysClaw sysClaw = new SysClaw(this);
-
     // -- Vision System
     SysVision sysVision = new SysVision(this);
+
+    // -- Claw System
+    SysClaw sysClaw = new SysClaw(this);
 
     // Settings for captured image
     Recognition recognitionTargetZone;
@@ -112,7 +105,7 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         // ------------------------------------------------------------
         // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
-        utilRobotInit.init();
+        //utilRobotInit.init();
 
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
@@ -139,18 +132,19 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
         telemetry.addData(">", "All Systems Ready - Waiting to Start");
         telemetry.update();
 
-        // ------------------------------------------------------------
-        // Allow for Start Option Selection
-        // ------------------------------------------------------------
-        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+        // System Initialization Complete
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
 
         // Reset runtime clock
         runtime.reset();
 
+        // ------------------------------------------------------------
+        // Allow for Start Option Selection - (disabled)
+        // ------------------------------------------------------------
+        //sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_PREGAME_OPTION_CONFIG);
+
         // Robot Initialization Settings - Autonomous
         //utilRobotInit.displayRobotInitializationSettings(RobotConstants.CommonSettings.INIT_SETTING_DISPLAY_MODE_AUTONOMOUS);
-
-        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
 
         // ------------------------------------------------------------
         // Get Cone Sleeve Image
@@ -235,7 +229,6 @@ public class OpAutoZoneAndParkOnly extends LinearOpMode {
             // ------------------------------------------------------------
             // Claw - Close the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
-            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_CLAW_CLAMP_CLOSED);
 
             // ------------------------------------------------------------
             // Get Cone Sleeve Image
