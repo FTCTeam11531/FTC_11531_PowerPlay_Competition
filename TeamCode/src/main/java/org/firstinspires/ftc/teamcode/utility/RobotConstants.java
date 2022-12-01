@@ -485,7 +485,7 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT = RevBlinkinLedDriver.BlinkinPattern.CP1_2_BEATS_PER_MINUTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT_TELEOP = LIGHT_PATTERN_DEFAULT;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT_AUTONOMOUS = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_PREGAME_OPTION_CONFIG = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_PREGAME_OPTION_CONFIG = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
 
 
         // System Initialize Light Patter/state
@@ -494,6 +494,7 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_VISION = RevBlinkinLedDriver.BlinkinPattern.CP1_HEARTBEAT_SLOW; // CP2_STROBE
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_WHITE; // STROBE_GOLD
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_CLAW = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED; // STROBE_RED
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_SOUND = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE; // STROBE_RED
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_COMPLETE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_FOREST_PALETTE;
 
         // Light Pattern(s) for Autonomous
@@ -613,6 +614,31 @@ public class RobotConstants {
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3};
+
+    }
+
+    /**
+     *  <h2>Robot Constant Values - Sound</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Anything and everything related to Sound constants
+     * </p>
+     * <li>Sound Constants</li>
+     * <br>
+     */
+    public static final class Sound {
+
+        // Build-in Sound File Names
+        public static final String SOUND_FILE_NAME_ROGER_ROGER = "ss_roger_roger";
+        public static final String SOUND_FILE_NAME_WOOKIE = "ss_wookie";
+        public static final String SOUND_FILE_NAME_DARTH_VADER = "ss_darth_vader";
+        public static final String SOUND_FILE_NAME_BB8_UP = "ss_bb8_up";
+        public static final String SOUND_FILE_NAME_BB8_DOWN = "ss_bb8_down";
+        public static final String SOUND_FILE_NAME_LIGHT_SABER = "ss_light_saber";
+        public static final String SOUND_FILE_NAME_LIGHT_SABER_LONG = "ss_light_saber_long";
 
     }
 

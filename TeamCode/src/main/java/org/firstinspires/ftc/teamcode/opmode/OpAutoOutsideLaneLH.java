@@ -38,6 +38,7 @@ import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
+import org.firstinspires.ftc.teamcode.system.SysSound;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
@@ -74,6 +75,9 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
 
     // -- Claw System
     SysClaw sysClaw = new SysClaw(this);
+
+    // -- Sound System
+    SysSound sysSound = new SysSound(this);
 
     // Settings for captured image
     Recognition recognitionTargetZone;
@@ -118,6 +122,9 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
+
+        sysSound.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_SOUND);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Autonomous Mode
@@ -227,6 +234,9 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
             // ------------------------------------------------------------
             // Commands to Run
             // ------------------------------------------------------------
+            // Ready to Play!!!
+            sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_WOOKIE);
+
             // Claw - Close the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
 
@@ -334,6 +344,8 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
             // ------------------------------------------------------------
             // Find Zone and Park!!!!
             // ------------------------------------------------------------
+            // Ready to Park
+            sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_BB8_UP);
 
             if (isImageFound) {
 
@@ -482,6 +494,9 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
 
         // Update the Transition Adjustment Value for the IMU
         RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
+
+        // Autonomous Complete
+        sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_DARTH_VADER);
 
         // ------------------------------------------------------------
         // - send telemetry to driver hub

@@ -40,6 +40,7 @@ import org.firstinspires.ftc.teamcode.system.SysClaw;
 import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
+import org.firstinspires.ftc.teamcode.system.SysSound;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
 import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
@@ -67,7 +68,7 @@ public class OpTeleopMain extends LinearOpMode {
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
     // -- Robot Initializtion
-    RobotInitialization utilRobotInit = new RobotInitialization(this);
+    //RobotInitialization utilRobotInit = new RobotInitialization(this);
 
     // -- Lighting System
     SysLighting sysLighting = new SysLighting(this);
@@ -80,6 +81,9 @@ public class OpTeleopMain extends LinearOpMode {
 
     // -- Claw System
     SysClaw sysClaw = new SysClaw(this);
+
+    // -- Sound System
+    SysSound sysSound = new SysSound(this);
 
     // ------------------------------------------------------------
     // Misc
@@ -99,7 +103,7 @@ public class OpTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         // Initialize System(s) - set different light mode between each system init
         // ------------------------------------------------------------
-        utilRobotInit.init();
+        //utilRobotInit.init();
 
         sysLighting.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
@@ -112,6 +116,9 @@ public class OpTeleopMain extends LinearOpMode {
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
+
+        sysSound.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_SOUND);
 
         // ------------------------------------------------------------
         // Configure drivetrain for Teleop Mode
@@ -180,6 +187,9 @@ public class OpTeleopMain extends LinearOpMode {
             //
             // -- Robot Movement - Function(s) not in place!
             // -- -- X: 180 spin
+            //
+            // -- Override Settings
+            // -- -- D-Pad Up + X: Reset Heading Override (and Raw)
             //
             // ------------------------------------------------------------
             // Gamepad2 = Co-Driver
@@ -413,6 +423,22 @@ public class OpTeleopMain extends LinearOpMode {
 //                sysClaw.moveClawUpDownToTarget(RobotConstants.Claw.SERVO_POSITION_CLAW_ROTATE_UPDOWN_DOWN);
 //
 //            }
+
+            // ------------------------------------------------------------
+            // Override
+            // ------------------------------------------------------------
+            // Button Action - Reset Heading Override (and Raw)
+            if(gamepad1.dpad_up && gamepad1.x) {
+
+                // Reset the Robot Heading (normally done on init of Drivetrain system)
+                sysDrivetrain.resetRobotHeading();
+
+                // Update the Transition Adjustment Value for the IMU
+                RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
+
+                // Confirm Action Complete
+                sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_ROGER_ROGER);
+            }
 
             // ------------------------------------------------------------
             // Driver Hub Feedback
