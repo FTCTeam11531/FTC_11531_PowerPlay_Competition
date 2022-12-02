@@ -55,7 +55,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
  * <hr>
  */
 @Autonomous(name="TEST: (RH) Inside Lane", group="z_test")
-//@Disabled
+@Disabled
 public class OpAutoTestInsideLaneRH extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -320,21 +320,18 @@ public class OpAutoTestInsideLaneRH extends LinearOpMode {
             // ------------------------------------------------------------
 
             // Drive - 26 inches left
-            sysDrivetrain.driveDistanceLateral(-26, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceLateral(-26, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH);
 
-            // Move Linear Slide to High Goal
-            while (opModeIsActive()
-                    && (sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL)
-                    || (sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT) > 0)) {
-
-                // Drive - 46 inches forward
-                sysDrivetrain.driveDistanceAxial(48, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-            }
+            // Drive - 46 inches forward
+            sysDrivetrain.driveDistanceAxial(46, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH);
 
             // Drive - turn to heading 180 degrees
             sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Move Linear Slide to High Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            }
 
             // Drive - 13 inches right
             sysDrivetrain.driveDistanceLateral(-13, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
@@ -352,7 +349,7 @@ public class OpAutoTestInsideLaneRH extends LinearOpMode {
             sysDrivetrain.driveDistanceAxial(-4.5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // slight pause to stabilize
-            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 2);
+            //sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 2);
 
             // Claw - Open the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
@@ -365,18 +362,14 @@ public class OpAutoTestInsideLaneRH extends LinearOpMode {
             // ------------------------------------------------------------
 
             // Drive - turn to heading 90 degrees
-            sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            sysDrivetrain.driveTurnToHeading(90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Linear Slide - Move to Cone Stack 5
-            while (opModeIsActive()
-                    && (sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5)
-                    || (sysDrivetrain.getDrivetrainMotorPower(RobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT) > 0)) {
-
-                // Drive - 32 inches right (forward)
-                sysDrivetrain.driveDistanceAxial(-32, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5) {
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
+            // Drive - 32 inches right (forward)
+            sysDrivetrain.driveDistanceAxial(-32, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_HIGH);
 
             // Drive - 5 inches right (forward) (slower speed)
             sysDrivetrain.driveDistanceAxial(-5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
@@ -393,6 +386,10 @@ public class OpAutoTestInsideLaneRH extends LinearOpMode {
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
+
+
+
+
             // ------------------------------------------------------------
             // Cone Stack - Drive To High Goal
             // ------------------------------------------------------------
@@ -403,27 +400,27 @@ public class OpAutoTestInsideLaneRH extends LinearOpMode {
             sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Linear Slide - Move to High Goal
-            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
             // Drive - turn to heading 180 degrees
-            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // ------------------------------------------------------------
             // Cone Stack - Place Cone
             // ------------------------------------------------------------
 
             // Linear Slide - Move to High Goal
-            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_MED_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
             // Drive - 6 inches forward (onto goal)
             sysDrivetrain.driveDistanceAxial(-6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // slight pause to stabilize
-            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+            //sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
 
             // Claw - Open the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
@@ -435,6 +432,8 @@ public class OpAutoTestInsideLaneRH extends LinearOpMode {
             while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
+
+
 
             // ------------------------------------------------------------
             // Find Zone and Park!!!!

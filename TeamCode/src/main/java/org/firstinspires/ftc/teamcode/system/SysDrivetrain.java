@@ -89,6 +89,7 @@ public class SysDrivetrain {
 
     // Robot Heading
     private BNO055IMU imuUnit = null;
+    BNO055IMU.Parameters imuParameters;
     private double trackHeadingRobot, trackHeadingOffset, trackHeadingError;
 
     /**
@@ -178,7 +179,7 @@ public class SysDrivetrain {
 
         // Initialize the IMU board/unit on the Rev Control Hub
         imuUnit = sysOpMode.hardwareMap.get(BNO055IMU.class, RobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
-        BNO055IMU.Parameters imuParameters = new BNO055IMU.Parameters();
+        imuParameters = new BNO055IMU.Parameters();
 
         // Set the Angle Unit to Radians
         imuParameters.angleUnit = BNO055IMU.AngleUnit.RADIANS;
@@ -488,6 +489,13 @@ public class SysDrivetrain {
 
         // Reset the Robot Heading to Zero
         trackHeadingRobot = 0;
+    }
+
+    public void resetZeroRobotHeading() {
+
+        // Set the Heading Offset to the IMU raw heading
+        imuUnit.initialize(imuParameters);
+        RobotConstants.CommonSettings.setImuTransitionAdjustment(0);
     }
 
     /**

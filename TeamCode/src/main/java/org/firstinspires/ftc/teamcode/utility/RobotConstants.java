@@ -512,6 +512,7 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_OCEAN_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_LIMIT_MAX = RevBlinkinLedDriver.BlinkinPattern.CP1_LARSON_SCANNER;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_DRIFT = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
 
         // Light Patterns for Robot State(s) - Claw
@@ -538,7 +539,7 @@ public class RobotConstants {
 
         // Image Detection Criteria
         public static final double RECOGNITION_IMAGE_CONFIDENCE_PERCENT_MIN = .60;
-        public static final int RECOGNITION_TIME_TO_WAIT_SECONDS = 5;
+        public static final int RECOGNITION_TIME_TO_WAIT_SECONDS = 2;
 
         /*
          * IMPORTANT: You need to obtain your own license key to use Vuforia. The string below with which

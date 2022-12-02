@@ -304,21 +304,21 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
 
             // Drive - 52 inches forward
             // -- 6 inches past goal to push signal out of the way
-            sysDrivetrain.driveDistanceAxial(52, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(56, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Drive - 6 inches backward
-            sysDrivetrain.driveDistanceAxial(-6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-
-            // Drive - turn to heading 180 degrees
-            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            sysDrivetrain.driveDistanceAxial(-6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Move Linear Slide to High Goal
             while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
+            // Drive - turn to heading 180 degrees
+            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
             // Drive - 14 inches right
-            sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            sysDrivetrain.driveDistanceLateral(-13, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // ------------------------------------------------------------
             // With Start Cone - Place Cone
@@ -330,22 +330,25 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
             }
 
             // Drive - 4 inches forward (onto goal)
-            sysDrivetrain.driveDistanceAxial(-4, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(-5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // slight pause to stabilize
-            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 2);
 
             // Claw - Open the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
 
             // Drive - 6 inches backward (away from goal)
-            sysDrivetrain.driveDistanceAxial(6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // ------------------------------------------------------------
             // Find Zone and Park!!!!
             // ------------------------------------------------------------
             // Ready to Park
-            sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_BB8_UP);
+            sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_DARTH_VADER);
+
+            // Drive - turn to heading 0 degrees
+            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             if (isImageFound) {
 
@@ -366,7 +369,7 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(-40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -391,7 +394,7 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -416,7 +419,7 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -445,7 +448,7 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(-40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Invalid :(
                         // ---------------------------
@@ -475,7 +478,7 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
                 }
 
                 // Drive - 14 inches left
-                sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                sysDrivetrain.driveDistanceLateral(-40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                 // Zone Parking Invalid :(
                 // ---------------------------
@@ -496,7 +499,7 @@ public class OpAutoOutsideLaneLH extends LinearOpMode {
         RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
 
         // Autonomous Complete
-        sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_DARTH_VADER);
+        sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_LIGHT_SABER_LONG);
 
         // ------------------------------------------------------------
         // - send telemetry to driver hub

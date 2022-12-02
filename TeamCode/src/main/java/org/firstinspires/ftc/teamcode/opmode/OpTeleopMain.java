@@ -189,6 +189,7 @@ public class OpTeleopMain extends LinearOpMode {
             // -- -- X: 180 spin
             //
             // -- Override Settings
+            // -- -- Back: Switch between Field-Centric and Robot-Centric drive
             // -- -- D-Pad Up + X: Reset Heading Override (and Raw)
             //
             // ------------------------------------------------------------
@@ -200,8 +201,10 @@ public class OpTeleopMain extends LinearOpMode {
             // -- -- B: Low Limit
             // -- -- A: Ground Limit
             // -- -- Axis (right_stick_y): Move up/down (restrict movement beyond High/Ground)
-            // -- -- D-Pad down: Linear Drift (down x encoder cycles from current position)
-            // -- -- D-Pad Up: Troubleshoot Linear Slide - move to max linear slide limit
+            // -- -- D-Pad Down: Linear Drift (down x encoder cycles from current position)
+
+            // -- Override Settings
+            // -- -- D-Pad Up + Y: Troubleshoot Linear Slide - move to max linear slide limit
             //
             // -- Claw
             // -- -- Left Bumper: Open Claw
@@ -346,11 +349,14 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // Button Action - Set Linear Slide to Max Limit (for troubleshooting)
-            if(gamepad2.dpad_up) {
+            if(gamepad2.dpad_up && gamepad2.y) {
 
                 // Move Linear Slide to Max Limit - for troubleshooting only!
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LIMIT_MAX, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
-                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_LIGHTING);
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_LIMIT_MAX);
+
+                // Confirm Action Complete
+                sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_LIGHT_SABER);
             }
 
             // ------------------------------------------------------------
@@ -431,13 +437,13 @@ public class OpTeleopMain extends LinearOpMode {
             if(gamepad1.dpad_up && gamepad1.x) {
 
                 // Reset the Robot Heading (normally done on init of Drivetrain system)
-                sysDrivetrain.resetRobotHeading();
-
-                // Update the Transition Adjustment Value for the IMU
-                RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
+                sysDrivetrain.resetZeroRobotHeading();
 
                 // Confirm Action Complete
                 sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_ROGER_ROGER);
+
+                // Cycle Pause
+                sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
             }
 
             // ------------------------------------------------------------
@@ -529,7 +535,7 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // Pace this loop so commands move at a reasonable speed.
-            //sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
         }
 
         // ------------------------------------------------------------

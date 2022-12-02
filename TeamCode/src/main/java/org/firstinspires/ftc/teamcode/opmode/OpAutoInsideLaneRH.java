@@ -305,7 +305,7 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
             sysDrivetrain.driveDistanceLateral(-26, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Drive - 48 inches forward
-            sysDrivetrain.driveDistanceAxial(48, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(48, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Move Linear Slide to High Goal
             while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
@@ -328,22 +328,25 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
             }
 
             // Drive - 4.5 inches forward (onto goal)
-            sysDrivetrain.driveDistanceAxial(-4.5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(-4.5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // slight pause to stabilize
-            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 2);
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
 
             // Claw - Open the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
 
             // Drive - 6 inches backward (away from goal)
-            sysDrivetrain.driveDistanceAxial(6, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(4.5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // ------------------------------------------------------------
             // Find Zone and Park!!!!
             // ------------------------------------------------------------
             // Ready to Park
-            sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_BB8_UP);
+            sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_DARTH_VADER);
+
+            // Drive - turn to heading 0 degrees
+            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             if (isImageFound) {
 
@@ -364,7 +367,7 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -389,7 +392,7 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                         }
 
                         // Drive - 14 inches right
-                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -414,7 +417,7 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                         }
 
                         // Drive - 32 inches right
-                        sysDrivetrain.driveDistanceLateral(-40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -443,7 +446,7 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                         }
 
                         // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                         // Zone Parking Invalid :(
                         // ---------------------------
@@ -473,7 +476,7 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                 }
 
                 // Drive - 14 inches left
-                sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
                 // Zone Parking Invalid :(
                 // ---------------------------
@@ -485,16 +488,13 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                 telemetry.update();
             }
 
-            // Drive - turn to heading 0 degrees
-            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
-
         }
 
         // Update the Transition Adjustment Value for the IMU
         RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
 
         // Autonomous Complete
-        sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_DARTH_VADER);
+        sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_LIGHT_SABER_LONG);
 
         // ------------------------------------------------------------
         // - send telemetry to driver hub
