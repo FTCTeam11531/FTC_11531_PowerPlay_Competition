@@ -44,18 +44,18 @@ import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
-// Renamed in TeamCode as: OpAutoInsideLaneV2LH.java
+// Renamed in TeamCode as: OpAutoInsideLaneConePrepLH.java
 
 /**
- * <h2>FTC Driver Station Autonomous OpMode/Command: (LH) Inside Lane V2</h2>
+ * <h2>FTC Driver Station Autonomous OpMode/Command: (LH) Inside Lane - Cone Prep</h2>
  * <hr>
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
  */
-@Autonomous(name="(LH) Inside Lane V2", group="_auto2")
+@Autonomous(name="(LH) Inside Lane - Cone Prep", group="_auto1")
 //@Disabled
-public class OpAutoInsideLaneV2LH extends LinearOpMode {
+public class OpAutoInsideLaneConePrepLH extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
@@ -244,54 +244,54 @@ public class OpAutoInsideLaneV2LH extends LinearOpMode {
             // ------------------------------------------------------------
             // Get Cone Sleeve Image
             // ------------------------------------------------------------
-            while (opModeIsActive() && !isImageFound && runtime.seconds() < RobotConstants.Vision.RECOGNITION_TIME_TO_WAIT_SECONDS) {
-
-                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
-
-                if(recognitionTargetZone != null) {
-                    isImageFound = true;
-
-                    // Get the target zone from recognition
-                    targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
-
-                    switch (targetZone) {
-
-                        case 1:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
-                            break;
-
-                        case 2:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
-                            break;
-
-                        case 3:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
-                            break;
-
-                        default:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
-                    }
-                }
-
-            }
+//            while (opModeIsActive() && !isImageFound && runtime.seconds() < RobotConstants.Vision.RECOGNITION_TIME_TO_WAIT_SECONDS) {
+//
+//                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
+//
+//                if(recognitionTargetZone != null) {
+//                    isImageFound = true;
+//
+//                    // Get the target zone from recognition
+//                    targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+//
+//                    switch (targetZone) {
+//
+//                        case 1:
+//                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
+//                            break;
+//
+//                        case 2:
+//                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
+//                            break;
+//
+//                        case 3:
+//                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
+//                            break;
+//
+//                        default:
+//                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
+//                    }
+//                }
+//
+//            }
 
             // ------------------------------------------------------------
             // - Vision telemetry
             // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Vision");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
-            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
-            telemetry.addData("-", "------------------------------");
-            if (isImageFound) {
-
-                telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
-                telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
-                telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
-            }
-
-            telemetry.update();
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("-", "-- Vision");
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
+//            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
+//            telemetry.addData("-", "------------------------------");
+//            if (isImageFound) {
+//
+//                telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
+//                telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
+//                telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
+//            }
+//
+//            telemetry.update();
 
             // ------------------------------------------------------------
             // Inside Lane - Left Hand Autonomous
@@ -324,15 +324,15 @@ public class OpAutoInsideLaneV2LH extends LinearOpMode {
             // ------------------------------------------------------------
 
             // Linear Slide - Move to High Goal
-            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
-                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-            }
+//            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL) {
+//                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+//            }
 
             // Drive - 4.5 inches forward (onto goal)  (diff from right)
             sysDrivetrain.driveDistanceAxial(-5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // slight pause to stabilize
-            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 2);
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 20);
 
             // Claw - Open the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
@@ -353,6 +353,9 @@ public class OpAutoInsideLaneV2LH extends LinearOpMode {
 
             // Claw - Close the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+
+            // slight pause to stabilize
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 5);
 
             // Linear Slide - Move to Position Low Goal
             while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL) {

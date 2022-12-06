@@ -53,7 +53,7 @@ import org.firstinspires.ftc.teamcode.utility.RobotConstants;
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
  */
-@Autonomous(name="(LH) Inside Lane", group="_auto0")
+@Autonomous(name="(LH) Inside Lane - Main", group="_auto0")
 //@Disabled
 public class OpAutoInsideLaneLH extends LinearOpMode {
     // ------------------------------------------------------------
@@ -244,54 +244,54 @@ public class OpAutoInsideLaneLH extends LinearOpMode {
             // ------------------------------------------------------------
             // Get Cone Sleeve Image
             // ------------------------------------------------------------
-            while (opModeIsActive() && !isImageFound && runtime.seconds() < RobotConstants.Vision.RECOGNITION_TIME_TO_WAIT_SECONDS) {
-
-                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
-
-                if(recognitionTargetZone != null) {
-                    isImageFound = true;
-
-                    // Get the target zone from recognition
-                    targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
-
-                    switch (targetZone) {
-
-                        case 1:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
-                            break;
-
-                        case 2:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
-                            break;
-
-                        case 3:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
-                            break;
-
-                        default:
-                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
-                    }
-                }
-
-            }
+//            while (opModeIsActive() && !isImageFound && runtime.seconds() < RobotConstants.Vision.RECOGNITION_TIME_TO_WAIT_SECONDS) {
+//
+//                recognitionTargetZone = sysVision.getRecognition(sysVision.getRecognitionList());
+//
+//                if(recognitionTargetZone != null) {
+//                    isImageFound = true;
+//
+//                    // Get the target zone from recognition
+//                    targetZone = sysVision.getTargetZone(recognitionTargetZone.getLabel());
+//
+//                    switch (targetZone) {
+//
+//                        case 1:
+//                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
+//                            break;
+//
+//                        case 2:
+//                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
+//                            break;
+//
+//                        case 3:
+//                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
+//                            break;
+//
+//                        default:
+//                            sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
+//                    }
+//                }
+//
+//            }
 
             // ------------------------------------------------------------
             // - Vision telemetry
             // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Vision");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
-            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
-            telemetry.addData("-", "------------------------------");
-            if (isImageFound) {
-
-                telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
-                telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
-                telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
-            }
-
-            telemetry.update();
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("-", "-- Vision");
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("TensorFlow Model File: ", sysVision.getCurrentModelFileName());
+//            telemetry.addData("TensorFlow Model Path: ", sysVision.getCurrentModelFilePath());
+//            telemetry.addData("-", "------------------------------");
+//            if (isImageFound) {
+//
+//                telemetry.addData("Image: ", "%s (%.0f %% Conf.)", recognitionTargetZone.getLabel(), recognitionTargetZone.getConfidence() * 100 );
+//                telemetry.addData("- Position (Row/Col): ","%.0f / %.0f", sysVision.getRecognitionRow(recognitionTargetZone), sysVision.getRecognitionColumn(recognitionTargetZone));
+//                telemetry.addData("- Size (Width/Height): ","%.0f / %.0f", sysVision.getRecognitionWidth(recognitionTargetZone), sysVision.getRecognitionHeight(recognitionTargetZone));
+//            }
+//
+//            telemetry.update();
 
             // ------------------------------------------------------------
             // Inside Lane - Left Hand Autonomous
