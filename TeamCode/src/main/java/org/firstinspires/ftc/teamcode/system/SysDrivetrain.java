@@ -416,7 +416,8 @@ public class SysDrivetrain {
 //                    , rightFrontDrive.getCurrentPosition(), rightBackDrive.getCurrentPosition());
 //            sysOpMode.telemetry.update();
 
-            sysOpMode.idle();
+            //sysOpMode.idle();
+            sysOpMode.sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
         }
 
         // Make sure all motors are stopped after completed path

@@ -49,7 +49,8 @@ public class SysSound {
     private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
 
     // Define hardware objects  (Make them private so they can't be accessed externally)
-    // <none_defined_yet>
+    SoundPlayer defaultSoundPlayer;
+    SoundPlayer.PlaySoundParams defaultSoundPlayerParameters;
 
     /**
      * <h2>Lighting System Constructor</h2>
@@ -86,6 +87,16 @@ public class SysSound {
         // Initialize the hardware variables. Note that the strings used here must correspond
         // to the names assigned during the robot configuration step on the DS or RC devices.
 
+        // Set Default Sound Player
+        defaultSoundPlayer = SoundPlayer.getInstance();
+
+        // Sound player parameters
+        defaultSoundPlayerParameters = new SoundPlayer.PlaySoundParams();
+        defaultSoundPlayerParameters.loopControl = 0;
+        defaultSoundPlayerParameters.waitForNonLoopingSoundsToFinish = true;
+        defaultSoundPlayerParameters.rate = 1.0f;
+        defaultSoundPlayerParameters.volume = RobotConstants.Sound.SOUND_PLAYER_MASTER_VOLUME_PLAYSOUND_SETPOINT;
+
         // Display telemetry
         sysOpMode.telemetry.addData(">", "--------------------------------");
         sysOpMode.telemetry.addData(">", " System: Sound Initialized");
@@ -96,15 +107,33 @@ public class SysSound {
     public void playSoundFileByName(String inSoundFileName) {
 
         if (checkSoundFileStatus(getSoundFileIDByName(inSoundFileName))) {
-            SoundPlayer.getInstance().startPlaying(sysOpMode.hardwareMap.appContext, getSoundFileIDByName(inSoundFileName));
+            defaultSoundPlayer.setMasterVolume(RobotConstants.Sound.SOUND_PLAYER_MASTER_VOLUME_PLAYSOUND_SETPOINT);
+
+            defaultSoundPlayer.startPlaying(sysOpMode.hardwareMap.appContext
+                    , getSoundFileIDByName(inSoundFileName)
+                    , defaultSoundPlayerParameters
+                    , null
+                    , new Runnable() {
+                        @Override
+                        public void run() {
+                            defaultSoundPlayer.setMasterVolume(RobotConstants.Sound.SOUND_PLAYER_MASTER_VOLUME_DEFAULT);
+                        }
+                    });
         }
+    }
+
+    public void stopAllSoundPlayback() {
+
+        // Stop playing all active sounds!
+        defaultSoundPlayer.stopPlayingAll();
+        defaultSoundPlayer.stopPlayingLoops();
     }
 
     private boolean checkSoundFileStatus(int inSoundFileID) {
         boolean isSoundFileFound = false;
 
         if (inSoundFileID != 0) {
-            isSoundFileFound = SoundPlayer.getInstance().preload(sysOpMode.hardwareMap.appContext, inSoundFileID);
+            isSoundFileFound = defaultSoundPlayer.preload(sysOpMode.hardwareMap.appContext, inSoundFileID);
         }
 
         return isSoundFileFound;

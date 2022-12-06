@@ -29,11 +29,9 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
-import android.app.Activity;
-import com.qualcomm.ftccommon.configuration.RobotConfigFileManager;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.system.SysClaw;
@@ -42,7 +40,6 @@ import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysSound;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
-import org.firstinspires.ftc.teamcode.utility.RobotInitialization;
 import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
 import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
 
@@ -167,7 +164,16 @@ public class OpTeleopMain extends LinearOpMode {
         runtime.reset();
 
         // Return if a Stop Action is requested
-        if (isStopRequested()) return;
+        if (isStopRequested()) {
+
+            // Update the Transition Adjustment Value for the IMU
+            RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
+
+            // Stop any Sounds that might be playing
+            sysSound.stopAllSoundPlayback();
+
+            return;
+        }
 
         // ------------------------------------------------------------
         // Command Loop: run until the end of the match (driver presses STOP)
@@ -189,8 +195,10 @@ public class OpTeleopMain extends LinearOpMode {
             // -- -- X: 180 spin
             //
             // -- Override Settings
-            // -- -- Back: Switch between Field-Centric and Robot-Centric drive
             // -- -- D-Pad Up + X: Reset Heading Override (and Raw)
+            //
+            // -- Not in place!
+            // -- -- Back: Switch between Field-Centric and Robot-Centric drive
             //
             // ------------------------------------------------------------
             // Gamepad2 = Co-Driver
@@ -241,14 +249,14 @@ public class OpTeleopMain extends LinearOpMode {
             }
 
             // Button Action - Cycle Drive mode
-            if(gamepad1.back) {
-                if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC)) {
-                    sysDrivetrain.stateDrivetrainMode = StateDrivetrainMode.Robot_Centric;
-                }
-                else {
-                    sysDrivetrain.stateDrivetrainMode = StateDrivetrainMode.Field_Centric;
-                }
-            }
+//            if(gamepad1.back) {
+//                if(sysDrivetrain.getLabelDrivetrainMode().equals(RobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_FIELDCENTRIC)) {
+//                    sysDrivetrain.stateDrivetrainMode = StateDrivetrainMode.Robot_Centric;
+//                }
+//                else {
+//                    sysDrivetrain.stateDrivetrainMode = StateDrivetrainMode.Field_Centric;
+//                }
+//            }
 
             // Button Action - Cycle Output Power Setting
             //if(gamepad1.start)
@@ -544,5 +552,7 @@ public class OpTeleopMain extends LinearOpMode {
         // Update the Transition Adjustment Value for the IMU
         RobotConstants.CommonSettings.setImuTransitionAdjustment(sysDrivetrain.getRobotHeadingRaw());
 
+        // Stop any Sounds that might be playing
+        sysSound.stopAllSoundPlayback();
     }
 }

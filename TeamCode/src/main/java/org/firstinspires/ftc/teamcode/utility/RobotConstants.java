@@ -641,6 +641,12 @@ public class RobotConstants {
         public static final String SOUND_FILE_NAME_LIGHT_SABER = "ss_light_saber";
         public static final String SOUND_FILE_NAME_LIGHT_SABER_LONG = "ss_light_saber_long";
 
+        public static final float SOUND_PLAYER_MASTER_VOLUME_DEFAULT = 0.5f;
+        public static final float SOUND_PLAYER_MASTER_VOLUME_MAX = 1.0f;
+        public static final float SOUND_PLAYER_MASTER_VOLUME_MIN = 0.2f;
+        public static final float SOUND_PLAYER_MASTER_VOLUME_PLAYSOUND_SETPOINT = SOUND_PLAYER_MASTER_VOLUME_MAX;
+
+
     }
 
     // --------------------------------------------

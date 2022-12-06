@@ -29,32 +29,33 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.teamcode.system.SysClaw;
+import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysSound;
 import org.firstinspires.ftc.teamcode.system.SysVision;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 
 // Program Copied from FTC example: ConceptExternalHardwareCLass.java
-// Renamed in TeamCode as: OpAutoInsideLaneRH.java
+// Renamed in TeamCode as: OpAutoInsideLaneV2LH.java
 
 /**
- * <h2>FTC Driver Station Autonomous OpMode/Command: (RH) Inside Lane</h2>
+ * <h2>FTC Driver Station Autonomous OpMode/Command: (LH) Inside Lane V2</h2>
  * <hr>
  * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
  * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
  * <hr>
  */
-@Autonomous(name="(RH) Inside Lane", group="_auto0")
+@Autonomous(name="(LH) Inside Lane V2", group="_auto2")
 //@Disabled
-public class OpAutoInsideLaneRH extends LinearOpMode {
+public class OpAutoInsideLaneV2LH extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
@@ -293,7 +294,7 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
             telemetry.update();
 
             // ------------------------------------------------------------
-            // Inside Lane - Right Hand Autonomous
+            // Inside Lane - Left Hand Autonomous
             // -- Command(s) / Action(s)
             // ------------------------------------------------------------
 
@@ -301,8 +302,8 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
             // With Start Cone - Drive To High Goal
             // ------------------------------------------------------------
 
-            // Drive - 26 inches left
-            sysDrivetrain.driveDistanceLateral(-26, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            // Drive - 26 inches right
+            sysDrivetrain.driveDistanceLateral(26, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Drive - 48 inches forward
             sysDrivetrain.driveDistanceAxial(48, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
@@ -313,10 +314,10 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
             }
 
             // Drive - turn to heading 180 degrees
-            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+//            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
-            // Drive - 13 inches right
-            sysDrivetrain.driveDistanceLateral(-13, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            // Drive - 13 inches left
+            sysDrivetrain.driveDistanceLateral(13, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // ------------------------------------------------------------
             // With Start Cone - Place Cone
@@ -327,17 +328,36 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_HIGH_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
-            // Drive - 4.5 inches forward (onto goal)
-            sysDrivetrain.driveDistanceAxial(-5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            // Drive - 4.5 inches forward (onto goal)  (diff from right)
+            sysDrivetrain.driveDistanceAxial(-5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // slight pause to stabilize
-            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+            sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 2);
 
             // Claw - Open the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
 
             // Drive - 6 inches backward (away from goal)
-            sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+            sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Drive - turn to heading -90 degrees
+            sysDrivetrain.driveTurnToHeading(-90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Linear Slide - Move to Position Cone Stack 5
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            }
+
+            // Drive - 60 inches forward (onto target goal)
+            sysDrivetrain.driveDistanceAxial(-58, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
+            // Claw - Close the Claw
+            sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);
+
+            // Linear Slide - Move to Position Low Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_LOW_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+            }
 
             // ------------------------------------------------------------
             // Find Zone and Park!!!!
@@ -346,7 +366,7 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
             sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_DARTH_VADER);
 
             // Drive - turn to heading 0 degrees
-            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+//            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             if (isImageFound) {
 
@@ -362,12 +382,15 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
 
                         // Linear Slide - Move to Ground Goal
-                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
-                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                        }
+//                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+//                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+//                        }
 
-                        // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        // Drive - 32 inches right
+//                        sysDrivetrain.driveDistanceLateral(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                        // Drive - 60 inches forward (onto target goal)
+                        sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -387,12 +410,15 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
 
                         // Linear Slide - Move to Ground Goal
-                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
-                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                        }
+//                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+//                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+//                        }
 
                         // Drive - 14 inches right
-                        sysDrivetrain.driveDistanceLateral(14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+//                        sysDrivetrain.driveDistanceLateral(36, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                        // Drive - 60 inches forward (onto target goal)
+                        sysDrivetrain.driveDistanceAxial(24, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -412,12 +438,15 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
 
                         // Linear Slide - Move to Ground Goal
-                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
-                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                        }
+//                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+//                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+//                        }
 
-                        // Drive - 32 inches right
-                        sysDrivetrain.driveDistanceLateral(40, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        // Drive - 14 inches left
+//                        sysDrivetrain.driveDistanceLateral(48, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                        // Drive - 60 inches forward (onto target goal)
+                        sysDrivetrain.driveDistanceAxial(48, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
                         // Zone Parking Complete
                         // ---------------------------
@@ -441,12 +470,15 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
 
                         // Linear Slide - Move to Ground Goal
-                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
-                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                        }
+//                        while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+//                            sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+//                        }
 
-                        // Drive - 14 inches left
-                        sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                        // Drive - 32 inches right
+//                        sysDrivetrain.driveDistanceLateral(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                        // Drive - 60 inches forward (onto target goal)
+                        sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
                         // Zone Parking Invalid :(
                         // ---------------------------
@@ -471,12 +503,15 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                 sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID);
 
                 // Linear Slide - Move to Ground Goal
-                while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
-                    sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                }
+//                while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+//                    sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
+//                }
 
-                // Drive - 14 inches left
-                sysDrivetrain.driveDistanceLateral(-14, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+                // Drive - 32 inches right
+//                sysDrivetrain.driveDistanceLateral(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+                // Drive - 60 inches forward (onto target goal)
+                sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
                 // Zone Parking Invalid :(
                 // ---------------------------
@@ -486,6 +521,14 @@ public class OpAutoInsideLaneRH extends LinearOpMode {
                 telemetry.addData("-", "------------------------------");
                 telemetry.addData("-", "Parking Complete");
                 telemetry.update();
+            }
+
+            // Drive - turn to heading 0 degrees
+            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
+            // Linear Slide - Move to Ground Goal
+            while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL) {
+                sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_GROUND_GOAL, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
         }
