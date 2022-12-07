@@ -329,16 +329,19 @@ public class OpAutoInsideLaneConePrepLH extends LinearOpMode {
 //            }
 
             // Drive - 4.5 inches forward (onto goal)  (diff from right)
-            sysDrivetrain.driveDistanceAxial(-5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(-5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // slight pause to stabilize
             sleep(RobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT * 20);
+
+            // Drive - turn to heading 0 degrees
+            sysDrivetrain.driveTurnToHeading(0, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Claw - Open the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_OPEN);
 
             // Drive - 6 inches backward (away from goal)
-            sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(5, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
             // Drive - turn to heading -90 degrees
             sysDrivetrain.driveTurnToHeading(-90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
@@ -348,8 +351,11 @@ public class OpAutoInsideLaneConePrepLH extends LinearOpMode {
                 sysLinearSlide.moveLinearSlideToTarget(RobotConstants.LinearSlide.ENCODER_SET_POINT_CONE_STACK_5, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
             }
 
+            // Drive - turn to heading -90 degrees
+            sysDrivetrain.driveTurnToHeading(-90, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+
             // Drive - 60 inches forward (onto target goal)
-            sysDrivetrain.driveDistanceAxial(-58, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
+            sysDrivetrain.driveDistanceAxial(-60, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_MED);
 
             // Claw - Close the Claw
             sysClaw.setClawClampPosition(RobotConstants.Claw.SERVO_POSITION_CLAW_CLAMP_CLOSE);

@@ -349,9 +349,11 @@ public class OpTeleopMain extends LinearOpMode {
                 // Linear Slide - interval movement down
                 intervalLinearSlideDown = sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) - RobotConstants.LinearSlide.ENCODER_SET_POINT_INTERVAL_DOWN;
 
-                while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != intervalLinearSlideDown) {
-                    sysLinearSlide.moveLinearSlideToTarget(intervalLinearSlideDown, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_HIGH);
-                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_DRIFT);
+                if(intervalLinearSlideDown > 0) {
+                    while (opModeIsActive() && sysLinearSlide.getLinearSlideCurrentPosition(RobotConstants.Configuration.LABEL_MOTOR_LINEAR_SLIDE_PRIMARY) != intervalLinearSlideDown) {
+                        sysLinearSlide.moveLinearSlideToTarget(intervalLinearSlideDown, RobotConstants.LinearSlide.MOTOR_OUTPUT_POWER_MED);
+                        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_LINEAR_SLIDE_DRIFT);
+                    }
                 }
 
             }

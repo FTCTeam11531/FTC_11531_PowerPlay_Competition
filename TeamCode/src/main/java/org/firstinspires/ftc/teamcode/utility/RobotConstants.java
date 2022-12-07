@@ -354,7 +354,7 @@ public class RobotConstants {
         // Limit Set Points
         public static final int ENCODER_SET_POINT_LIMIT_MAX = 6200;
         public static final int ENCODER_SET_POINT_LIMIT_MIN = 0;
-        public static final int ENCODER_SET_POINT_INTERVAL_DOWN = 300;
+        public static final int ENCODER_SET_POINT_INTERVAL_DOWN = 800;
 
         // Encoder Set Points for each Goal (High/Med/Low/Ground)
         public static final int ENCODER_SET_POINT_HIGH_GOAL = 5800;

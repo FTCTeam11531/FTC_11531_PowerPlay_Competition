@@ -319,6 +319,9 @@ public class OpAutoInsideLaneLH extends LinearOpMode {
             // Drive - 13 inches left
             sysDrivetrain.driveDistanceLateral(13, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
 
+            // Drive - turn to heading 180 degrees
+            sysDrivetrain.driveTurnToHeading(180, RobotConstants.Drivetrain.MOTOR_OUTPUT_POWER_LOW);
+
             // ------------------------------------------------------------
             // With Start Cone - Place Cone
             // ------------------------------------------------------------
