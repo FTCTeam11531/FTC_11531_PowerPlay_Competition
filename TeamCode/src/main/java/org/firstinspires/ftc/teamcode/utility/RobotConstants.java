@@ -7,6 +7,8 @@ import android.os.Environment;
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
 /**
  *  <h2>Robot Constant Values</h2>
  * <hr>
@@ -103,6 +105,11 @@ public class RobotConstants {
 
         // Vision
         public static final String LABEL_CAMERA_VISION_TRACKING = "camera_vision_track";
+
+        // Targeting
+        public static final String LABEL_SENSOR_RANGE_JUNCTION_LEFT = "range_junction_left";
+        public static final String LABEL_SENSOR_RANGE_JUNCTION_RIGHT = "range_junction_right";
+        public static final String LABEL_SENSOR_RANGE_JUNCTION_MIDDLE = "range_junction_middle";
 
     }
 
@@ -487,13 +494,13 @@ public class RobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_DEFAULT_AUTONOMOUS = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_FOREST_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_PREGAME_OPTION_CONFIG = RevBlinkinLedDriver.BlinkinPattern.HOT_PINK;
 
-
         // System Initialize Light Patter/state
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LIGHTING = RevBlinkinLedDriver.BlinkinPattern.CP1_HEARTBEAT_FAST; // CP1_STROBE
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN = RevBlinkinLedDriver.BlinkinPattern.CP2_HEARTBEAT_FAST; // STROBE_WHITE
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_VISION = RevBlinkinLedDriver.BlinkinPattern.CP1_HEARTBEAT_SLOW; // CP2_STROBE
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_LINEARSLIDE = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_WHITE; // STROBE_GOLD
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_CLAW = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED; // STROBE_RED
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_TARGETING = RevBlinkinLedDriver.BlinkinPattern.CP1_HEARTBEAT_FAST; // STROBE_RED
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_SOUND = RevBlinkinLedDriver.BlinkinPattern.CP1_LIGHT_CHASE; // STROBE_RED
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_SYSTEM_INIT_COMPLETE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_FOREST_PALETTE;
 
@@ -518,6 +525,10 @@ public class RobotConstants {
         // Light Patterns for Robot State(s) - Claw
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_OPEN = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE; // LIGHT_CHASE_RED
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_CLOSED = RevBlinkinLedDriver.BlinkinPattern.SINELON_OCEAN_PALETTE; // LIGHT_CHASE_BLUE
+
+        // Light Patterns for Targeting
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_TARGET_JUNCTION_ZONE_ACTIVE = RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_TARGET_JUNCTION_ZONE_INACTIVE = RevBlinkinLedDriver.BlinkinPattern.SHOT_RED;
 
     }
 
@@ -615,6 +626,28 @@ public class RobotConstants {
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE1,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE2,
                 TENSORFLOW_MODEL_LABEL_POWERPLAY_BLUE_ZONE3};
+
+    }
+
+    /**
+     *  <h2>Robot Constant Values - Targeting</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Anything and everything related to Targeting constants
+     * </p>
+     * <li>Target Constants</li>
+     * <br>
+     */
+    public static final class Targeting {
+
+        // -- Junction Targeting
+        public static final double TARGET_JUNCTION_RANGE_TOLERANCE_MIN = 1;
+        public static final double TARGET_JUNCTION_RANGE_TOLERANCE_MAX = 5;
+
+        public static final DistanceUnit TARGET_JUNCTION_DISTANCE_UNIT = DistanceUnit.INCH;
 
     }
 

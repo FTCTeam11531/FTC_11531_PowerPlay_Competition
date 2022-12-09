@@ -31,14 +31,7 @@ package org.firstinspires.ftc.teamcode.system;
 
 import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
-
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
-
-import java.util.Arrays;
-import java.util.List;
 
 // Program Copied from FTC example: RobotHardware.java
 // Renamed in TeamCode as: SysLighting.java
@@ -61,7 +54,7 @@ import java.util.List;
 public class SysLighting {
 
     /* Declare OpMode members. */
-    private LinearOpMode sysOpMode = null;   // gain access to methods in the calling OpMode.
+    private LinearOpMode sysOpMode;   // gain access to methods in the calling OpMode.
 
     // Define hardware objects  (Make them private so they can't be accessed externally)
     private RevBlinkinLedDriver ledLightController;
@@ -114,6 +107,55 @@ public class SysLighting {
     }
 
     /**
+     * <h2>Lighting Method: checkValidLightPattern</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Check that the light pattern is a valid pattern
+     * </p>
+     * @param inLightPattern RevBlinkinLedDriver.BlinkinPattern - Light Pattern Setting
+     *
+     * @return boolean - True of valid / False if invalid
+     */
+    public boolean checkValidLightPattern(RevBlinkinLedDriver.BlinkinPattern inLightPattern) {
+
+        // Variable to check if pattern is valid
+        // Pattern will always be true to start and false if the checks find a match
+        boolean isValid = true;
+
+        // Check pattern against avoided pattern(s) when pattern is not one of the avoided keywords
+
+        // Avoid TWINKLES
+        if(inLightPattern.toString().contains(RobotConstants.Lighting.LIGHT_PATTERN_AVOID_KEYWORD_TWINKLES)) {
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    /**
+     * <h2>Lighting Method: getLightPatternCurrent</h2>
+     * <hr>
+     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
+     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
+     * <hr>
+     * <p>
+     * Get the current light pattern
+     * </p>
+     * @return RevBlinkinLedDriver.BlinkinPattern - LED Light Pattern (current)
+     */
+    public RevBlinkinLedDriver.BlinkinPattern getLightPatternCurrent() {
+
+        // Get current LED Light Pattern
+        RevBlinkinLedDriver.BlinkinPattern outLightPattern = ledLightPattern;
+
+        // Return the current light pattern
+        return outLightPattern;
+    }
+
+    /**
      * <h2>Lighting Method: getLightPatternNext</h2>
      * <hr>
      * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
@@ -161,35 +203,6 @@ public class SysLighting {
 
         // Return the previous light pattern
         return outLightPattern;
-    }
-
-    /**
-     * <h2>Lighting Method: checkValidLightPattern</h2>
-     * <hr>
-     * <b>Author:</b> {@value RobotConstants.About#COMMENT_AUTHOR_NAME}<br>
-     * <b>Season:</b> {@value RobotConstants.About#COMMENT_SEASON_PERIOD}<br>
-     * <hr>
-     * <p>
-     * Check that the light pattern is a valid pattern
-     * </p>
-     * @param inLightPattern RevBlinkinLedDriver.BlinkinPattern - Light Pattern Setting
-     *
-     * @return boolean - True of valid / False if invalid
-     */
-    public boolean checkValidLightPattern(RevBlinkinLedDriver.BlinkinPattern inLightPattern) {
-
-        // Variable to check if pattern is valid
-        // Pattern will always be true to start and false if the checks find a match
-        boolean isValid = true;
-
-        // Check pattern against avoided pattern(s) when pattern is not one of the avoided keywords
-
-        // Avoid TWINKLES
-        if(inLightPattern.toString().contains(RobotConstants.Lighting.LIGHT_PATTERN_AVOID_KEYWORD_TWINKLES)) {
-            isValid = false;
-        }
-
-        return isValid;
     }
 
     /**

@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.qualcomm.hardware.rev.RevBlinkinLedDriver;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -39,6 +40,7 @@ import org.firstinspires.ftc.teamcode.system.SysDrivetrain;
 import org.firstinspires.ftc.teamcode.system.SysLighting;
 import org.firstinspires.ftc.teamcode.system.SysLinearSlide;
 import org.firstinspires.ftc.teamcode.system.SysSound;
+import org.firstinspires.ftc.teamcode.system.SysTargeting;
 import org.firstinspires.ftc.teamcode.utility.RobotConstants;
 import org.firstinspires.ftc.teamcode.utility.StateDriveMotorMaxOutputPower;
 import org.firstinspires.ftc.teamcode.utility.StateDrivetrainMode;
@@ -79,6 +81,9 @@ public class OpTeleopMain extends LinearOpMode {
     // -- Claw System
     SysClaw sysClaw = new SysClaw(this);
 
+    // -- Targeting System
+    SysTargeting sysTargeting = new SysTargeting(this);
+
     // -- Sound System
     SysSound sysSound = new SysSound(this);
 
@@ -113,6 +118,9 @@ public class OpTeleopMain extends LinearOpMode {
 
         sysClaw.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_CLAW);
+
+        sysTargeting.init();
+        sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_TARGETING);
 
         sysSound.init();
         sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_SOUND);
@@ -191,6 +199,9 @@ public class OpTeleopMain extends LinearOpMode {
             // -- -- Y: Set Output Speed to Med
             // -- -- A: Set Output Speed to Low
             //
+            // -- Targeting - Junction
+            // -- -- left bumper or right bumper: Check Target Junction Position
+            //
             // -- Robot Movement - Function(s) not in place!
             // -- -- X: 180 spin
             //
@@ -217,6 +228,9 @@ public class OpTeleopMain extends LinearOpMode {
             // -- Claw
             // -- -- Left Bumper: Open Claw
             // -- -- Right Bumper: Close Claw
+            //
+            // -- Targeting - Junction
+            // -- -- Left Trigger or Right Trigger: Check Target Junction Position
             //
             // -- Claw - Hardware not in place!
             // -- -- D-Pad left: Left Max Setpoint
@@ -367,6 +381,31 @@ public class OpTeleopMain extends LinearOpMode {
 
                 // Confirm Action Complete
                 sysSound.playSoundFileByName(RobotConstants.Sound.SOUND_FILE_NAME_LIGHT_SABER);
+            }
+
+            // ------------------------------------------------------------
+            // Targeting - Show target state using robot lighting pattern
+            // ------------------------------------------------------------
+            // Check if Target Junction is in range
+            if(gamepad1.left_bumper
+                    || gamepad1.right_bumper
+                    || gamepad2.left_trigger >= .5
+                    || gamepad2.right_trigger >= .5
+              ) {
+
+                if (sysTargeting.checkTargetJunctionRangeTolerance(sysTargeting.getTargetJunctionRangeSensorDistance(RobotConstants.Configuration.LABEL_SENSOR_RANGE_JUNCTION_LEFT))
+                        && sysTargeting.checkTargetJunctionRangeTolerance(sysTargeting.getTargetJunctionRangeSensorDistance(RobotConstants.Configuration.LABEL_SENSOR_RANGE_JUNCTION_RIGHT))
+                        && sysTargeting.checkTargetJunctionRangeTolerance(sysTargeting.getTargetJunctionRangeSensorDistance(RobotConstants.Configuration.LABEL_SENSOR_RANGE_JUNCTION_MIDDLE))
+                ) {
+                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_TARGET_JUNCTION_ZONE_ACTIVE);
+                } else {
+                    sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_TARGET_JUNCTION_ZONE_INACTIVE);
+                }
+            }
+            else
+            {
+                // Set light pattern back to current light pattern
+                sysLighting.setLightPattern(RobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_TELEOP);
             }
 
             // ------------------------------------------------------------
@@ -526,6 +565,20 @@ public class OpTeleopMain extends LinearOpMode {
                     , sysClaw.getClawClampPosition()
                     , sysClaw.getClawSidePosition()
                     , sysClaw.getClawUpDownPosition());
+
+            // ------------------------------------------------------------
+            // - Targeting Junction telemetry
+            // ------------------------------------------------------------
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "-- Targeting Junction");
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Left/Middle/Right", "%4.2f, %4.2f, %4.2f"
+                    , sysTargeting.getTargetJunctionRangeSensorDistance(RobotConstants.Configuration.LABEL_SENSOR_RANGE_JUNCTION_LEFT)
+                    , sysTargeting.getTargetJunctionRangeSensorDistance(RobotConstants.Configuration.LABEL_SENSOR_RANGE_JUNCTION_MIDDLE)
+                    , sysTargeting.getTargetJunctionRangeSensorDistance(RobotConstants.Configuration.LABEL_SENSOR_RANGE_JUNCTION_RIGHT));
+//            telemetry.addData("Left", "%4.2f, %4.2f, %4.2f");
+//            telemetry.addData("Middle", "%4.2f, %4.2f, %4.2f");
+//            telemetry.addData("Right", "%4.2f, %4.2f, %4.2f");
 
             // ------------------------------------------------------------
             // - Lighting telemetry
